@@ -15,9 +15,16 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 //routes import
-import userRouter from "./routes/user.routes.js"
-
+import flatRouter from "./routes/flat.routes.js"
+import ownerRouter from "./routes/owner.routes.js"
+import renterRouter from "./routes/renter.routes.js"
+import petRouter from "./routes/pet.routes.js"
+import visitorRouter from "./routes/visitor.routes.js"
 // routes declaration
-app.use("/api/v1/users", userRouter)
+app.use("/api/v1/users", flatRouter)
+app.use("/api/v1/owners", ownerRouter)
+app.use("/api/v1/renters", renterRouter)
+app.use("/api/v1/pets", petRouter)
+app.use("/api/v1/visitor", visitorRouter)
 //http:localhost:8000/api/v1/users/register
 export { app }

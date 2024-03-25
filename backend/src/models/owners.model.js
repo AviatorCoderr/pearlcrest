@@ -8,26 +8,22 @@ const ownerSchema = mongoose.Schema({
     name: {
         type: String,
         uppercase: true,
-        trim: true,
-        required: [true, "Owner's Name is required"]
+        trim: true
     },
     mobile: {
         type: String,
         uppercase: true,
-        trim: true,
-        required: [true, "Owner's Mobile is required"]
+        trim: true
     },
     aadhar: {
         type: String,
         uppercase: true,
-        trim: true,
-        required: [true, "Owner's Aadhar is required"]
+        trim: true
     },
     email: {
         type: String,
         lowercase: true,
-        trim: true,
-        required: [true, "Owner's email is required"]
+        trim: true
     },
     spouse_name: {
         type: String,
@@ -36,14 +32,6 @@ const ownerSchema = mongoose.Schema({
     spouse_mobile: {
         type: String,
         uppercase: true
-    },
-    spouse_aadhar: {
-        type: String,
-        uppercase: true
-    },
-    spouse_email: {
-        type: String,
-        lowercase: true
     }
 })
 

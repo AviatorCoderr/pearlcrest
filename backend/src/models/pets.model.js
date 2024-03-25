@@ -17,6 +17,4 @@ const petSchema = new mongoose.Schema({
     }
 });
 
-const Pet = mongoose.model("Pet", petSchema);
-
-export default Pet;
+export const Pet = mongoose.model("Pet", petSchema);

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const visitorSchema = new mongoose.Schema({
     flat: {
         type: mongoose.Schema.Types.ObjectId,
@@ -23,18 +22,15 @@ const visitorSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        enum: ["relative", "delivery", "staff"]
+        enum: ["relative", "delivery", "staff", "schoolvan"]
     },
     checkin: {
-        type: Date,
-        required: true,
-        default: Date.now
+        type: String,
+        required: true
     },
     checkout: {
-        type: Date
+        type: String
     }
 });
 
-const Visitor = mongoose.model("Visitor", visitorSchema);
-
-export default Visitor;
+export const Visitor = mongoose.model("Visitor", visitorSchema);
