@@ -12,25 +12,25 @@ import UserProfile from "./components/UserProfile";
 import Login from "./components/Login";
 import Payementhistory from "./components/Payementhistory";
 import VisitorsLog from "./components/VisitorsLog";
+
 function App() {
   return (
     <div>
       <Router>
         <Routes>
-          <Route path="/log" element={<Login />} />
+          <Route path="/log" element= {<Login />} />
           <Route path="/" element={<Home />} />
           <Route path="/db" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="events" element={<Addevents />} />
             <Route path="addpv" element={<AddPaymentVoucher />} />
-            <Route path="addcomplain" element={<AddComplaints />}></Route>
-            <Route path="reserve" element={<FacilityReservation />}></Route>
-            <Route path="payments" element={<Societypayments />}></Route>
-            <Route path="profile" element={<UserProfile />}></Route>
-            <Route path="trackpay" element={<Payementhistory />}></Route>
-            <Route path="visitor" element={<VisitorsLog />}></Route>
+            <Route path="addcomplain" element={<AddComplaints />} />
+            <Route path="reserve" element={<FacilityReservation />} />
+            <Route path="payments" element={<Societypayments />} />
+            <Route path="profile" element={<UserProfile />} />
+            <Route path="trackpay" element={<Payementhistory />} />
+            <Route path="visitor" element={<VisitorsLog />} />
           </Route>
-          <Route path="/home" element={<Home />} />
         </Routes>
       </Router>
     </div>

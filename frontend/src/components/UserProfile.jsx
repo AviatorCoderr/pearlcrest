@@ -1,6 +1,17 @@
-import React from 'react'
-
+import React, { useState, useEffect } from 'react'
+import axios from "axios"
 export default function UserProfile() {
+  const [owner, setOwner] = useState(null)
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/v1/users/get-current-user")
+    .then((response) => {
+      console.log(response)
+      setOwner(response.data)
+    })
+    .catch((error) => {
+      console.log(error) 
+    })
+  }, [])
   return (
     <div className='m-5'>
     <strong className='text-xl m-5 font-semibold'>Your Profile</strong>

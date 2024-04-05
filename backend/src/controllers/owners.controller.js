@@ -2,7 +2,6 @@ import {asyncHandler} from "../utils/asynchandler.js"
 import { Owner } from "../models/owners.model.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {ApiError} from "../utils/ApiError.js"
-import bcrypt from "bcrypt"
 // add owner details
 const addOwner = asyncHandler(async (req, res) => {
     const data = req.body
@@ -79,5 +78,15 @@ const updateOwner = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, {owner}, "Owner details updated"))
 })
+//get owner details
+const getOwner = asyncHandler(async (req, res) => {
+    console.log("hello owner")
+    const loggedIn = req?.flat._id.toString()
+    console.log(loggedIn)
+    const owner = await Owner.findOne({flat: {$in: loggedIn}})
+    console.log(owner)
+    res.status(200)
+    .json(new ApiResponse(200, {owner}, "Owner data recieved"))
+})
 
-export {addOwner, updateOwner, updateAdminOwner}
+export {addOwner, updateOwner, updateAdminOwner, getOwner}

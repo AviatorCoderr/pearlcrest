@@ -11,9 +11,10 @@ const addvisitor = asyncHandler(async (req, res) => {
             throw new Error("Flat not found"); 
         }
         const flatid = flat._id;
+        console.log(flatid)
         const checkin = new Date();
         const visitor = await Visitor.create({
-            flatid,
+            flat: flatid,
             name,
             mobile,
             numofpeople,
@@ -25,5 +26,23 @@ const addvisitor = asyncHandler(async (req, res) => {
         res.status(400).json(new ApiResponse(400, null, error.message));
     }
 });
+const messageToAll = asyncHandler(async(req, res) => {
+    const { flatnumber, name, mobile, numofpeople, purpose } = req.body;
+    if(purpose==="schoolvan"){
+        //message all flats
+    }
+})
+const getvisitor = asyncHandler(async( req, res) => {
+    const flatid = req?.flat._id
+    console.log(flatid)
+    const visitors = await Visitor.findOne({
+        flat: flatid
+    })
+    res
+    .status(200)
+    .json(new ApiResponse(200, {visitors}, "all visitors data returned"))
+})
 
-export {addvisitor}
+//checkout function
+
+export {addvisitor, getvisitor, messageToAll}

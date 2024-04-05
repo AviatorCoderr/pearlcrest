@@ -21,8 +21,7 @@ const visitorSchema = new mongoose.Schema({
     purpose: {
         type: String,
         required: true,
-        trim: true,
-        enum: ["relative", "delivery", "staff", "schoolvan"]
+        trim: true
     },
     checkin: {
         type: String,
