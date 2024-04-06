@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import { Renter } from '../../../backend/src/models/renters.model';
 
 export default function UserProfile() {
   const [owner, setOwner] = useState(null);
@@ -11,7 +10,7 @@ export default function UserProfile() {
     const getPet = async () => {
       try {
         const response = await axios.get("http://localhost:8000/api/v1/pets/get-pets", { withCredentials: true });
-        setPet(response.data.data);
+        setPet(response.data.data.pets);
       } catch (error) {
         console.log(error);
       }
@@ -88,10 +87,12 @@ export default function UserProfile() {
           <input className="p-2 rounded-sm shadow-lg border border-black" type="text" defaultValue='' />
         </div>
         <strong>Pet Details</strong>
-        <div className='grid gap-5 grid-cols-2'>
-          <input className="p-2 rounded-sm shadow-lg border border-black" type="text" defaultValue={pet[0]?.type} />
-          <input className="p-2 rounded-sm shadow-lg border border-black" type="text" defaultValue={pet[0]?.breed} />
-        </div>
+        {pet?.map(pet => (
+          <div className='grid gap-5 grid-cols-2'>
+          <input className="p-2 rounded-sm shadow-lg border border-black" type="text" defaultValue={pet?.type} />
+          <input className="p-2 rounded-sm shadow-lg border border-black" type="text" defaultValue={pet?.breed} />
+          </div>
+        ))}
       </div>
       <button className='m-5 bg-black text-white px-5 py-2 rounded-xl hover:opacity-80'>Continue & Pay</button>
     </div>
