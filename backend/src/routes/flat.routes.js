@@ -7,5 +7,6 @@ router.route("/change-password").patch(verifyJWT, changePassword)
 router.route("/admin-reset-password").patch(adminresetpassword)
 router.route("/login").post(loginFlat)
 router.route("/display-flat").get(displayFlats)
-router.route("/get-current-user").get(getCurrentUser)
+router.route("/get-current-user").get(verifyJWT, getCurrentUser)
+
 export default router

@@ -10,6 +10,9 @@ export default function Login() {
     axios.post("http://localhost:8000/api/v1/users/login", {
       flatnumber: username,
       password: password
+    },
+    {
+      withCredentials: true
     })
     .then(response => {
       console.log("Login success:", response.data);

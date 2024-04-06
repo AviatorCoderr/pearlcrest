@@ -35,7 +35,7 @@ const messageToAll = asyncHandler(async(req, res) => {
 const getvisitor = asyncHandler(async( req, res) => {
     const flatid = req?.flat._id
     console.log(flatid)
-    const visitors = await Visitor.findOne({
+    const visitors = await Visitor.find({
         flat: flatid
     })
     res

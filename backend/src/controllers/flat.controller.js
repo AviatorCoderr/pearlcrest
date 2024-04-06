@@ -107,8 +107,8 @@ const loginFlat = asyncHandler(async (req, res) => {
     const {accessToken, refreshToken} = await generateAccessandRefreshTokens(flat._id)
     const loggedInFlat = await Flat.findById(flat._id).select("-password -refreshToken")
     const options= {  
-        expires: new Date(Date.now() + 3*24*60*60*1000),
         httpOnly: true,
+        secure: true
     }
     return res
     .status(200)
@@ -133,16 +133,12 @@ const displayFlats = asyncHandler(async (req, res) => {
 })
 //to get current user
 const getCurrentUser = asyncHandler(async(req, res) => {
-    const currentToken = req.cookies?.accessToken
-    console.log(currentToken)
-    if(!currentToken){
-        return res.status(200)
-        .json(new ApiResponse(401, {status: false}, "not logged in")) 
-    }
-    const flatid = currentToken._id
-    console.log(flatid)
-    res.status(200)
-    .json(new ApiResponse(200, {status: true}, "logged in"))
+    console.log(req.flat)
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200, req.flat, "current user fetched successfully")
+    )
 })
 
 export {registerFlat, changePassword, adminresetpassword, loginFlat, displayFlats, getCurrentUser}

@@ -29,6 +29,10 @@ const addAdminPets = asyncHandler(async (req, res) => {
         res.status(400).json({ success: false, message: error.message });
     }
 });
+const getPets = asyncHandler(async (req, res) => {
+    const flatid = req?.flat._id.toString();
+    const pets = await Pet.find({flat: {$in: flatid}});
+    res.status(200).json(new ApiResponse(200, pets, "Vehicle data received"));
+});
 
-
-export {addAdminPets}
+export {addAdminPets, getPets}

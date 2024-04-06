@@ -78,5 +78,12 @@ const updateRenter = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, {renter}, "Owner details updated"))
 })
+const getRenter = asyncHandler(async (req, res) => {
+    const loggedIn = req?.flat._id.toString()
+    const renter = await Renter.findOne({flat: {$in: loggedIn}})
+    res.status(200)
+    .json(new ApiResponse(200, renter, "Renter data recieved"))
+})
 
-export {addRenter, updateRenter, updateAdminRenter}
+
+export {addRenter, updateRenter, updateAdminRenter, getRenter}

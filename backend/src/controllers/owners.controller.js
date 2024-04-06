@@ -80,13 +80,10 @@ const updateOwner = asyncHandler(async (req, res) => {
 })
 //get owner details
 const getOwner = asyncHandler(async (req, res) => {
-    console.log("hello owner")
     const loggedIn = req?.flat._id.toString()
-    console.log(loggedIn)
     const owner = await Owner.findOne({flat: {$in: loggedIn}})
-    console.log(owner)
     res.status(200)
-    .json(new ApiResponse(200, {owner}, "Owner data recieved"))
+    .json(new ApiResponse(200, owner, "Owner data recieved"))
 })
 
 export {addOwner, updateOwner, updateAdminOwner, getOwner}
