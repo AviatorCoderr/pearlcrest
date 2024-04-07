@@ -5,12 +5,12 @@ const incomeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Flat'
     },
-    modeofpayment: {
+    mode: {
         type: String,
-        enum: ['cash', 'bank'],
+        enum: ['cash', 'online'],
         required: true
     },
-    source_type: {
+    purpose: {
         type: String,
         required: true,
         trim: true
@@ -20,16 +20,8 @@ const incomeSchema = new mongoose.Schema({
         required: true,
         min: 0
     },
-    from_month: {
-        type: String,
-        trim: true
-    },
-    to_month: {
-        type: String,
-        trim: true
-    },
     createdAt: {
-        type: Date,
+        type: String,
         required: true,
         default: Date.now
     }

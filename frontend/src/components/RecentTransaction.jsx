@@ -1,39 +1,19 @@
-import React from 'react'
-const recenttransdata = [
-    {
-    id: '1',
-    type: 'Maintainence',
-    amount: 1700,
-    month: 'march 23',
-    date: '28-02-2024',
-    receipt: 'click'
-    },
-    {
-        id: '1',
-        type: 'Maintainence',
-        amount: 1700,
-        month: 'march 23',
-        date: '28-02-2024',
-        receipt: 'click'
-    },
-    {
-        id: '1',
-        type: 'Maintainence',
-        amount: 1700,
-        month: 'march 23',
-        date: '28-02-2024',
-        receipt: 'click'
-    },
-    {
-        id: '1',
-        type: 'Maintainence',
-        amount: 1700,
-        month: 'march 23',
-        date: '28-02-2024',
-        receipt: 'click'
-    }
-]
+import React, { useState, useEffect } from 'react'
+import axios from 'axios';
 export default function RecentTransaction() {
+  const [transaction, setTransaction] = useState([])
+  useEffect(() => {
+    const getTrans = async() => {
+        const response = await axios.get("http://localhost:8000/api/v1/account/get-trans-5", {withCredentials: true})
+        setTransaction(response.data.data)
+    }
+    getTrans()
+    console.log(transaction)
+  }, []);   
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+};
   return (
     <div className='bg-white px-4 pt-3 pb-4 rounded-sm border border-gray-200 flex-1'>
         <strong>Recent Transactions</strong>
@@ -46,18 +26,16 @@ export default function RecentTransaction() {
                     <td>Amount</td>
                     <td>Month</td>
                     <td>Date</td>
-                    <td>Receipt</td>
                 </tr>
             </thead>
             <tbody className='border-t border-gray-400'>
-                {recenttransdata.map((ele) => (
-                    <tr key={ele.id}>
-                    <td>{ele.id}</td>
-                    <td>{ele.type}</td>
-                    <td>{ele.amount}</td>
-                    <td>{ele.month}</td>
-                    <td>{ele.date}</td>
-                    <td>{ele.receipt}</td>
+                {transaction.map((ele, index) => (
+                    <tr key={index}>
+                        <td>{ele._id}</td>
+                        <td>{ele.purpose}</td>
+                        <td>{ele.amount}</td>
+                        <td>{ele.months.join(", ")}</td>
+                        <td>{formatDate(ele.createdAt)}</td>
                     </tr>
                 ))}
             </tbody>

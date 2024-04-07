@@ -1,19 +1,25 @@
 import React from 'react';
 import { jsPDF } from "jspdf";
-
-const recenttransdata = [
-    {
-        id: '1',
-        type: 'Maintenance',
-        amount: 1700,
-        month: 'March 23',
-        date: '28-02-2024',
-        receipt: 'click'
-    },
-    // Other transaction objects
-]
-
+import { useState, useEffect } from 'react';
+import axios from "axios"
 export default function PaymentHistory() {
+    const [transaction, setTransaction] = useState([])
+    const [user, setUser] = useState("")
+    useEffect(() => {
+    const getTrans = async() => {
+        const response = await axios.get("http://localhost:8000/api/v1/account/get-transaction", {withCredentials: true})
+        const user = await axios.get("http://localhost:8000/api/v1/users/get-current-user", {withCredentials: true})
+        setTransaction(response.data.data.data)
+        setUser(user.data.data.flatnumber)
+    }
+    getTrans()
+    console.log(user)
+    console.log(transaction)
+  }, []);
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+};
     const jsPdfGenerator = (receiptNo, date, flatNo, amount, transactionDate, months) => {
         const doc = new jsPDF();
     
@@ -98,7 +104,6 @@ export default function PaymentHistory() {
         doc.setDrawColor(0);
         doc.setLineDashPattern([1, 1], 0);
         doc.line(15, 195, 90, 195); // Draw dashed line
-    
         doc.save("sample.pdf");
     }
     return (
@@ -117,14 +122,14 @@ export default function PaymentHistory() {
                         </tr>
                     </thead>
                     <tbody className='border-t border-gray-400'>
-                        {recenttransdata.map((ele, index) => (
+                        {transaction.map((ele, index) => (
                             <tr key={index}>
-                                <td>{ele.id}</td>
-                                <td>{ele.type}</td>
+                                <td>{ele._id}</td>
+                                <td>{ele.purpose}</td>
                                 <td>{ele.amount}</td>
-                                <td>{ele.month}</td>
-                                <td>{ele.date}</td>
-                                <td><button onClick={() => jsPdfGenerator(ele.id, new Date(), "A104", ele.amount, ele.date, ele.month)}>Receipt</button></td>
+                                <td>{ele.months.join(", ")}</td>
+                                <td>{formatDate(ele.createdAt)}</td>
+                                <td><button onClick={() => jsPdfGenerator(ele._id, new Date(), user, ele.amount, formatDate(ele.createdAt), ele.months.join(", "))}>Receipt</button></td>
                             </tr>
                         ))}
                     </tbody>

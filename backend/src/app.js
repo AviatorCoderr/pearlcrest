@@ -21,6 +21,7 @@ import renterRouter from "./routes/renter.routes.js"
 import petRouter from "./routes/pet.routes.js"
 import visitorRouter from "./routes/visitor.routes.js"
 import vehicleRouter from "./routes/vehicle.routes.js"
+import accountRouter from "./routes/accounts.routes.js"
 // routes declaration
 app.use("/api/v1/users", flatRouter)
 app.use("/api/v1/owners", ownerRouter)
@@ -28,5 +29,6 @@ app.use("/api/v1/renters", renterRouter)
 app.use("/api/v1/pets", petRouter)
 app.use("/api/v1/visitor", visitorRouter)
 app.use("/api/v1/vehicle", vehicleRouter)
+app.use("/api/v1/account", accountRouter)
 //http:localhost:8000/api/v1/users/register
 export { app }

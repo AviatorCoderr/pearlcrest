@@ -5,6 +5,11 @@ const transactionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Flat'
     },
+    transactionId: {
+        type: String,
+        trim: true,
+        required: true
+    },
     mode: {
         type: String,
         required: true,
@@ -21,19 +26,20 @@ const transactionSchema = new mongoose.Schema({
         required: true,
         min: 0
     },
-    datetime: {
+    date: {
+        type: Date,
+        required: true,
+        default: Date.now()
+    },
+    createdAt: {
         type: Date,
         required: true,
         default: Date.now
     },
-    from_month:{
-        type: Date,
+    months: [{
+        type: String,
         required: true
-    },
-    to_month: {
-        type: Date,
-        required: true
-    }   
+    }]
 });
 
 const Transaction = mongoose.model("Transaction", transactionSchema);

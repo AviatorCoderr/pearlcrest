@@ -1,6 +1,37 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaCashRegister } from "react-icons/fa";
+import axios from "axios"
 export default function Dashboardstatsgrid() {
+  const [income, setIncome] = useState("")
+  const [exp, setExp] = useState("")
+  const [transaction, setTransaction] = useState("")
+  useEffect(() => {
+    const getIncome = async() => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/v1/account/get-total-income")
+        setIncome(response.data.data.totalIncome)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    const getExp = async() => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/v1/account/get-total-exp")
+        setExp(response.data.data.totalExpenditure)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    const getTrans = async() => {
+      const response = await axios.get("http://localhost:8000/api/v1/account/get-trans-5", {withCredentials: true})
+      setTransaction(response.data.data)
+    }
+    getTrans()
+    getIncome()
+    getExp()
+    console.log(income)
+    console.log(exp)
+  }, [])
   return (
     <div className='flex gap-4 w-full h-full'>
         <BoxWrapper>
@@ -10,7 +41,7 @@ export default function Dashboardstatsgrid() {
           <div className='pl-4'>
             <span className='text-sm text-black font-bold'>Total Income</span>
             <div className='flex items-center'>
-              <strong className='text-xl text-green-500 font-semibold'>34525</strong>
+              <strong className='text-xl text-green-500 font-semibold'>{income}</strong>
             </div>
           </div>
         </BoxWrapper>
@@ -21,7 +52,7 @@ export default function Dashboardstatsgrid() {
           <div className='pl-4'>
             <span className='text-sm text-black font-bold'>Total Expenditure</span>
             <div className='flex items-center'>
-              <strong className='text-xl text-red-400 font-semibold'>34525</strong>
+              <strong className='text-xl text-red-400 font-semibold'>{exp}</strong>
             </div>
           </div>
         </BoxWrapper>
@@ -30,10 +61,9 @@ export default function Dashboardstatsgrid() {
             <FaCashRegister className='text-2xl text-white'/>
           </div>
           <div className='pl-4'>
-            <span className='text-sm text-gray-500 font-light'>Total Expenditure</span>
+            <span className='text-sm text-gray-500 font-light'>Cash Balance</span>
             <div className='flex items-center'>
-              <strong className='text-xl text-gray-700 font-semibold'>34525</strong>
-              <span className='text-sm text-green-500 pl-2'>+234</span>
+              <strong className='text-xl text-gray-700 font-semibold'></strong>
             </div>
           </div>
         </BoxWrapper>
@@ -42,10 +72,9 @@ export default function Dashboardstatsgrid() {
             <FaCashRegister className='text-2xl text-white'/>
           </div>
           <div className='pl-4'>
-            <span className='text-sm text-gray-500 font-light'>Total Income</span>
+            <span className='text-sm text-gray-500 font-light'>Bank Balance</span>
             <div className='flex items-center'>
-              <strong className='text-xl text-gray-700 font-semibold'>34525</strong>
-              <span className='text-sm text-green-500 pl-2'>+234</span>
+              <strong className='text-xl text-gray-700 font-semibold'></strong>
             </div>
           </div>
         </BoxWrapper>
