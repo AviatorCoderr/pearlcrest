@@ -25,38 +25,13 @@ function Showcase() {
             From Payments to Complaints: Pearl Crest Puts it All at Your
             Fingertips
           </h2>
-          <Link to="/log">
-            <button className="p-3 text-center bg-black hover:opacity-80 w-1/4 m-auto md:m-0 border-white text-white border-2 rounded-l-3xl rounded-r-3xl">
+          <Link className="m-auto md:m-0" to="/log">
+            <button className="px-10 py-4 text-center bg-black hover:opacity-80 border-white text-white border-2 rounded-l-3xl rounded-r-3xl">
               Login
             </button>
           </Link>
         </div>
-        <div className="w-1/2 h-full invisible md:visible">
-          <img
-            className={`${
-              isVisible ? "show" : ""
-            } showcase_img1 overflow-x-hidden w-1/3 border-2 border-black  absolute top-[60%] left-[63%] rounded-3xl rotate-12`}
-            src="/static/images/PC2.jpg"
-            alt=""
-          />
-          \
-          <img
-            className={`${
-              isVisible ? "show" : ""
-            } showcase_img2 w-1/3 border-2 border-black  absolute top-[20%] left-[52%] rounded-3xl rotate-12`}
-            src="/static/images/PC4.jpg"
-            alt=""
-          />
-          \
-          <img
-            className={`${
-              isVisible ? "show" : ""
-            } showcase_img3 w-1/3 border-2 border-black absolute top-1/6 left-[32%] rounded-3xl rotate-12`}
-            src="/static/images/PC5.jpg"
-            alt=""
-          />
-          \
-        </div>
+      
       </div>
       <div className="md:hidden h-full m-1 grid gap-4 overflow-hidden">
         {/* <img className={`w-full m-auto border-2 border-black rounded-3xl`} src="../../public/static/images/PC2.jpg" alt="" /> */}

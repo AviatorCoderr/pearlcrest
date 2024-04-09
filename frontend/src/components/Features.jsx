@@ -37,7 +37,9 @@ const Features = () => {
                     )}
                   </span>
                 </p>
-                {isOpen[index] && <p className="text-xl p-1">{ele.desc}</p>}
+                <div className={`transition-max-height duration-300 ${isOpen[index] ? 'max-h-48' : 'max-h-0 overflow-hidden'}`}>
+                  <p className="text-xl p-1">{ele.desc}</p>
+                </div>
               </div>
             ))}
           </div>

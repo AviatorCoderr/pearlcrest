@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function VisitorLog() {
+export default function VisitorGuard() {
     const [visitor, setVisitor] = useState([]);
     useEffect(() => {
         const getVisitor = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/api/v1/visitor/get-visitor", { withCredentials: true });
+                const response = await axios.get("http://localhost:8000/api/v1/visitor/get-all-visitor");
                 setVisitor(response.data.data.visitors);
             } catch (error) {
                 console.log(error);

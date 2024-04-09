@@ -4,7 +4,6 @@ import axios from "axios"
 export default function Dashboardstatsgrid() {
   const [income, setIncome] = useState("")
   const [exp, setExp] = useState("")
-  const [transaction, setTransaction] = useState("")
   useEffect(() => {
     const getIncome = async() => {
       try {
@@ -22,11 +21,6 @@ export default function Dashboardstatsgrid() {
         console.log(error)
       }
     }
-    const getTrans = async() => {
-      const response = await axios.get("http://localhost:8000/api/v1/account/get-trans-5", {withCredentials: true})
-      setTransaction(response.data.data)
-    }
-    getTrans()
     getIncome()
     getExp()
     console.log(income)

@@ -42,7 +42,14 @@ const getvisitor = asyncHandler(async( req, res) => {
     .status(200)
     .json(new ApiResponse(200, {visitors}, "all visitors data returned"))
 })
+const getAllVisitor = asyncHandler(async( req, res) => {
+    const visitors = await Visitor.find()
+    console.log(visitors)
+    res
+    .status(200)
+    .json(new ApiResponse(200, {visitors}, "all visitors data returned"))
+})
 
 //checkout function
 
-export {addvisitor, getvisitor, messageToAll}
+export {addvisitor, getvisitor, messageToAll, getAllVisitor}

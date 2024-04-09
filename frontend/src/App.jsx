@@ -13,7 +13,7 @@ import Login from "./components/Login";
 import Payementhistory from "./components/Payementhistory";
 import VisitorsLog from "./components/VisitorsLog";
 import AddIncome from "./components/AddIncome";
-
+import VisitorGuard from "./components/VisitorsGuard";
 function App() {
   return (
     <div>
@@ -32,6 +32,7 @@ function App() {
             <Route path="trackpay" element={<Payementhistory />} />
             <Route path="visitor" element={<VisitorsLog />} />
             <Route path="addincome" element={<AddIncome />} />
+            <Route path="getvisitor" element={<VisitorGuard />} />
           </Route>
         </Routes>
       </Router>
