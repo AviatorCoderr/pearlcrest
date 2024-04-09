@@ -10,7 +10,7 @@ function Navbar() {
 
   return (
     <div className="md:flex z-20 my-2">
-      <div className="p-2 ml-10 text-3xl flex">
+      <div className="p-2 md:ml-10 text-3xl flex">
         <p className="m-2 py-2 md:visible flex">
           <img className="px-2" src="/static/images/favicon-32x32.png" alt="" />
           PEARL CREST

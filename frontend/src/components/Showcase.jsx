@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 function Showcase() {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -17,6 +20,18 @@ function Showcase() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  // Slick carousel settings
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+  };
+
   return (
     <div className="m-0 md:h-[30rem]">
       <div className="flex flex-col-reverse md:flex-row items-center p-6 mx-auto space-y-0">
@@ -31,24 +46,28 @@ function Showcase() {
             </button>
           </Link>
         </div>
-      
       </div>
-      <div className="md:hidden h-full m-1 grid gap-4 overflow-hidden">
-        {/* <img className={`w-full m-auto border-2 border-black rounded-3xl`} src="../../public/static/images/PC2.jpg" alt="" /> */}
-        <img
-          className={`showcase_img1 ${
-            isVisible ? "show" : ""
-          } w-1/2 m-auto border-2 border-black rounded-3xl`}
-          src="../../public/static/images/PC4.jpg"
-          alt=""
-        />
-        <img
-          className={`showcase_img3 ${
-            isVisible ? "show" : ""
-          } w-1/2 m-auto border-2 border-black rounded-3xl`}
-          src="../../public/static/images/PC5.jpg"
-          alt=""
-        />
+      <div className="md:hidden h-full m-1">
+        <Slider {...settings}>
+          <div>
+            <img
+              className={`w-full h-[20rem] md:h-[30rem] object-cover border-2 border-black rounded-3xl ${
+                isVisible ? "show" : ""
+              }`}
+              src="../../public/static/images/PC4.jpg"
+              alt=""
+            />
+          </div>
+          <div>
+            <img
+              className={`w-full h-[20rem] md:h-[30rem] object-cover border-2 border-black rounded-3xl ${
+                isVisible ? "show" : ""
+              }`}
+              src="../../public/static/images/PC5.jpg"
+              alt=""
+            />
+          </div>
+        </Slider>
       </div>
     </div>
   );
