@@ -54,7 +54,7 @@ function Showcase() {
               className={`w-full h-[20rem] md:h-[30rem] object-cover border-2 border-black rounded-3xl ${
                 isVisible ? "show" : ""
               }`}
-              src="../../public/static/images/PC4.jpg"
+              src="/static/images/PC4.jpg"
               alt=""
             />
           </div>
@@ -63,7 +63,7 @@ function Showcase() {
               className={`w-full h-[20rem] md:h-[30rem] object-cover border-2 border-black rounded-3xl ${
                 isVisible ? "show" : ""
               }`}
-              src="../../public/static/images/PC5.jpg"
+              src="/static/images/PC5.jpg"
               alt=""
             />
           </div>
