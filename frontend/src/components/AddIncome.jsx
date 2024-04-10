@@ -55,7 +55,7 @@ export default function AddIncome() {
         })
         }
         else{
-          await axios.post('/api/v1/account/add-admin-account', {
+          await axios.post('http://localhost:8000/api/v1/account/add-admin-account', {
           mode: mode,
           amount: amount,
           purpose: purpose,
