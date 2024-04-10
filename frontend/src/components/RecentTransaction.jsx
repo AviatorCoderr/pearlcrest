@@ -4,7 +4,7 @@ export default function RecentTransaction() {
   const [transaction, setTransaction] = useState([])
   useEffect(() => {
     const getTrans = async() => {
-        const response = await axios.get("http://localhost:8000/api/v1/account/get-trans-5", {withCredentials: true})
+        const response = await axios.get("/api/v1/account/get-trans-5", {withCredentials: true})
         setTransaction(response.data.data)
     }
     getTrans()

@@ -38,7 +38,7 @@ export default function AddIncome() {
         const currentMonthString = new Date().toLocaleString('default', { month: 'long' });
         console.log("Current month:", currentMonthString);
         if(purpose==="Cash Deposit" || purpose==="Cash withdrawal"){
-          await axios.post('http://localhost:8000/api/v1/account/add-admin-income', {
+          await axios.post('/api/v1/account/add-admin-income', {
           mode: mode,
           amount: amount,
           purpose: purpose,
@@ -55,7 +55,7 @@ export default function AddIncome() {
         })
         }
         else{
-          await axios.post('http://localhost:8000/api/v1/account/add-admin-account', {
+          await axios.post('/api/v1/account/add-admin-account', {
           mode: mode,
           amount: amount,
           purpose: purpose,

@@ -26,7 +26,7 @@ export default function UserProfile() {
 
     const getRenter = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/v1/renters/get-renter", { withCredentials: true });
+        const response = await axios.get("/api/v1/renters/get-renter", { withCredentials: true });
         setRenter(response.data.data);
       } catch (error) {
         console.log(error);
@@ -35,7 +35,7 @@ export default function UserProfile() {
 
     const getOwner = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/v1/owners/get-owner", { withCredentials: true });
+        const response = await axios.get("/api/v1/owners/get-owner", { withCredentials: true });
         setOwner(response.data.data);
       } catch (error) {
         console.log(error);

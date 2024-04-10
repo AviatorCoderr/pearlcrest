@@ -28,11 +28,11 @@ function Sidebar() {
     const [isOpen, setIsOpen] = useState(true);
 
     return (
-        <div>
+        <div className="h-screen">
             <motion.div
                 variants={Sidebar_animation}
                 animate={isOpen ? "open" : "closed"}
-                className=' bg-neutral-900 w-[15rem] p-3 z-[999] h-full overflow-hidden md:relative fixed max-w-[15rem] flex flex-col text-white'
+                className='overflow-y-scroll lg:overflow-y-auto relative z-40 h-full no-scrollbar bg-neutral-900 p-3 flex flex-col text-white'
             >
                 <div className='flex gap-2 px-1 py-3'>
                     <img className="w-[15%] min-w-max gap-6" src="/static/images/favicon-32x32.png" alt="" />

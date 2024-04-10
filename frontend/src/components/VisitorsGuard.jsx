@@ -6,7 +6,7 @@ export default function VisitorGuard() {
     useEffect(() => {
         const getVisitor = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/api/v1/visitor/get-all-visitor");
+                const response = await axios.get("/api/v1/visitor/get-all-visitor");
                 setVisitor(response.data.data.visitors);
             } catch (error) {
                 console.log(error);
@@ -15,6 +15,9 @@ export default function VisitorGuard() {
         getVisitor();
         console.log(visitor)
     }, []);
+    const checkout = async () => {
+        
+    }
     const formatDateTime = (timestamp) => {
         const date = new Date(timestamp);
         const options = { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -43,6 +46,7 @@ export default function VisitorGuard() {
                                 <td>{visitor.numofpeople}</td>
                                 <td>{visitor.purpose}</td>
                                 <td>{formatDateTime(visitor.checkin)}</td>
+                                <td><button onClick={checkout}>Click</button></td>
                             </tr>
                         ))}
                     </tbody>
