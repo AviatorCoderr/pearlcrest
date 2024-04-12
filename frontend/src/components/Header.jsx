@@ -6,8 +6,8 @@ import classNames from 'classnames';
 export default function Header() {
   const navigate = useNavigate();
   return (
-    <div className='bg-white h-16 px-4 flex justify-between items-center border-b border-gray-200'>
-        <div className='relative'>
+    <div className='relative  bg-white h-16 px-4 flex justify-between items-center border-b border-gray-200'>
+        <div className=''>
           <HiOutlineSearch fontsize={20} className='text-gray-400 absolute top-1/2 -translate-y-1/2 left-3'/>
           <input 
             type="text" 

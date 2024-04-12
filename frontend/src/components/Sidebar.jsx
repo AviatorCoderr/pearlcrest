@@ -28,11 +28,11 @@ function Sidebar() {
     const [isOpen, setIsOpen] = useState(true);
 
     return (
-        <div className="h-screen">
             <motion.div
                 variants={Sidebar_animation}
                 animate={isOpen ? "open" : "closed"}
-                className='overflow-y-scroll lg:overflow-y-auto relative z-40 h-full no-scrollbar bg-neutral-900 p-3 flex flex-col text-white'
+                className='overflow-y-scroll overflow-x-hidden fixed lg:overflow-y-scroll z-40 h-full bg-neutral-900 p-3 flex flex-col text-white'
+                style={{ scrollbarWidth: "none", /* Firefox */ }}
             >
                 <div className='flex gap-2 px-1 py-3'>
                     <img className="w-[15%] min-w-max gap-6" src="/static/images/favicon-32x32.png" alt="" />
@@ -48,29 +48,14 @@ function Sidebar() {
                         </span>
                         Logout
                     </div>
+                    <div onClick={() => setIsOpen(!isOpen)} className={classNames('text-red-500 cursor-pointer border-t border-neutral-700', linkclasses)}>
+                        <span className="text-xl">
+                            <IoIosArrowBack />
+                        </span>
+                        Collapse 
+                    </div>
                 </div>
-                <motion.div
-                    animate={
-                        isOpen ? {
-                            x:203,
-                            y:0,
-                            rotate:0,
-                        } : {
-                            x:27,
-                            y:53,
-                            rotate:180,
-                        }
-                    }
-                    transition={{
-                        duration: 0.5,
-                    }}
-                    onClick={()=>setIsOpen(!isOpen)}
-                    className="absolute text-neutral-100 bg-transparent py-5 hover:opacity-80 w-fit h-fit z-70 cursor-pointer md:block hidden"
-                >
-                    <IoIosArrowBack size={25} />
-                </motion.div>
             </motion.div>
-        </div>
     );
 }
 

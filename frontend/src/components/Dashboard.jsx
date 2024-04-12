@@ -7,8 +7,8 @@ import Complaintsdash from "./Complaintsdash";
 
 export default function Dashboard() {
     return (
-        <div className="overflow-y-auto relative z-40 h-full no-scrollbar">
-            <div className="relative flex flex-col gap-4 overflow-y-scroll lg:overflow-y-auto z-40 h-full">
+        <div className="overflow-y-auto h-full">
+            <div className="relative flex flex-col gap-4 overflow-y-scroll lg:overflow-y-auto h-full">
                 <Dashboardstatsgrid />
                 <div className="flex flex-row gap-4 w-full">
                     <Transactionchart />

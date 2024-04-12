@@ -25,7 +25,7 @@ const Features = () => {
         <div className="mt-10">
           <div className="">
             {feat_det.map((ele, index) => (
-              <div key={index} className="p-3 md:p-5 border-2 border-white text-white bg-black shadow-2xl">
+              <div key={index} className="p-3 md:p-5 border-2 border-white text-white bg-stone-900 border-zinc-600 shadow-2xl">
                 <p className="flex text-2xl items-center">
                   {<ele.icon className="mr-1" size={40} />}
                   {ele.title}

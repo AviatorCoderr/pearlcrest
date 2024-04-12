@@ -4,11 +4,17 @@ import Sidebar from './Sidebar'
 import Header from './Header'
 export default function Layout(){
     return (
-        <div className="flex bg-neutral-100 flex-row h-full min-w-fit">
-            <Sidebar  className=""/>
-            <div className="flex-1">
-                <Header className=""/>
-                <div>{<Outlet />}</div>
+        <div className="relative flex flex-col bg-neutral-100 h-full min-w-fit">
+            <div className='relative'>
+                <Sidebar className=""/>
+            </div>
+            <div className="">
+                <div className='w-full'>
+                    <Header className=""/>
+                </div>
+                <div className='w-full'>
+                    {<Outlet className=""/>}
+                </div>
             </div>
         </div>
     )
