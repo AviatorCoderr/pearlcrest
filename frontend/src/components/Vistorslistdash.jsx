@@ -22,7 +22,7 @@ export default function Vistorslistdash() {
       return date.toLocaleString('en-US', options);
     };
   return (
-      <div className='bg-white px-4 pt-3 pb-4 rounded-sm border border-gray-200 w-[40rem] flex-row flex'>
+      <div className='bg-white px-4 pt-3 pb-4 rounded-sm border border-gray-200 w-full flex-row flex'>
         <div className='p-3 w-full'>
           <div className='flex gap-2'>
             <MdOutlineEmojiPeople className='text-2xl text-black'/>

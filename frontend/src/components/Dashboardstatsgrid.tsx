@@ -27,7 +27,7 @@ export default function Dashboardstatsgrid() {
     console.log(exp)
   }, [])
   return (
-    <div className='flex gap-4 w-full h-full'>
+    <div className='flex flex-col md:flex-row gap-4 w-full h-full'>
         <BoxWrapper>
           <div className='rounded-full h-12 w-12 flex items-center justify-center bg-green-500'>
             <FaCashRegister className='text-2xl text-white'/>
