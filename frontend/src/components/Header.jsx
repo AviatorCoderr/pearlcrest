@@ -38,7 +38,7 @@ export default function Header() {
                 onClick={() => setIsNavbarOpen(!isNavbarOpen)}
                 className="p-1.5 inline-flex items-center text-gray-700  hover:text-capacity-100 focus:outline-none active:bg-gray-200"
               >
-                <IoMdMenu fontsize={32} className='text-3xl visible hover:opacity-70 cursor-pointer text-black m-2' />
+                <IoMdMenu fontsize={32} className='text-3xl visible md:hidden hover:opacity-70 cursor-pointer text-black m-2' />
               </Popover.Button>
               <Transition
                 show={isNavbarOpen}
@@ -67,12 +67,14 @@ export default function Header() {
             </>
           )}
         </Popover>
-        <div className='flex border border-gray-300 rounded-sm pl-5'>
-          <HiOutlineSearch fontsize={32} className='m-auto text-gray-400' />
+        <div className='flex h-full m-auto border border-gray-300 rounded-sm'>
+          <div className='p-2 m-auto'>
+          <HiOutlineSearch fontsize={32} className='my-auto text-gray-400' />
+          </div>
           <input
             type="text"
             placeholder='Search...'
-            className='text-sm px-2 focus:outline-none active:outline-none h-10 w-[24rem] ' />
+            className='text-sm px-2 py-2 m-auto focus:outline-none active:outline-none h-full w-[24rem] ' />
         </div>
       </div>
       <div className='pl-6 flex ml-auto items-center gap-2 mr-2'>
