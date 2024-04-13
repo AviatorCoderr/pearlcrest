@@ -28,14 +28,15 @@ function Sidebar() {
     const [isOpen, setIsOpen] = useState(true);
 
     return (
-            <motion.div
+        <aside>
+                <motion.div
                 variants={Sidebar_animation}
                 animate={isOpen ? "open" : "closed"}
-                className='overflow-y-scroll overflow-x-hidden fixed lg:overflow-y-scroll z-40 h-full bg-neutral-900 p-3 flex flex-col text-white'
-                style={{ scrollbarWidth: "none", /* Firefox */ }}
+                className='relative left-0 top-0 flex h-screen flex-col overflow-y-scroll overflow-x-hidden lg:overflow-y-scroll z-50 bg-neutral-900 p-3 text-white'
+                style={{ scrollbarWidth: "none" }}
             >
                 <div className='flex gap-2 px-1 py-3'>
-                    <img className="w-[15%] min-w-max gap-6" src="/static/images/favicon-32x32.png" alt="" />
+                    <img className="" src="/static/images/favicon-32x32.png" alt="" />
                     <span className='px-2 text-lg text-neutral-100'>PEARL CREST</span>
                 </div>
                 <div className='whitespace-pre flex-1 py-[1rem] text-[0.9rem] flex flex-col gap-0.5'>
@@ -56,6 +57,7 @@ function Sidebar() {
                     </div>
                 </div>
             </motion.div>
+        </aside> 
     );
 }
 

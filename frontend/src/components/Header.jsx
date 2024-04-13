@@ -3,19 +3,23 @@ import {HiOutlineChatAlt, HiOutlineSearch, HiOutlineBell} from 'react-icons/hi'
 import { Popover, Transition, Menu } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom'
 import classNames from 'classnames';
+import { IoMdMenu } from 'react-icons/io';
 export default function Header() {
   const navigate = useNavigate();
   return (
-    <div className='relative  bg-white h-16 px-4 flex justify-between items-center border-b border-gray-200'>
-        <div className=''>
-          <HiOutlineSearch fontsize={20} className='text-gray-400 absolute top-1/2 -translate-y-1/2 left-3'/>
+    <div className=' sticky top-0 z-40 bg-white h-16 px-4 flex w-full py-2 items-center border-b border-gray-200'>
+      <div className='flex'>
+      <IoMdMenu fontsize={32} className='text-3xl hover:opacity-70 cursor-pointer text-black m-2'/>
+        <div className='flex border border-gray-300 rounded-sm pl-5'>
+          <HiOutlineSearch fontsize={32} className='m-auto text-gray-400'/>
           <input 
             type="text" 
             placeholder='Search...' 
-            className='text-sm focus:outline-none active:outline-none h-10 w-[24rem] border border-gray-300 rounded-sm pl-11 px-4' />
+            className='text-sm px-2 focus:outline-none active:outline-none h-10 w-[24rem] ' />
         </div>
-        <div className='flex items-center gap-2 mr-2'>
-        <Popover className="relative">
+      </div>
+        <div className='pl-6 flex ml-auto items-center gap-2 mr-2'>
+        <Popover className="">
           {({ open }) => (
             <>
               <Popover.Button
@@ -45,7 +49,7 @@ export default function Header() {
             </>
         )}
         </Popover>
-        <Popover className="relative">
+        <Popover className="">
           {({ open }) => (
             <>
               <Popover.Button
@@ -80,7 +84,6 @@ export default function Header() {
           <Menu.Button className="ml-2 inline-flex rounded-full focus:outline-none focus:ring-2 focus:ring-neutral-400">
             <span className='sr-only'>Open user menu</span>
             <div className="h-10 w-10 rounded-full bg-[url('public/static/images/treasurer.jpg')] bg-cover bg-no-repeat bg-center" style={{backgroundImage: ''}}>
-              <span className='sr-only'>Kushagra Sahay</span>
             </div>
           </Menu.Button>
         </div>
