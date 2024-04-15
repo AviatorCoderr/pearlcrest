@@ -5,8 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { sidebar_det } from "../navi";
 import { IoMdMenu } from 'react-icons/io';
-import Sidebar from './Sidebar';
-import { IoIosArrowBack } from "react-icons/io";
 import { HiOutlineLogout } from "react-icons/hi";
 import { useLocation, Link } from 'react-router-dom';
 const linkclasses = 'flex items-center gap-6 font-light p-2.5 hover:bg-neutral-700 hover:no-underline active:bg-neutral rounded-sm text-base';
