@@ -104,6 +104,10 @@ const loginFlat = asyncHandler(async (req, res) => {
     if(!isPasswordCorrect){
         throw new ApiError(401, "Invalid Password")
     }
+    const setLoginTime = Flat.updateOne(
+        {flatnumber},
+        {$set: { $lastLogIn: new Date() }}
+    )
     const {accessToken, refreshToken} = await generateAccessandRefreshTokens(flat._id)
     const loggedInFlat = await Flat.findById(flat._id).select("-password -refreshToken")
     const options= {  
@@ -140,5 +144,10 @@ const getCurrentUser = asyncHandler(async(req, res) => {
         new ApiResponse(200, req.flat, "current user fetched successfully")
     )
 })
-
-export {registerFlat, changePassword, adminresetpassword, loginFlat, displayFlats, getCurrentUser}
+// logout user
+const logoutUser = asyncHandler( async(req, res) => {
+    res.clearCookie('accessToken')
+    res.clearCookie('refreshToken')
+    res.json(new ApiResponse(200, "user logged out successfully"))
+})
+export {registerFlat, changePassword, adminresetpassword, loginFlat, displayFlats, getCurrentUser, logoutUser}

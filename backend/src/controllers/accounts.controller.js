@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import Transaction from "../models/transactions.model.js";
 import Income from "../models/income.model.js";
+import Maintenance from "../models/maintenance.model.js"
 import mongoose from "mongoose";
 import {Flat} from "../models/flats.model.js"
 import Expenditure from "../models/expenditures.model.js";
@@ -36,6 +37,21 @@ const addTransaction = asyncHandler(async (req, res) => {
       },],
       { session: session }
     );
+    if(purpose==="Maintenance"){
+      const maintenanceRecord = await Maintenance.findOne(flatid);
+      const monthsPaid = maintenanceRecord.months
+      console.log(monthsPaid)
+      months.forEach(newmonth => {
+        monthsPaid.push(newmonth)
+      });
+      const maintenance = await Maintenance.create(
+        [{
+          flat: flatid,
+          months: monthsPaid
+        },],
+        { session: session}
+      )
+    }
     await session.commitTransaction();
     res.status(201).json(
       new ApiResponse(200, { trans, incomerecord }, "transaction and income added successfully")
@@ -52,11 +68,8 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
   session.startTransaction();
   try {
     const { flatnumber, mode, purpose, amount, months, transactionId, date } = req.body;
-    console.log(months)
     const flat = await Flat.findOne({flatnumber})
     const flatid = flat._id
-    console.log(flatid)
-    // add transaction date
     const trans = await Transaction.create(
       [{
         flat: flatid,
@@ -80,6 +93,29 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
       },],
       { session: session }
     );
+    if(purpose==="Maintenance"){
+      const maintenanceRecord = await Maintenance.findOne({flat: flatid});
+      let maintenance;
+      if(!maintenanceRecord){
+        maintenance = await Maintenance.create(
+          [{
+            flat: flatid,
+            months
+          },],
+          { session: session}
+        )
+      }
+      else{
+        const monthsPaid = [ ...maintenanceRecord.months, ...months]
+        maintenance = await Maintenance.updateOne(
+          {flat: flatid},
+          {
+            $set: {months: monthsPaid}
+          },
+          { session: session}
+        )
+      }
+    }
     await session.commitTransaction();
     res.status(201).json(
       new ApiResponse(200, { trans, incomerecord }, "transaction and income added successfully")
@@ -238,6 +274,12 @@ const getTransaction5 = asyncHandler(async(req, res) => {
   console.log(data);
   res.status(200).json(new ApiResponse(200, data, "Top 5 transaction data fetched"));
 });
+const getMaintenanceRecord = asyncHandler(async(req, res) => {
+  const flatid = req?.flat._id;
+  const record = await Maintenance.findOne({flat: flatid});
+  res.status(200)
+  .json(new ApiResponse(200, record.months, "Data fetched successfully"))
+})
 export { addTransaction, addTransactionByAdmin, addIncomeByAdmin, 
   addExpenditure, getTransaction, getTotalIncome, getTotalExpenditure,
-getCashBalance, getTransaction5};
+getCashBalance, getTransaction5, getMaintenanceRecord};

@@ -1,51 +1,39 @@
 import { asyncHandler } from "../utils/asynchandler.js";
-import { FourWheeler, TwoWheeler, Bicycle } from "../models/vehicles.model.js";
+import { Vehicle } from "../models/vehicles.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-const Fourwheeler = asyncHandler(async(req, res) => {
-    const {reg_no, colour, brand, model} = req.body
+import {Owner} from "../models/owners.model.js"
+import {Renter} from "../models/renters.model.js"
+import { ApiError } from "../utils/ApiError.js";
+const AddVehicle = asyncHandler(async(req, res) => {
+    const {type, reg_no, colour, model} = req.body
     const flatid = req?.flat._id
-    const four = await FourWheeler.create({
-        flatid,
+    const vehicle = await Vehicle.create({
+        flat: flatid,
+        type,
         reg_no,
-        brand,
         colour,
         model
     })
     res
     .status(200)
-    .json(new ApiResponse(200, {four}, "four wheeler added"))
+    .json(new ApiResponse(200, {vehicle}, "vehicle added"))
 })
-const Twowheeler = asyncHandler(async(req, res) => {
-    const {reg_no, colour, brand, model} = req.body
-    const flatid = req?.flat._id
-    const two = await TwoWheeler.create({
-        flatid,
-        reg_no,
-        brand,
-        colour,
-        model
-    })
-    res
-    .status(200)
-    .json(new ApiResponse(200, {two}, "two wheeler added"))
-})
-const bicycle = asyncHandler(async(req, res) => {
-    const {colour, model} = req.body
-    const flatid = req?.flat._id
-    const bicycle = await FourWheeler.create({
-        flatid, 
-        colour,
-        model
-    })
-    res
-    .status(200)
-    .json(new ApiResponse(200, {bicycle}, "bicycle added"))
-})
+
 const getVehicles = asyncHandler(async (req, res) => {
     const flatid = req?.flat._id;
-    const fourWheelers = await FourWheeler.find({ flatid });
-    const twoWheelers = await TwoWheeler.find({ flatid });
-    const bicycles = await Bicycle.find({ flatid });
-    res.status(200).json(new ApiResponse(200, { fourWheelers, twoWheelers, bicycles }, "Vehicle data received"));
+    const vehicles = await Vehicle.find({ flatid });
+    res.status(200).json(new ApiResponse(200, { vehicles }, "Vehicle data received"));
 });
-export {Fourwheeler, Twowheeler, bicycle, getVehicles}
+
+const getVehiclebyNumber = asyncHandler(async (req, res) => {
+    const {reg_no} = req.body
+    console.log(reg_no)
+    const vehicle = await Vehicle.findOne({reg_no});
+    const flatid = vehicle?.flat
+    const owner = await Owner.findOne({flat: {$in : flatid}})
+    const renter = await Renter.findOne({flat: flatid})
+    if(!vehicle)
+    throw new ApiError(501, "not found")
+    res.status(200).json(new ApiResponse(200, {vehicle, owner, renter}, "Vehicle found"))
+})
+export {AddVehicle, getVehicles, getVehiclebyNumber}
