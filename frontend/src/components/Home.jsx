@@ -5,6 +5,7 @@ import Pillarmem from "./Pillars";
 import Features from "./Features";
 import Footer from "./Footer";
 function Home(){
+    // get current user and store it globally as user using redux
     return (
         <div>
             <Navbar />

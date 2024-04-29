@@ -11,18 +11,6 @@ export const sidebar_det = [
         icon: HiOutlineViewGrid
     },
     {
-        key: 'accounts',
-        label: 'Accounts Summary',
-        path: '/db/summaryacc',
-        icon: FaRupeeSign
-    },
-    {
-        key: 'events',
-        label: 'Events',
-        path: '/db/events',
-        icon: RiCommunityFill
-    },
-    {
         key: 'payments',
         label: 'Society Payments',
         path: '/db/payments',
@@ -51,11 +39,5 @@ export const sidebar_det = [
         label: 'Payment History',
         path: '/db/trackpay',
         icon: FaReceipt
-    },
-    {
-        key: 'addpaymentvoucher',
-        label: 'Payment Vouchers',
-        path: '/db/addpv',
-        icon: CiReceipt
     }
 ];

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { FaCashRegister } from "react-icons/fa";
 import axios from "axios"
 export default function Dashboardstatsgrid() {
-  const [income, setIncome] = useState("")
-  const [exp, setExp] = useState("")
+  const [income, setIncome] = useState(0)
+  const [exp, setExp] = useState(0)
   useEffect(() => {
     const getIncome = async() => {
       try {
         const response = await axios.get("http://localhost:8000/api/v1/account/get-total-income")
-        setIncome(response.data.data.totalIncome)
+        setIncome(response.data.data)
       } catch (error) {
         console.log(error)
       }
@@ -16,7 +16,7 @@ export default function Dashboardstatsgrid() {
     const getExp = async() => {
       try {
         const response = await axios.get("http://localhost:8000/api/v1/account/get-total-exp")
-        setExp(response.data.data.totalExpenditure)
+        setExp(response.data.data)
       } catch (error) {
         console.log(error)
       }
@@ -26,6 +26,8 @@ export default function Dashboardstatsgrid() {
     console.log(income)
     console.log(exp)
   }, [])
+  const incomeoverexp = income[0]+income[1]-exp[0]-exp[1]
+  localStorage.setItem("incomeoverexp", incomeoverexp.toString())
   return (
     <div className='flex flex-col md:flex-row gap-4 w-full h-full'>
         <BoxWrapper>
@@ -35,7 +37,7 @@ export default function Dashboardstatsgrid() {
           <div className='pl-4'>
             <span className='text-sm text-black font-bold'>Total Income</span>
             <div className='flex items-center'>
-              <strong className='text-xl text-green-500 font-semibold'>{income}</strong>
+              <strong className='text-xl text-green-500 font-semibold'>{income[0]+income[1]}</strong>
             </div>
           </div>
         </BoxWrapper>
@@ -46,7 +48,7 @@ export default function Dashboardstatsgrid() {
           <div className='pl-4'>
             <span className='text-sm text-black font-bold'>Total Expenditure</span>
             <div className='flex items-center'>
-              <strong className='text-xl text-red-400 font-semibold'>{exp}</strong>
+              <strong className='text-xl text-red-400 font-semibold'>{exp[0]+exp[1]}</strong>
             </div>
           </div>
         </BoxWrapper>
@@ -57,7 +59,7 @@ export default function Dashboardstatsgrid() {
           <div className='pl-4'>
             <span className='text-sm text-gray-500 font-light'>Cash Balance</span>
             <div className='flex items-center'>
-              <strong className='text-xl text-gray-700 font-semibold'></strong>
+              <strong className='text-xl text-gray-700 font-semibold'>{income[0]-exp[0]}</strong>
             </div>
           </div>
         </BoxWrapper>
@@ -68,7 +70,7 @@ export default function Dashboardstatsgrid() {
           <div className='pl-4'>
             <span className='text-sm text-gray-500 font-light'>Bank Balance</span>
             <div className='flex items-center'>
-              <strong className='text-xl text-gray-700 font-semibold'></strong>
+              <strong className='text-xl text-gray-700 font-semibold'>{income[1]-exp[1]}</strong>
             </div>
           </div>
         </BoxWrapper>

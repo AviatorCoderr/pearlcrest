@@ -8,19 +8,19 @@ export default function PaymentHistory() {
     useEffect(() => {
     const getTrans = async() => {
         const response = await axios.get("http://localhost:8000/api/v1/account/get-transaction", {withCredentials: true})
-        const user = await axios.get("/api/v1/users/get-current-user", {withCredentials: true})
+        const user = await axios.get("http://localhost:8000/api/v1/users/get-current-user", {withCredentials: true})
         setTransaction(response.data.data.data)
-        setUser(user.data.data.flatnumber)
+        setUser(user.data.data)
     }
     getTrans()
-    console.log(user)
-    console.log(transaction)
+    console.log("user", user)
+    console.log("trans", transaction)
   }, []);
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
 };
-    const jsPdfGenerator = (receiptNo, date, flatNo, amount, transactionDate, months) => {
+    const jsPdfGenerator = (receiptNo, date, flatNo, amount, transactionDate, months, purpose) => {
         const doc = new jsPDF();
     
         // Add logo
@@ -82,7 +82,7 @@ export default function PaymentHistory() {
     
         // On account of Monthly Maintenance Charges of Society
         doc.setFont("helvetica", "normal");
-        doc.text("On account of Monthly Maintenance Charges of Society", 15, 145);
+        doc.text(`On account of ${purpose} Charges of Society`, 15, 145);
     
         // Dashed lines
         doc.setLineWidth(0.1);
@@ -104,7 +104,7 @@ export default function PaymentHistory() {
         doc.setDrawColor(0);
         doc.setLineDashPattern([1, 1], 0);
         doc.line(15, 195, 90, 195); // Draw dashed line
-        doc.save("sample.pdf");
+        doc.save(`${receiptNo}.pdf`);
     }
     return (
         <div className='bg-white px-4 pt-3 pb-4 rounded-sm border border-gray-200 flex-1'>
@@ -129,7 +129,7 @@ export default function PaymentHistory() {
                                 <td>{ele.amount}</td>
                                 <td>{ele.months.join(", ")}</td>
                                 <td>{formatDate(ele.createdAt)}</td>
-                                <td><button onClick={() => jsPdfGenerator(ele._id, new Date(), user, ele.amount, formatDate(ele.createdAt), ele.months.join(", "))}>Receipt</button></td>
+                                <td><button onClick={() => jsPdfGenerator(ele._id, new Date(), user.flatnumber, ele.amount, formatDate(ele.createdAt), ele.months.join(", "), ele.purpose)}>Receipt</button></td>
                             </tr>
                         ))}
                     </tbody>

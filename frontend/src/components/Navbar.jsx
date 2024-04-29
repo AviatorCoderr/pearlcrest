@@ -39,6 +39,7 @@ function Navbar() {
               <span className="absolute hover:visible duration-200 inset-x-0 bottom-0 w-1/3 group-hover:w-full h-1 bg-black"></span>
             </button>
           </li>
+          {/* direct directly to dashboard if user exists */}
           <Link to="/log">
             <li className="p-3 text-lg px-10 mx-5 bg-black hover:opacity-85 text-white border-black border-2 m-2 rounded-l-3xl rounded-r-3xl">
               <button>Login</button>

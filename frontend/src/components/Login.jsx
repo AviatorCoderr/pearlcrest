@@ -5,9 +5,9 @@ import Swal from "sweetalert2";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const navigate = useNavigate();    
   const handleLogin = () => {
-    axios.post("/api/v1/users/login", {
+    axios.post("http://localhost:8000/api/v1/users/login", {
       flatnumber: username,
       password: password
     },
@@ -15,7 +15,8 @@ export default function Login() {
       withCredentials: true
     })
     .then(response => {
-      console.log("Login success:", response.data);
+      console.log("Login success:", JSON.stringify(response.data.data.flat)); 
+      localStorage.setItem("user", JSON.stringify(response.data.data.flat))               
       navigate("/db")
     })
     .catch(error => {
