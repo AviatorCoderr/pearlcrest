@@ -7,7 +7,7 @@ export default function Dashboardstatsgrid() {
   useEffect(() => {
     const getIncome = async() => {
       try {
-        const response = await axios.get("http://localhost:8000/api/v1/account/get-total-income")
+        const response = await axios.get("/api/v1/account/get-total-income")
         setIncome(response.data.data)
       } catch (error) {
         console.log(error)
@@ -15,7 +15,7 @@ export default function Dashboardstatsgrid() {
     }
     const getExp = async() => {
       try {
-        const response = await axios.get("http://localhost:8000/api/v1/account/get-total-exp")
+        const response = await axios.get("/api/v1/account/get-total-exp")
         setExp(response.data.data)
       } catch (error) {
         console.log(error)

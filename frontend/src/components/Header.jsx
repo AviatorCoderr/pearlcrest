@@ -15,7 +15,7 @@ export default function Header() {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const navigate = useNavigate()
   const handleLogout = () => {
-    axios.get("http://localhost:8000/api/v1/users/logout-user", {
+    axios.get("/api/v1/users/logout-user", {
       withCredentials: true
     })
     .then(response => {

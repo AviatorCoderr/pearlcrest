@@ -15,7 +15,7 @@ export default function ExpenditureStatements() {
     useEffect(() => {
         const getDepartment = async () => {
             try {
-                const response = await axios.post("http://localhost:8000/api/v1/account/get-expenditure-record", {
+                const response = await axios.post("/api/v1/account/get-expenditure-record", {
                     department,
                     executive_name,
                     mode,

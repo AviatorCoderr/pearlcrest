@@ -13,7 +13,7 @@ function FindVehicle() {
     e.preventDefault();
     console.log(regNo);
     try {
-      const response = await axios.get("http://localhost:8000/api/v1/vehicle/get-vehicle-by-regno", {
+      const response = await axios.get("/api/v1/vehicle/get-vehicle-by-regno", {
         reg_no: regNo
       });
       console.log("Data found", response.data);

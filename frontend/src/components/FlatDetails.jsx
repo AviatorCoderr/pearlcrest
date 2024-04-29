@@ -7,7 +7,7 @@ export default function FlatDetails() {
     useEffect(() => {
         const getFlats = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/api/v1/users/display-flat");
+                const response = await axios.get("/api/v1/users/display-flat");
                 setFlat_det(response.data.data.flats);
             } catch (error) {
                 console.error("Error fetching flats:", error);

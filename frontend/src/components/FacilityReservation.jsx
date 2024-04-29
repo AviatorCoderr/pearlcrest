@@ -19,8 +19,8 @@ export default function FacilityReservation() {
   }, [start, end])
   const handleCheckout = async () => {
     try {
-      const response = await axios.post("http://localhost:8000/api/v1/payment/checkout", { amount });
-      const { data: { key } } = await axios.post("http://localhost:8000/api/v1/getkey");
+      const response = await axios.post("/api/v1/payment/checkout", { amount });
+      const { data: { key } } = await axios.post("/api/v1/getkey");
       
       const options = {
         key,
