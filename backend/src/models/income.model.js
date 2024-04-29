@@ -7,8 +7,7 @@ const incomeSchema = new mongoose.Schema({
     },
     mode: {
         type: String,
-        enum: ['cash', 'online'],
-        required: true
+        uppercase: true
     },
     purpose: {
         type: String,
@@ -21,7 +20,7 @@ const incomeSchema = new mongoose.Schema({
         min: 0
     },
     createdAt: {
-        type: String,
+        type: Date,
         required: true,
         default: Date.now
     }

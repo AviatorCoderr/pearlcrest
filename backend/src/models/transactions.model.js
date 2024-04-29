@@ -8,32 +8,26 @@ const transactionSchema = new mongoose.Schema({
     transactionId: {
         type: String,
         trim: true,
-        required: true
+        uppercase: true
     },
     mode: {
         type: String,
-        required: true,
-        trim: true,
-        enum: ['online', 'cash']
+        uppercase: true
     },
     purpose: {
         type: String,
-        required: true,
         trim: true
     },
     amount: {
         type: Number,
-        required: true,
         min: 0
     },
     date: {
         type: Date,
-        required: true,
         default: Date.now()
     },
     createdAt: {
         type: Date,
-        required: true,
         default: Date.now
     },
     months: [{

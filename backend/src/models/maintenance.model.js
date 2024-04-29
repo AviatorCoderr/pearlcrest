@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 const MaintenanceSchema = new mongoose.Schema({
     flat: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'Flat',
         required: true
     },
     months: [{
