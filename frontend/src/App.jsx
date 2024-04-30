@@ -24,7 +24,7 @@ import BankBook from "./components/BankBook";
 import MaintenanceRecord from "./components/MaintenanceRecord";
 import PaymentSucess from "./components/PaymentSuccess"
 function App() {
-  const user = (localStorage.getItem("user")) ? JSON.parse(localStorage.getItem("user")): null
+  //const user = (localStorage.getItem("user")) ? JSON.parse(localStorage.getItem("user")): null
   console.log(user)
   return (
     <div>
