@@ -24,7 +24,9 @@ import BankBook from "./components/BankBook";
 import MaintenanceRecord from "./components/MaintenanceRecord";
 import PaymentSucess from "./components/PaymentSuccess"
 function App() {
-  const user = JSON.parse(localStorage.getItem("user"))
+  const getuser = (localStorage.getItem("user"))
+  let user
+  if(getuser) { user = JSON.parse(getuser)}
   console.log(user)
   return (
     <div>
