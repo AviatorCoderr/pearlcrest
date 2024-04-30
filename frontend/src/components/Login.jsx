@@ -16,6 +16,7 @@ export default function Login() {
       withCredentials: true
     })
     .then(response => {
+      console.log(response)
       console.log("Login success:", JSON.stringify(response.data.data.flat)); 
       localStorage.setItem("user", JSON.stringify(response.data.data.flat))               
       navigate("/db")
