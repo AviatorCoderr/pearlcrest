@@ -7,7 +7,7 @@ export default function MaintenanceRecord() {
     useEffect(() => {
         const getRecord = async () => {
             try {
-                const response = await axios.get("/api/v1/account/get-all-record", {    
+                const response = await axios.get("https://pearlcrest.onrender.com/api/v1/account/get-all-record", {    
                     withCredentials: true
                 });
                 setRecord(response.data.data.mainrecord);

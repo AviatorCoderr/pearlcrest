@@ -15,7 +15,7 @@ export default function Header() {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const navigate = useNavigate()
   const handleLogout = () => {
-    axios.get("/api/v1/users/logout-user", {
+    axios.get("https://pearlcrest.onrender.com/api/v1/users/logout-user", {
       withCredentials: true
     })
     .then(response => {

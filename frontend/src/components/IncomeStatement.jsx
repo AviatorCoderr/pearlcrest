@@ -12,7 +12,7 @@ export default function IncomeStatement() {
     useEffect(() => {
         const getIncome = async () => {
             try {
-                const response = await axios.post("/api/v1/account/get-income-record", {
+                const response = await axios.post("https://pearlcrest.onrender.com/api/v1/account/get-income-record", {
                     purpose: purpose,
                     flatnumber: flatnumber,
                     start_date: start,
