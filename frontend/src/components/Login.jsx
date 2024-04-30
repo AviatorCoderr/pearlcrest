@@ -8,7 +8,10 @@ export default function Login() {
   const navigate = useNavigate();    
   const handleLogin = () => {
     console.log(username)
-    axios.get("https://pearlcrest.onrender.com/api/v1/users/display-flat",
+    axios.post("https://pearlcrest.onrender.com/api/v1/users/login", {
+      flatnumber: username,
+      password: password
+    },
     {
       withCredentials: true
     })
