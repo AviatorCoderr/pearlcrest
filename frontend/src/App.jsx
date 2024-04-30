@@ -24,7 +24,8 @@ import BankBook from "./components/BankBook";
 import MaintenanceRecord from "./components/MaintenanceRecord";
 import PaymentSucess from "./components/PaymentSuccess"
 function App() {
-  //const user = (localStorage.getItem("user")) ? JSON.parse(localStorage.getItem("user")): null
+  const userJSON = localStorage.getItem("user");
+  const user = userJSON ? JSON.parse(userJSON) : null;
   console.log(user)
   return (
     <div>
@@ -32,7 +33,7 @@ function App() {
         <Routes>
           <Route path="/log" element={<Login />} />
           <Route path="/" element={<Home />} />
-          <Route path="/paymentsuccess" element={<PaymentSucess />} />
+          <Route path="/" element={<PaymentSucess />} />
           <Route path="/db" element={(user?.flatnumber !== null) ? <Layout/> : <Navigate to="/log" />}>
             <Route index element={<Dashboard />} />
             <Route path="addcomplain" element={<AddComplaints />} />
