@@ -7,8 +7,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();    
   const handleLogin = () => {
-    console.log(username, password)
-    axios.get("/api/v1/users/login", {
+    console.log(username)
+    axios.post("/api/v1/users/login", {
       flatnumber: username,
       password: password
     },
