@@ -24,9 +24,12 @@ import BankBook from "./components/BankBook";
 import MaintenanceRecord from "./components/MaintenanceRecord";
 import PaymentSucess from "./components/PaymentSuccess"
 function App() {
-  const userJSON = localStorage.getItem("user");
-  const user = userJSON ? JSON.parse(userJSON) : null;
-  console.log(user)
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    // Fetch user data from localStorage when the component mounts
+    const userData = JSON.parse(localStorage.getItem("user"));
+    setUser(userData);
+  }, []); // Empty dependency array ensures useEffect runs only once, when component mounts
   return (
     <div>
       <Router>
