@@ -33,14 +33,18 @@ const messageToAll = asyncHandler(async(req, res) => {
     }
 })
 const getvisitor = asyncHandler(async( req, res) => {
-    const flatid = req?.flat._id
-    console.log(flatid)
-    const visitors = await Visitor.find({
-        flat: flatid
-    })
-    res
-    .status(200)
-    .json(new ApiResponse(200, {visitors}, "all visitors data returned"))
+    try {
+        const flatid = req?.flat._id
+        console.log(flatid)
+        const visitors = await Visitor.find({
+            flat: flatid
+        })
+        res
+        .status(200)
+        .json(new ApiResponse(200, {visitors}, "all visitors data returned"))
+    } catch (error) {
+        console.log(error.message)
+    }
 })
 const getAllVisitor = asyncHandler(async( req, res) => {
     const visitors = await Visitor.find()
