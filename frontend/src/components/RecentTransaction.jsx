@@ -4,8 +4,12 @@ export default function RecentTransaction() {
   const [transaction, setTransaction] = useState([])
   useEffect(() => {
     const getTrans = async() => {
-        const response = await axios.get("https://pearlcrest.onrender.com/api/v1/account/get-trans-5", {withCredentials: true})
-        setTransaction(response.data.data)
+        try {
+            const response = await axios.get("https://pearlcrest.onrender.com/api/v1/account/get-trans-5", {withCredentials: true})
+            setTransaction(response.data.data)
+        } catch (error) {
+            console.log(error.message)
+        }
     }
     getTrans()
     console.log(transaction)
@@ -29,7 +33,7 @@ export default function RecentTransaction() {
                 </tr>
             </thead>
             <tbody className='border-t border-gray-400'>
-                {transaction.map((ele, index) => (
+                {transaction?.map((ele, index) => (
                     <tr key={index}>
                         <td>{ele._id}</td>
                         <td>{ele.purpose}</td>
