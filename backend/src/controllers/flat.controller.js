@@ -111,11 +111,11 @@ const loginFlat = asyncHandler(async (req, res) => {
     const {accessToken, refreshToken} = await generateAccessandRefreshTokens(flat._id)
     const loggedInFlat = await Flat.findById(flat._id).select("-password -refreshToken")
     const options= {  
-        httpOnly: false,
+        httpOnly: true,
         secure: true
     }
     return res
-    .status(200)
+    .status(200)  
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json(
