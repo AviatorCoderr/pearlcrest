@@ -104,14 +104,14 @@ const loginFlat = asyncHandler(async (req, res) => {
     if(!isPasswordCorrect){
         throw new ApiError(401, "Invalid Password")
     }
-    const setLoginTime = Flat.updateOne(
+    const setLoginTime = await Flat.updateOne(
         {flatnumber},
         {$set: { $lastLogIn: new Date() }}
     )
     const {accessToken, refreshToken} = await generateAccessandRefreshTokens(flat._id)
     const loggedInFlat = await Flat.findById(flat._id).select("-password -refreshToken")
     const options= {  
-        httpOnly: true,
+        httpOnly: false,
         secure: false
     }
     return res
