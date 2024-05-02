@@ -8,7 +8,7 @@ export default function VisitorsListDash() {
     useEffect(() => {
         const getVisitor = async () => {
             try {
-                await axios.get("https://pearlcrest.onrender.com/api/v1/visitor/get-visitor", { withCredentials: true })
+                await axios.post("https://pearlcrest.onrender.com/api/v1/visitor/get-visitor", { withCredentials: true })
                 .then(response => {
                     console.log(response)
                     setVisitor(response.data.data.visitors);
