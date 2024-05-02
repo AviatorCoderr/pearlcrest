@@ -127,7 +127,6 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
     session.endSession();
   }
 });
-
 const addIncomeByAdmin = asyncHandler(async (req, res) => {
   const { mode, purpose, amount } = req.body;
   const flatnumber = "PCS";
