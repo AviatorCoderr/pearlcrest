@@ -286,8 +286,8 @@ const getCashBalance = asyncHandler(async (req, res) => {
 })
 const getTransaction5 = asyncHandler(async(req, res) => {
   const {flatnumber} = req.body
-  const flatid = Flat.findOne({flatnumber})
-  const data = await Transaction.find({ flat: flatid }).limit(5);
+  const flat = Flat.findOne({flatnumber})
+  const data = await Transaction.find({ flat: flat._id }).limit(5);
   console.log(data);
   res.status(200).json(new ApiResponse(200, data, "Top 5 transaction data fetched"));
 });
