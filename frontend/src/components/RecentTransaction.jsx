@@ -5,10 +5,10 @@ export default function RecentTransaction() {
   useEffect(() => {
     const getTrans = async() => {
         try {
-            const response = await axios.post("https://pearlcrest.onrender.com/api/v1/account/get-trans-5", {withCredentials: true})
+            const response = await axios.get("https://pearlcrest.onrender.com/api/v1/account/get-trans-5", {withCredentials: true})
             setTransaction(response.data.data)
         } catch (error) {
-            console.log(error.response.data)
+            console.log(error.message)
         }
     }
     getTrans()
@@ -33,7 +33,7 @@ export default function RecentTransaction() {
                 </tr>
             </thead>
             <tbody className='border-t border-gray-400'>
-                {transaction.length>0 ? transaction?.map((ele, index) => (
+                {transaction?.map((ele, index) => (
                     <tr key={index}>
                         <td>{ele._id}</td>
                         <td>{ele.purpose}</td>
@@ -41,11 +41,7 @@ export default function RecentTransaction() {
                         <td>{ele.months.join(", ")}</td>
                         <td>{formatDate(ele.createdAt)}</td>
                     </tr>
-                )) :
-                <tr>
-                    <td colSpan={5}>No transactions found</td>
-                </tr>
-                }
+                ))}
             </tbody>
         </table>
         </div>
