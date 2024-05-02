@@ -8,7 +8,7 @@ export default function CashBook() {
 
     useEffect(() => {
         const getCashbook = async () => {
-            const response = await axios.post("https://pearlcrest.onrender.com/api/v1/account/get-books", {
+            const response = await axios.post("http://localhost:8000/api/v1/account/get-books", {
                 mode: "CASH"
             }, { withCredentials: true });
             setRecordexp(response.data.data.cashexpense);

@@ -4,5 +4,5 @@ import { AddVehicle, getVehiclebyNumber, getVehicles } from "../controllers/vehi
 const router = Router();
 router.route("/add-vehicle").post(verifyJWT, AddVehicle)
 router.route("/get-vehicles").get(verifyJWT, getVehicles)
-router.route("/get-vehicle-by-regno").get(getVehiclebyNumber)
+router.route("/get-vehicle-by-regno").post(getVehiclebyNumber)
 export default router

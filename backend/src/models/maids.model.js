@@ -7,17 +7,21 @@ const maidSchema = new mongoose.Schema({
     }],
     name: {
         type: String,
-        required: [true, "Maid's Name is required"],
         trim: true
     },
     mobile: {
         type: String,
-        required: [true, "Maid's Mobile is required"],
         trim: true
     },
     aadhar: {
         type: String,
         trim: true
+    },
+    checkin: {
+        type: Date
+    },
+    checkout: {
+        type: Date
     }
 });
 

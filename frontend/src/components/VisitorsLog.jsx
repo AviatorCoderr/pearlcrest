@@ -6,7 +6,7 @@ export default function VisitorLog() {
     useEffect(() => {
         const getVisitor = async () => {
             try {
-                const response = await axios.get("https://pearlcrest.onrender.com/api/v1/visitor/get-visitor", { withCredentials: true });
+                const response = await axios.get("http://localhost:8000/api/v1/visitor/get-visitor", { withCredentials: true });
                 setVisitor(response.data.data.visitors);
             } catch (error) {
                 console.log(error);
@@ -29,10 +29,8 @@ export default function VisitorLog() {
                         <tr>
                             <th>Name of Visitor</th>
                             <th>Mobile</th>
-                            <th>Number of People</th>
                             <th>Purpose</th>
                             <th>Check In</th>
-                            <th>Check Out</th>
                         </tr>
                     </thead>
                     <tbody className='border-t border-gray-400'>
@@ -40,7 +38,6 @@ export default function VisitorLog() {
                             <tr key={visitor._id}>
                                 <td>{visitor.name}</td>
                                 <td>{visitor.mobile}</td>
-                                <td>{visitor.numofpeople}</td>
                                 <td>{visitor.purpose}</td>
                                 <td>{formatDateTime(visitor.checkin)}</td>
                             </tr>

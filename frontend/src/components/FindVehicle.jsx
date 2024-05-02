@@ -10,33 +10,44 @@ function FindVehicle() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(regNo);
     try {
-      const response = await axios.get("https://pearlcrest.onrender.com/api/v1/vehicle/get-vehicle-by-regno", {
+      const response = await axios.post("http://localhost:8000/api/v1/vehicle/get-vehicle-by-regno", {
         reg_no: regNo
       });
-      console.log("Data found", response.data);
-      setVehicleData(response.data);
+      setVehicleData(response.data.data);
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <div>
-      <div>
-        <label className=''>
+    <div className="max-w-md mx-auto mt-10 p-4 bg-gray-100 rounded-lg shadow-lg">
+      <div className="mb-4">
+        <label className="block mb-2 text-lg font-medium text-gray-800">
           Enter Vehicle Registration Number:
-          <input className=' p-1 m-4 border-2 border-black' type="text" onChange={handleInputChange} />
         </label>
-        <button className="p-2 px-5 rounded-lg text-white font-medium bg-blue-500" onClick={handleSubmit}>Search</button>
+        <input 
+          className="w-full p-2 border-2 border-gray-400 rounded-lg focus:outline-none focus:border-blue-500"
+          type="text"
+          onChange={handleInputChange}
+        />
       </div>
+      <button 
+        className="w-full py-2 px-4 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+        onClick={handleSubmit}
+      >
+        Search
+      </button>
 
       {vehicleData && (
-        <div>
-          <h2>Vehicle Details</h2>
-          <p>Registration Number: {vehicleData.vehicle.reg_no}</p>
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold mb-2">Vehicle Details</h2>
+          <p><span className="font-semibold">Flat Number:</span> {vehicleData.flatnumber}</p>
+          <p><span className="font-semibold">Registration Number:</span> {vehicleData.vehicle.reg_no}</p>
+          <p><span className="font-semibold">Type:</span> {vehicleData.vehicle.type}</p>
+          <p><span className="font-semibold">Model:</span> {vehicleData.vehicle.model}</p>
+          <p><span className="font-semibold">Owner's Number:</span> {`${vehicleData.owner?.mobile}, ${vehicleData.owner?.spouse_mobile}`}</p>
+          <p><span className="font-semibold">Renter's Number:</span> {`${vehicleData.renter?.mobile}, ${vehicleData.renter?.spouse_mobile}`}</p>
         </div>
       )}
     </div>

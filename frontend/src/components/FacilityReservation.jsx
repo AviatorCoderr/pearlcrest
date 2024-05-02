@@ -19,8 +19,8 @@ export default function FacilityReservation() {
   }, [start, end])
   const handleCheckout = async () => {
     try {
-      const response = await axios.post("https://pearlcrest.onrender.com/api/v1/payment/checkout", { amount });
-      const { data: { key } } = await axios.post("https://pearlcrest.onrender.com/api/v1/getkey");
+      const response = await axios.post("http://localhost:8000/api/v1/payment/checkout", { amount });
+      const { data: { key } } = await axios.post("http://localhost:8000/api/v1/getkey");
       
       const options = {
         key,
@@ -30,7 +30,7 @@ export default function FacilityReservation() {
         description: purpose,
         image: "/static/images/favicon-32x32.png",
         order_id: response.data.data.order.id,
-        callback_url: "https://pearlcrest.onrender.com/api/v1/payment/paymentverification",
+        callback_url: "http://localhost:8000/api/v1/payment/paymentverification",
         prefill: {
           "name": "Kushagra Sahay",
           "email": "kushagra.sahay@gmail.com",

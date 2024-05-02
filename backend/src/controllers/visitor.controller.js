@@ -5,21 +5,18 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 //visitor to be added by security guard
 const addvisitor = asyncHandler(async (req, res) => {
     try {
-        const { flatnumber, name, mobile, numofpeople, purpose } = req.body;
+        const { flatnumber, name, mobile, purpose } = req.body;
         const flat = await Flat.findOne({flatnumber });
         if (!flat) {
             throw new Error("Flat not found"); 
         }
         const flatid = flat._id;
         console.log(flatid)
-        const checkin = new Date();
         const visitor = await Visitor.create({
             flat: flatid,
             name,
             mobile,
-            numofpeople,
-            purpose,
-            checkin
+            purpose
         });
         res.status(201).json(new ApiResponse(201, { visitor }, "Visitor created"));
     } catch (error) {
@@ -47,11 +44,15 @@ const getvisitor = asyncHandler(async( req, res) => {
     }
 })
 const getAllVisitor = asyncHandler(async( req, res) => {
-    const visitors = await Visitor.find()
+    const visitors = await Visitor.find().populate('flat')
+    const visitorData = visitors.map(record => {
+        const flatnumber = record.flat.flatnumber
+        return {...record._doc, flatnumber}
+    })
     console.log(visitors)
     res
     .status(200)
-    .json(new ApiResponse(200, {visitors}, "all visitors data returned"))
+    .json(new ApiResponse(200, {visitorData}, "all visitors data returned"))
 })
 
 export {addvisitor, getvisitor, messageToAll, getAllVisitor}

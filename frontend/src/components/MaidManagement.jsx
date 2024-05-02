@@ -2,100 +2,105 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-export default function AddVisitor() {
-  const [visitorlist, setVisitorlist] = useState([]);
+export default function MaidManagement() {
+  const [maidList, setMaidList] = useState([]);
   const [addClick, setAddClick] = useState(false);
   const [flat, setFlat] = useState('');
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
-  const [purpose, setPurpose] = useState('');
-
+  const [aadhar, setAadhar] = useState('');
   useEffect(() => {
-    const getAllVisitors = async () => {
-      const response = await axios.get("http://localhost:8000/api/v1/visitor/get-all-visitor");
-      setVisitorlist(response.data.data.visitorData);
+    const getAllMaids = async () => {
+      const response = await axios.get("http://localhost:8000/api/v1/maid/get-all-maid");
+      setMaidList(response.data.data.maidList);
     };
-    getAllVisitors();
-    console.log(visitorlist)
+    getAllMaids();
   }, []);
 
-  const handleAddVisitor = () => {
+  const handleAddMaid = () => {
     setAddClick(true);
   };
 
   const handleAddClick = () => {
-    axios.post("http://localhost:8000/api/v1/visitor/add-visitor", {
-      flatnumber: flat,
+    axios.post("http://localhost:8000/api/v1/maid/add-maid", {
+      flatnumber,
       name,
       mobile,
-      purpose
+      aadhar
     })
-    setFlat('');
-    setName('');
-    setMobile('');
-    setPurpose('');
-    // Optionally, you can close the form here
-    setAddClick(false);
-    window.location.reload()
+    .then(response => {
+      console.log(response);
+      Swal.fire({
+        icon: 'success',
+        title: 'Maid added successfully!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+      setFlat('');
+      setName('');
+      setMobile('');
+      setAadhar('');
+      setAddClick(false);
+      getAllMaids();
+    })
+    .catch(error => {
+      console.error('Error adding maid:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+      });
+    });
   };
 
   return (
     <div className="mx-auto">
-      <button onClick={handleAddVisitor} className='block w-full max-w-lg m-auto py-2 bg-blue-500 text-white rounded-lg'>Add Visitor</button>
+      <button onClick={handleAddMaid} className='block w-full max-w-lg m-auto py-2 bg-blue-500 text-white rounded-lg'>Add Maid</button>
       {addClick && (
         <div className="mt-4 bg-white rounded-lg shadow-md p-4">
           <input
             placeholder="Flat"
             type="text"
-            value={flat}
             onChange={(e) => setFlat(e.target.value)}
             className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
           />
           <input
             placeholder="Name"
             type="text"
-            value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
           />
           <input
             placeholder="Mobile"
             type="text"
-            value={mobile}
             onChange={(e) => setMobile(e.target.value)}
             className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
           />
-          <select
-            onChange={(e) => setPurpose(e.target.value)}
+          <input
+            placeholder="Aadhar"
+            type="text"
+            onChange={(e) => setAadhar(e.target.value)}
             className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
-          >
-            <option value="">Select Visitor Type</option>
-            <option value="guest">Guest</option>
-            <option value="delivery">Delivery</option>
-            <option value="cab_driver">Cab Driver</option>
-            <option value="gas_delivery">Gas Delivery</option>
-            <option value="grocery_shop">Grocery Shop</option>
-            <option value="milkman">Milkman</option>
-          </select>
+          />
           <button onClick={handleAddClick} className="p-2 px-10 mt-4 bg-blue-500 text-white rounded-lg">Submit</button>
         </div>
       )}
       <table className='w-full text-gray-700 text-center table-auto shadow-lg bg-white divide-y divide-gray-200 rounded-lg overflow-hidden mt-5'>
         <thead className='bg-gray-200 text-gray-800 uppercase'>
           <tr>
-          <th className="px-6 py-3 text-center text-sm font-semibold">Flat</th>
+            <th className="px-6 py-3 text-center text-sm font-semibold">Flat</th>
             <th className="px-6 py-3 text-center text-sm font-semibold">Name</th>
             <th className="px-6 py-3 text-center text-sm font-semibold">Mobile</th>
-            <th className="px-6 py-3 text-center text-sm font-semibold">Purpose</th>
+            <th className="px-6 py-3 text-center text-sm font-semibold">Aadhar</th>
           </tr>
         </thead>
         <tbody>
-          {visitorlist?.map((ele, index) => (
+          {maidList?.map((maid, index) => (
             <tr key={index} className={(index % 2 === 0) ? 'bg-gray-100' : 'bg-white'}>
-              <td className="px-6 py-4">{ele.flat.flatnumber}</td>
-              <td className="px-6 py-4">{ele.name}</td>
-              <td className="px-6 py-4">{ele.mobile}</td>
-              <td className="px-6 py-4">{ele.purpose}</td>
+              <td className="px-6 py-4">{maid.flat}</td>
+              <td className="px-6 py-4">{maid.name}</td>
+              <td className="px-6 py-4">{maid.mobile}</td>
+              <td className="px-6 py-4">{maid.aadhar}</td>
             </tr>
           ))}
         </tbody>

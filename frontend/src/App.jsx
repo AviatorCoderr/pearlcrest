@@ -12,7 +12,6 @@ import IncomeExpAccount from "./components/IncomeExpAccount"
 import Payementhistory from "./components/Payementhistory";
 import VisitorsLog from "./components/VisitorsLog";
 import AddIncome from "./components/AddIncome";
-import VisitorGuard from "./components/VisitorsGuard";
 import FlatDetails from "./components/FlatDetails"
 import FindVehicle from "./components/FindVehicle";
 import IncomeStatement from "./components/IncomeStatement";
@@ -23,20 +22,17 @@ import CashBook from "./components/CashBook";
 import BankBook from "./components/BankBook";
 import MaintenanceRecord from "./components/MaintenanceRecord";
 import PaymentSucess from "./components/PaymentSuccess"
+import AddVisitor from "./components/AddVisitor"
+import MaidManagement from "./components/MaidManagement";
 function App() {
-  const [user, setUser] = useState(null);
-  useEffect(() => {
-    // Fetch user data from localStorage when the component mounts
-    const userData = JSON.parse(localStorage.getItem("user"));
-    setUser(userData);
-  }, []); // Empty dependency array ensures useEffect runs only once, when component mounts
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   return (
     <div>
       <Router>
         <Routes>
           <Route path="/log" element={<Login />} />
           <Route path="/" element={<Home />} />
-          <Route path="/" element={<PaymentSucess />} />
+          <Route path="/paymentsuccess" element={<PaymentSucess />} />
           <Route path="/db" element={(user?.flatnumber !== null) ? <Layout/> : <Navigate to="/log" />}>
             <Route index element={<Dashboard />} />
             <Route path="addcomplain" element={<AddComplaints />} />
@@ -45,7 +41,6 @@ function App() {
             <Route path="profile" element={<UserProfile />} />
             <Route path="trackpay" element={<Payementhistory />} />
             <Route path="visitor" element={<VisitorsLog />} />
-            <Route path="getvisitor" element={<VisitorGuard />} />
             <Route path="addincome" element={(user?.flatnumber === "PCS") ? <AddIncome/> : <Navigate to="/log" />} />
             <Route path="flat-details-change-perm" element={(user?.flatnumber === "PCS") ? <FlatDetails/> : <Navigate to="/log" />} />
             <Route path="add-transaction" element={(user?.flatnumber === "PCS") ? <AddTransaction/> : <Navigate to="/log" />} />
@@ -62,11 +57,12 @@ function App() {
             <Route path="complaint-redressal" element={user?.position === "executive" || user?.flatnumber === "PCS" ? <></> : <Navigate to="/log" />} />
             <Route path="addpv" element={user?.position === "executive" || user?.flatnumber === "PCS" ? <AddPaymentVoucher /> : <Navigate to="/log" />} />
             {/* Guard and Admin Routes  */}
-            <Route path="visitor-manage" element={(user?.flatnumber === "PCS" || user?.flatnumber === "ABC") ? <></> : <Navigate to="/log" />} />
+            <Route path="visitor-manage" element={(user?.flatnumber === "PCS" || user?.flatnumber === "ABC") ? <AddVisitor /> : <></>} />
             {/* All Admin, Executive, and Guard Routes  */}
+            <Route path="maidmanage" element={user?.flatnumber === "ABC" ? <MaidManagement/> : <Navigate to="/log" />} />
             <Route path="findvehicle" element={(user?.position === "executive" || user?.flatnumber === "PCS" || user?.flatnumber === "ABC") ? <FindVehicle /> : <Navigate to="/log" />} />
-            <Route path="owner-details" element={user?.position === "executive" || user?.flatnumber === "PCS" || user?.flatnumber === "ABC" ? <></> : <Navigate to="/log" />} />
-            <Route path="renter-details" element={user?.position === "executive" || user?.flatnumber === "PCS" || user?.flatnumber === "ABC" ? <></> : <Navigate to="/log" />} />
+            <Route path="owner-details" element={user?.position === "executive" || user?.flatnumber === "PCS"? <></> : <Navigate to="/log" />} />
+            <Route path="renter-details" element={user?.position === "executive" || user?.flatnumber === "PCS" ? <></> : <Navigate to="/log" />} />
           </Route>
         </Routes>
       </Router>

@@ -7,20 +7,14 @@ const VehicleSchema = new mongoose.Schema({
     },
     type: {
         type: String, 
-        required: true,
         trim: true
     },
     reg_no: {
         type: String,
         trim: true
     },
-    colour: {
-        type: String,
-        trim: true
-    },
     model: {
         type: String,
-        required: true,
         trim: true
     }
 });

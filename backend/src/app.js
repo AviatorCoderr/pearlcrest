@@ -24,6 +24,7 @@ import visitorRouter from "./routes/visitor.routes.js"
 import vehicleRouter from "./routes/vehicle.routes.js"
 import accountRouter from "./routes/accounts.routes.js"
 import paymentRouter from "./routes/payment.router.js"
+import maidRouter from "./routes/maid.routes.js"
 // routes declaration
 app.use("/api/v1/users", flatRouter)
 app.use("/api/v1/owners", ownerRouter)
@@ -33,6 +34,7 @@ app.use("/api/v1/visitor", visitorRouter)
 app.use("/api/v1/vehicle", vehicleRouter)
 app.use("/api/v1/account", accountRouter)
 app.use("/api/v1/payment", paymentRouter)
+app.use("/api/v1/maid", maidRouter)
 app.use("/api/v1/getkey", (req, res) =>
     res.status(200).json({key: process.env.RAZORPAY_API_KEY})
 )

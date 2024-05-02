@@ -42,7 +42,7 @@ export default function AddPaymentVoucher() {
         cancelButtonText: 'Cancel',
       });
       if (confirmation.isConfirmed) {
-        axios.post('https://pearlcrest.onrender.com/api/v1/account/add-expenditure', {
+        axios.post('http://localhost:8000/api/v1/account/add-expenditure', {
           mode: mode,
           amount: amount,
           executive_name: user.flatnumber,
