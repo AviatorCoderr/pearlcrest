@@ -14,10 +14,6 @@ const visitorSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    numofpeople: {
-        type: Number,
-        default: 1
-    },
     purpose: {
         type: String,
         required: true,

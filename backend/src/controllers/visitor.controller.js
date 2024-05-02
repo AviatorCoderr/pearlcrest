@@ -53,7 +53,16 @@ const getAllVisitor = asyncHandler(async( req, res) => {
     .status(200)
     .json(new ApiResponse(200, {visitors}, "all visitors data returned"))
 })
-
+const visitorCheckin = asyncHandler(async(req, res) => {
+    const {visitor_id} = req.body
+    const response = await Visitor.updateOne({_id: visitor_id}, {$set: {$checkin: new Date()}})
+    res.status(200).json(200, response, "checked in")
+})
+const visitorCheckOut = asyncHandler(async(req, res) => {
+    const {visitor_id} = req.body
+    const response = await Visitor.updateOne({_id: visitor_id}, {$set: {$checkout: new Date()}})
+    res.status(200).json(200, response, "checked out")
+})
 //checkout function
 
-export {addvisitor, getvisitor, messageToAll, getAllVisitor}
+export {addvisitor, getvisitor, messageToAll, getAllVisitor, visitorCheckin, visitorCheckOut}
