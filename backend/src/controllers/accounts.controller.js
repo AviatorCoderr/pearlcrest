@@ -287,7 +287,7 @@ const getCashBalance = asyncHandler(async (req, res) => {
 const getTransaction5 = asyncHandler(async(req, res) => {
   const {flatnumber} = req.body
   console.log(flatnumber)
-  const flat = Flat.findOne({flatnumber})
+  const flat = await Flat.findOne({flatnumber})
   console.log(flat)
   const data = await Transaction.find({ flat: flat._id }).limit(5);
   console.log(data);
