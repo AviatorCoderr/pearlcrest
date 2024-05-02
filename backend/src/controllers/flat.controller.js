@@ -112,7 +112,7 @@ const loginFlat = asyncHandler(async (req, res) => {
     const loggedInFlat = await Flat.findById(flat._id).select("-password -refreshToken")
     const options= {  
         httpOnly: true,
-        secure: true
+        secure: false
     }
     return res
     .status(200)  
