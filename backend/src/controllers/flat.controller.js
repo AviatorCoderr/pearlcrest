@@ -111,7 +111,7 @@ const loginFlat = asyncHandler(async (req, res) => {
     const {accessToken, refreshToken} = await generateAccessandRefreshTokens(flat._id)
     const loggedInFlat = await Flat.findById(flat._id).select("-password -refreshToken")
     const options= {  
-        httpOnly: true,
+        httpOnly: fslse,
         secure: true
     }
     return res
