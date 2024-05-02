@@ -43,7 +43,7 @@ const getvisitor = asyncHandler(async( req, res) => {
         .status(200)
         .json(new ApiResponse(200, {visitors}, "all visitors data returned"))
     } catch (error) {
-        console.log(error.message)
+        console.log(error)
     }
 })
 const getAllVisitor = asyncHandler(async( req, res) => {
