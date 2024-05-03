@@ -30,7 +30,7 @@ function Sidebar() {
     };
     const [isOpen, setIsOpen] = useState(true);
 
-    let sidebarData = sidebar_det;
+    let sidebarData = "";
 
     if (user.flatnumber === "PCS") {
         sidebarData = admin_navi;
@@ -39,7 +39,8 @@ function Sidebar() {
     } else if (user.flatnumber === "ABC") {
         sidebarData = guard_det;
     }
-
+    else
+    sidebarData = sidebar_det
     return (
         <aside>
             <motion.div

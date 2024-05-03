@@ -1,10 +1,8 @@
 import React from "react";
 import Dashboardstatsgrid from "./Dashboardstatsgrid";
-import Transactionchart from "./Transactionchart";
 import Vistorslistdash from "./Vistorslistdash";
 import RecentTransaction from "./RecentTransaction";
-import Complaintsdash from "./Complaintsdash";
-
+import MaidLog from "./MaidLogs";
 export default function Dashboard() {
     return (
         <div className="flex flex-col overflow-visible md:grid md:grid-cols-1 gap-4 md:w-full h-full">
@@ -14,7 +12,7 @@ export default function Dashboard() {
             </div>
             <div className="grid gap-4 w-full">
                 <RecentTransaction />
-                <Complaintsdash />
+                <MaidLog />
             </div>
         </div>
     );

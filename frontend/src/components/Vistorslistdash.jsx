@@ -8,7 +8,7 @@ export default function VisitorsListDash() {
     useEffect(() => {
         const getVisitor = async () => {
             try {
-                await axios.get("http://localhost:8000/api/v1/visitor/get-visitor", { withCredentials: true })
+                await axios.get("/api/v1/visitor/get-visitor", { withCredentials: true })
                 .then(response => {
                     console.log(response)
                     setVisitor(response.data.data.visitors);
@@ -35,11 +35,11 @@ export default function VisitorsListDash() {
                 </div>
                 <div className='mt-3'>
                     <table className='w-full text-gray-700 text-center'>
-                        <thead className='bg-gray-100'>
-                            <tr className='flex flex-row gap-6 w-full'>
-                                <th className='flex-1'>Name</th>
-                                <th className='flex-1'>Mobile</th>
-                                <th className='flex-1'>Check In</th>
+                        <thead className='bg-gray-100 w-full'>
+                            <tr className=' gap-6 w-full'>
+                                <th className=''>Name</th>
+                                <th className=''>Mobile</th>
+                                <th className=''>Check In</th>
                             </tr>
                         </thead>
                         <tbody className='border-t border-gray-400'>

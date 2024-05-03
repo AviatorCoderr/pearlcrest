@@ -7,7 +7,8 @@ const maidSchema = new mongoose.Schema({
     }],
     name: {
         type: String,
-        trim: true
+        trim: true,
+        uppercase: true
     },
     mobile: {
         type: String,
@@ -18,10 +19,7 @@ const maidSchema = new mongoose.Schema({
         trim: true
     },
     checkin: {
-        type: Date
-    },
-    checkout: {
-        type: Date
+        type: String
     }
 });
 

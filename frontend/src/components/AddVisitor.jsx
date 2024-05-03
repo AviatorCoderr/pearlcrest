@@ -12,7 +12,7 @@ export default function AddVisitor() {
 
   useEffect(() => {
     const getAllVisitors = async () => {
-      const response = await axios.get("http://localhost:8000/api/v1/visitor/get-all-visitor");
+      const response = await axios.get("/api/v1/visitor/get-all-visitor");
       setVisitorlist(response.data.data.visitorData);
     };
     getAllVisitors();
@@ -24,7 +24,7 @@ export default function AddVisitor() {
   };
 
   const handleAddClick = () => {
-    axios.post("http://localhost:8000/api/v1/visitor/add-visitor", {
+    axios.post("/api/v1/visitor/add-visitor", {
       flatnumber: flat,
       name,
       mobile,

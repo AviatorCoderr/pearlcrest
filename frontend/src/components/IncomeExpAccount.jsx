@@ -8,7 +8,7 @@ export default function IncomeStatement() {
 
     useEffect(() => {
         const getIncomeExpAcc = async () => {
-            const response = await axios.get("http://localhost:8000/api/v1/account/get-income-exp-record", { withCredentials: true });
+            const response = await axios.get("/api/v1/account/get-income-exp-record", { withCredentials: true });
             setRecordexp(response.data.data.recordexp);
             setRecordinc(response.data.data.recordincome);
         };

@@ -3,6 +3,9 @@ import { Popover, Transition, Menu } from '@headlessui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { sidebar_det } from "../navi";
+import { admin_navi } from "../admin_navi";
+import { guard_det } from "../guard_det";
+import { exe_det } from "../exe_det";
 import { IoMdMenu } from 'react-icons/io';
 import { HiOutlineLogout } from "react-icons/hi";
 import classNames from 'classnames';
@@ -15,7 +18,7 @@ export default function Header() {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const navigate = useNavigate()
   const handleLogout = () => {
-    axios.get("http://localhost:8000/api/v1/users/logout-user", {
+    axios.get("/api/v1/users/logout-user", {
       withCredentials: true
     })
     .then(response => {
@@ -40,7 +43,17 @@ export default function Header() {
   const closeNavbar = () => {
     setIsNavbarOpen(false);
   };
+  let sidebarData = "";
 
+    if (user.flatnumber === "PCS") {
+        sidebarData = admin_navi;
+    } else if (user.position === "executive") {
+        sidebarData = exe_det;
+    } else if (user.flatnumber === "ABC") {
+        sidebarData = guard_det;
+    }
+    else
+    sidebarData = sidebar_det
   return (
     <div className='sticky top-0 z-40 bg-white h-16 px-4 flex w-full py-2 items-center border-b border-gray-200'>
       <div className='flex'>
@@ -65,7 +78,7 @@ export default function Header() {
               >
                 <Popover.Panel className="absolute left-0 z-10 mt-2.5 w-full opacity-100 bg-black">
                   <div className='whitespace-pre flex-1 py-[1rem] text-[0.9rem] flex flex-col gap-0.5'>
-                    {sidebar_det.map(ele => (
+                    {sidebarData.map(ele => (
                       <Sidebarlink key={ele.key} ele={ele} closeNavbar={closeNavbar} />
                     ))}
                     <div className={classNames('text-red-500 mt-[2rem] cursor-pointer border-t border-neutral-700', linkClasses)} onClick={handleLogout}>

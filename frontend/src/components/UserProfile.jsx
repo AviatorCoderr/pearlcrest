@@ -28,10 +28,10 @@ export default function UserProfile() {
     const fetchData = async () => {
       try {
         const [ownerResponse, renterResponse, vehicleResponse, petResponse] = await Promise.all([
-          axios.get("http://localhost:8000/api/v1/owners/get-owner", { withCredentials: true }),
-          axios.get("http://localhost:8000/api/v1/renters/get-renter", { withCredentials: true }),
-          axios.get("http://localhost:8000/api/v1/vehicle/get-vehicles", { withCredentials: true }),
-          axios.get("http://localhost:8000/api/v1/pets/get-pets", { withCredentials: true })
+          axios.get("/api/v1/owners/get-owner", { withCredentials: true }),
+          axios.get("/api/v1/renters/get-renter", { withCredentials: true }),
+          axios.get("/api/v1/vehicle/get-vehicles", { withCredentials: true }),
+          axios.get("/api/v1/pets/get-pets", { withCredentials: true })
         ]);
         setOwner(ownerResponse.data.data);
         setRenter(renterResponse.data.data);

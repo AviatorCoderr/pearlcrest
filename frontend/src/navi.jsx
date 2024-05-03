@@ -29,12 +29,6 @@ export const sidebar_det = [
         icon: FaLock
     },
     {
-        key: 'complains',
-        label: 'Register Complaints',
-        path: '/db/addcomplain',
-        icon: FaRegSadCry
-    },
-    {
         key: 'trackreceipts',
         label: 'Payment History',
         path: '/db/trackpay',

@@ -11,7 +11,7 @@ function FindVehicle() {
 
   const handleSubmit = async (e) => {
     try {
-      const response = await axios.post("http://localhost:8000/api/v1/vehicle/get-vehicle-by-regno", {
+      const response = await axios.post("/api/v1/vehicle/get-vehicle-by-regno", {
         reg_no: regNo
       });
       setVehicleData(response.data.data);

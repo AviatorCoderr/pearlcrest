@@ -7,8 +7,8 @@ export default function PaymentHistory() {
     const [user, setUser] = useState("")
     useEffect(() => {
     const getTrans = async() => {
-        const response = await axios.get("http://localhost:8000/api/v1/account/get-transaction", {withCredentials: true})
-        const user = await axios.get("http://localhost:8000/api/v1/users/get-current-user", {withCredentials: true})
+        const response = await axios.get("/api/v1/account/get-transaction", {withCredentials: true})
+        const user = await axios.get("/api/v1/users/get-current-user", {withCredentials: true})
         setTransaction(response.data.data.data)
         setUser(user.data.data)
     }

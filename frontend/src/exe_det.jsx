@@ -7,12 +7,6 @@ import { sidebar_det } from './navi';
 export const exe_det = [
     ...sidebar_det,
     {
-        key: 'complaint-redressal',
-        label: 'Complaint Redressal',
-        path: '/complaint-redressal',
-        icon: RiCommunityFill
-    },
-    {
         key: 'addpv',
         label: 'Add Payment Voucher',
         path: '/addpv',

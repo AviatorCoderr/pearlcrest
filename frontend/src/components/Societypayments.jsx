@@ -11,7 +11,7 @@ const Societypayments = () => {
   useEffect(() => {
     const getMonthsPaid = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/v1/account/get-maintenance-record", { withCredentials: true });
+        const response = await axios.get("/api/v1/account/get-maintenance-record", { withCredentials: true });
         setMonthsPaid(response.data.data);
       } catch (error) {
         console.error("Error fetching months paid:", error);
@@ -57,8 +57,8 @@ const Societypayments = () => {
 
   const handleCheckout = async () => {
     try {
-      const response = await axios.post("http://localhost:8000/api/v1/payment/checkout", { amount });
-      const { data: { key } } = await axios.post("http://localhost:8000/api/v1/getkey");
+      const response = await axios.post("/api/v1/payment/checkout", { amount });
+      const { data: { key } } = await axios.post("/api/v1/getkey");
       
       const options = {
         key,
@@ -68,7 +68,7 @@ const Societypayments = () => {
         description: purpose,
         image: "/static/images/favicon-32x32.png",
         order_id: response.data.data.order.id,
-        callback_url: "http://localhost:8000/api/v1/payment/paymentverification",
+        callback_url: "/api/v1/payment/paymentverification",
         prefill: {
           "name": "Kushagra Sahay",
           "email": "kushagra.sahay@gmail.com",
