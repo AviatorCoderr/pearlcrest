@@ -6,7 +6,8 @@ const Societypayments = () => {
   const [purpose, setPurpose] = useState("None"); // Set default purpose
   const [monthsPaid, setMonthsPaid] = useState([]);
   const [amount, setAmount] = useState(0);
-  const [paydemand, setpaydemand] = useState("");
+  const [paydemand, setpaydemand] = useState([]);
+  
   useEffect(() => {
     const getMonthsPaid = async () => {
       try {
@@ -16,26 +17,31 @@ const Societypayments = () => {
         console.error("Error fetching months paid:", error);
       }
     };
-    const getDemand = async() => {
-      try{
+
+    const getDemand = async () => {
+      try {
         const response = await axios.get("/api/v1/demand/getpaydemand")
-        setpaydemand(response.data.data)
-      }catch(error){
+        setpaydemand(response.data.data.response)
+      } catch (error) {
         console.error(error.message)
       }
     }
+
     getMonthsPaid();
     getDemand();
-    console.log(monthsPaid)
-    console.log("hello", paydemand)
   }, []);
 
   useEffect(() => {
-    setAmount(selectedMonths.length * 1700);
+    setAmount(selectedMonths.length*1700);
   }, [selectedMonths]);
 
   const handlePurposeChange = (e) => {
-    setPurpose(e.target.value);
+    const selectedPurpose = e.target.value;
+    setPurpose(selectedPurpose);
+    if(purpose!=="MAINTENANCE"){
+      const selectedAmount = paydemand.find((ele) => ele.type === selectedPurpose)?.amount || 0;
+      setAmount(selectedAmount);
+    }
   };
 
   const handleMonthToggle = (month) => {
@@ -102,13 +108,13 @@ const Societypayments = () => {
     <div className="container mx-auto px-4 py-8 bg-gray-100 rounded-lg shadow-xl">
       <strong className="text-xl mb-5 block text-center font-semibold">Make Your Payments</strong>
       <div className="grid gap-5 p-5 bg-white rounded-lg shadow-md">
-        <select onChange={handlePurposeChange} value={purpose} className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500">
-          <option value="None">Choose Payment Type</option>
-          <option value="MAINTENANCE">Monthly Maintenance</option>
-          <option value="Corpus Fund">Corpus Fund</option>
-          <option value="Saraswati Puja Donation">Saraswati Puja Donation</option>
+        <select onChange={handlePurposeChange} className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500">
+          <option value="">Choose Payment Purpose</option>
+          {paydemand.map((ele, index) => (
+            <option key={index} value={ele.type}>{ele.type}</option>
+          ))}
         </select>
-        {purpose === "MAINTENANCE" &&
+        {purpose === "MAINTENANCE" ?
           <div className="grid grid-cols-4 gap-2">
             {months.map((month, index) => (
               <label key={index} className={`cursor-pointer p-2 flex gap-2 ${(monthsPaid.includes(month)) ? "bg-green-500" : "bg-red-500"} rounded-lg shadow-sm`}>
@@ -125,6 +131,11 @@ const Societypayments = () => {
               <p>Payable Amount:</p>
               <p className="font-semibold text-xl text-blue-500">₹{amount.toFixed(2)}</p>
             </div>
+          </div>
+          :
+          <div className="col-span-4 flex justify-between items-center">
+            <p>Payable Amount:</p>
+            <p className="font-semibold text-xl text-blue-500">₹{amount.toFixed(2)}</p>
           </div>
         }
       </div>

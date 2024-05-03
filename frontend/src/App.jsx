@@ -32,11 +32,6 @@ function App() {
   const isAdmin = user?.flatnumber === "PCS";
   const isGuard = user?.flatnumber === "ABC";
 
-  // Functions to check user permissions
-  const canAccessAddIncome = isAdmin;
-  const canAccessFlatDetails = isAdmin;
-  // Add more permission checks as needed
-
   return (
     <div>
       <Router>
@@ -59,15 +54,11 @@ function App() {
             <Route path="maids" element={<MaidLog />} />
             <Route
               path="addincome"
-              element={canAccessAddIncome ? <AddIncome /> : <Navigate to="/log" />}
+              element={isAdmin ? <AddIncome /> : <Navigate to="/log" />}
             />
             <Route
               path="flat-details-change-perm"
-              element={canAccessFlatDetails ? <FlatDetails /> : <Navigate to="/log" />}
-            />
-            <Route
-              path="add-transaction"
-              element={(isAdmin || isExecutive) ? <AddTransaction/> : <Navigate to="/log" />}
+              element={isAdmin ? <FlatDetails /> : <Navigate to="/log" />}
             />
             <Route
               path="facility-reservation-booking-account"
@@ -75,31 +66,27 @@ function App() {
             />
             <Route
               path="income-details-deptwise"
-              element={(isAdmin || isExecutive) ? <IncomeStatement/> : <Navigate to="/log" />}
+              element={<IncomeStatement/>}
             />
             <Route
               path="expenditure-details-deptwise"
-              element={(isAdmin || isExecutive) ? <ExpenditureStatements/> : <Navigate to="/log" />}
+              element={<ExpenditureStatements/>}
             />
             <Route
               path="income-expenditure-account"
-              element={(isAdmin || isExecutive) ? <IncomeExpAccount/> : <Navigate to="/log" />}
+              element={<IncomeExpAccount/>}
             />
             <Route
               path="cashbook"
-              element={(isAdmin || isExecutive) ? <CashBook/> : <Navigate to="/log" />}
+              element={<CashBook/>}
             />
             <Route
               path="bankbook"
-              element={(isAdmin || isExecutive) ? <BankBook/> : <Navigate to="/log" />}
+              element={<BankBook/>}
             />
             <Route
               path="maintenance-tracking"
-              element={(isAdmin || isExecutive) ? <MaintenanceRecord /> : <Navigate to="/log" />}
-            />
-            <Route
-              path="complaint-redressal"
-              element={(isExecutive || isAdmin) ? <></> : <Navigate to="/log" />}
+              element={<MaintenanceRecord />}
             />
             <Route
               path="addpv"
@@ -107,7 +94,7 @@ function App() {
             />
             <Route
               path="visitor-manage"
-              element={(isAdmin || isGuard) ? <AddVisitor /> : <></>}
+              element={(isGuard) ? <AddVisitor /> : <></>}
             />
             <Route
               path="maidmanage"

@@ -64,22 +64,10 @@ export const admin_navi = [
         icon: FaWarehouse
     },
     {
-        key: 'complaints',
-        label: 'Complaints',
-        path: '/db/complaint-redressal',
-        icon: FaFileAlt
-    },
-    {
         key: 'addpv',
         label: 'Payment Voucher',
         path: '/db/addpv',
         icon: FaMoneyCheckAlt
-    },
-    {
-        key: 'visitors',
-        label: 'Visitors',
-        path: '/db/visitor-manage',
-        icon: FaUserFriends
     },
     {
         key: 'findvehicle',

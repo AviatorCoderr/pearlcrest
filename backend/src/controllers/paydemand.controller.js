@@ -11,12 +11,13 @@ const addPayDemand = asyncHandler(async(req, res) => {
     })
     if(!response)
         throw new ApiError(500,"something went wrong")
-    return res.status(200, new ApiResponse(200, {response}, "added successfully"))
+    return res.status(200).json(new ApiResponse(200, {response}, "added successfully"))
 })
 const getPayDemand = asyncHandler(async(req, res) => {
     const response = await PayDemand.find()
+    console.log(response)
     if(!response)
-        throw new ApiError(500,"something went wrong")
-    return res.status(200, new ApiResponse(200, {response}, "found successfuly"))
+        throw new ApiError(404,"something went wrong")
+    return res.status(200).json(new ApiResponse(200, {response}, "found successfuly"))
 })
 export {addPayDemand, getPayDemand}
