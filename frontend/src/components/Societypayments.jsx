@@ -6,19 +6,27 @@ const Societypayments = () => {
   const [purpose, setPurpose] = useState("None"); // Set default purpose
   const [monthsPaid, setMonthsPaid] = useState([]);
   const [amount, setAmount] = useState(0);
-  const [paydemand, setpaydemand] = useState(0);
+  const [paydemand, setpaydemand] = useState("");
   useEffect(() => {
     const getMonthsPaid = async () => {
       try {
         const response = await axios.get("/api/v1/account/get-maintenance-record", { withCredentials: true });
-        const demands = await axios.get("/api/v1/demand/getpaydemand");
         setMonthsPaid(response.data.data);
-        setpaydemand(demands)
       } catch (error) {
         console.error("Error fetching months paid:", error);
       }
     };
+    const getDemand = async() => {
+      try{
+        const response = await axios.get("/api/v1/demand/getpaydemand")
+        setpaydemand(response.data.data)
+      }catch(error){
+        console.error(error.message)
+      }
+    }
     getMonthsPaid();
+    getDemand();
+    console.log(monthsPaid)
     console.log("hello", paydemand)
   }, []);
 

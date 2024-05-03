@@ -17,6 +17,6 @@ const getPayDemand = asyncHandler(async(req, res) => {
     const response = await PayDemand.find()
     if(!response)
         throw new ApiError(500,"something went wrong")
-    return res.status(200, new ApiResponse(200, {response}, "added successfuly"))
+    return res.status(200, new ApiResponse(200, {response}, "found successfuly"))
 })
 export {addPayDemand, getPayDemand}
