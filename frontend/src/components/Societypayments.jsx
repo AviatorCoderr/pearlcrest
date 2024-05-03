@@ -13,13 +13,13 @@ const Societypayments = () => {
         const response = await axios.get("/api/v1/account/get-maintenance-record", { withCredentials: true });
         const demands = await axios.get("/api/v1/demand/getpaydemand");
         setMonthsPaid(response.data.data);
-        setpaydemand(demands.data.data)
+        setpaydemand(demands)
       } catch (error) {
         console.error("Error fetching months paid:", error);
       }
     };
     getMonthsPaid();
-    console.log(paydemand)
+    console.log("hello", paydemand)
   }, []);
 
   useEffect(() => {

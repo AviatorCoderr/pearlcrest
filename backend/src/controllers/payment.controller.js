@@ -25,7 +25,7 @@ export const PaymentVerification = asyncHandler(async (req, res) => {
     if (expectedSignature === razorpay_signature) {
         // Payment verification successful
         // You can handle further actions here, like updating database records or sending email notifications
-        res.redirect(`http://localhost:3000/paymentsuccess?reference=${razorpay_payment_id}`);
+        res.redirect(`/api/v1/paymentsuccess?reference=${razorpay_payment_id}`);
     } else {
         // Signature mismatch, payment verification failed
         res.status(400).json({ success: false });

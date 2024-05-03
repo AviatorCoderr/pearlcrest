@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose"
 
-const payDemandSchema = mongoose.Schema({
+const payDemandSchema = new mongoose.Schema({
     type: {
         type: String,
         uppercase: true,
