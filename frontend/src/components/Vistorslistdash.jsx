@@ -3,21 +3,20 @@ import { MdOutlineEmojiPeople } from 'react-icons/md';
 import axios from "axios";
 
 export default function VisitorsListDash() {
-    const [visitor, setVisitor] = useState([]);
+    const [visitors, setVisitors] = useState([]);
 
     useEffect(() => {
-        const getVisitor = async () => {
+        const getVisitors = async () => {
             try {
-                await axios.get("/api/v1/visitor/get-visitor", { withCredentials: true })
-                .then(response => {
-                    console.log(response)
-                    setVisitor(response.data.data.visitors);
-                })
+                const response = await axios.get("/api/v1/visitor/get-visitor", { withCredentials: true });
+                const allVisitors = response.data.data.visitors;
+                const lastFiveVisitors = allVisitors.slice(Math.max(allVisitors.length - 5, 0));
+                setVisitors(lastFiveVisitors);
             } catch (error) {
                 console.error("Error fetching visitors:", error);
             }
         };
-        getVisitor();
+        getVisitors();
     }, []);
 
     const formatDateTime = (timestamp) => {
@@ -27,36 +26,37 @@ export default function VisitorsListDash() {
     };
 
     return (
-        <div className='bg-white px-4 pt-3 pb-4 rounded-sm border border-gray-200 w-full flex-row flex'>
-            <div className='p-3 w-full'>
-                <div className='flex gap-2'>
-                    <MdOutlineEmojiPeople className='text-2xl text-black'/>
-                    <strong>Visitors Log</strong>
+        <div className='bg-white rounded-md shadow-md overflow-hidden w-full'>
+            <div className='bg-blue-500 text-white py-3 px-4 flex items-center justify-between'>
+                <div className='flex items-center gap-2'>
+                    <MdOutlineEmojiPeople className='text-2xl'/>
+                    <strong className='text-lg'>Visitors Log</strong>
                 </div>
-                <div className='mt-3'>
-                    <table className='w-full text-gray-700 text-center'>
-                        <thead className='bg-gray-100 w-full'>
-                            <tr className=' gap-6 w-full'>
-                                <th className=''>Name</th>
-                                <th className=''>Mobile</th>
-                                <th className=''>Check In</th>
+                <div className='text-sm'>Today: {new Date().toLocaleDateString()}</div>
+            </div>
+            <div className='px-4 py-3'>
+                {visitors.length > 0 ? (
+                    <table className='w-full text-gray-700'>
+                        <thead className='bg-gray-200'>
+                            <tr>
+                                <th className='px-4 py-2 border border-gray-300'>Name</th>
+                                <th className='px-4 py-2 border border-gray-300'>Mobile</th>
+                                <th className='px-4 py-2 border border-gray-300'>Check In</th>
                             </tr>
                         </thead>
-                        <tbody className='border-t border-gray-400'>
-                            {visitor.length > 0 ? visitor.map(visitor => (
-                                <tr key={visitor._id}>
-                                    <td>{visitor.name}</td>
-                                    <td>{visitor.mobile}</td>
-                                    <td>{formatDateTime(visitor.checkin)}</td>
+                        <tbody>
+                            {visitors.map(visitor => (
+                                <tr key={visitor._id} className='hover:bg-gray-100 transition-all'>
+                                    <td className='px-4 py-2 border border-gray-300'>{visitor.name}</td>
+                                    <td className='px-4 py-2 border border-gray-300'>{visitor.mobile}</td>
+                                    <td className='px-4 py-2 border border-gray-300'>{formatDateTime(visitor.checkin)}</td>
                                 </tr>
-                            )) : (
-                                <tr>
-                                    <td colSpan="3">No visitors found</td>
-                                </tr>
-                            )}
+                            ))}
                         </tbody>
                     </table>
-                </div>
+                ) : (
+                    <div className='text-gray-600 text-center py-4'>No visitors found</div>
+                )}
             </div>
         </div>
     );

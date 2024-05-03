@@ -16,7 +16,8 @@ const transactionSchema = new mongoose.Schema({
     },
     purpose: {
         type: String,
-        trim: true
+        trim: true,
+        uppercase: true
     },
     amount: {
         type: Number,

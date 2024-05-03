@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import image from "../../public/static/images/favicon-32x32.png";
 
 const Societypayments = () => {
   const [selectedMonths, setSelectedMonths] = useState([]);
   const [purpose, setPurpose] = useState("None"); // Set default purpose
   const [monthsPaid, setMonthsPaid] = useState([]);
   const [amount, setAmount] = useState(0);
-
+  const [paydemand, setpaydemand] = useState(0);
   useEffect(() => {
     const getMonthsPaid = async () => {
       try {
         const response = await axios.get("/api/v1/account/get-maintenance-record", { withCredentials: true });
+        const demands = await axios.get("/api/v1/demand/getpaydemand");
         setMonthsPaid(response.data.data);
+        setpaydemand(demands.data.data)
       } catch (error) {
         console.error("Error fetching months paid:", error);
       }
     };
     getMonthsPaid();
+    console.log(paydemand)
   }, []);
 
   useEffect(() => {
@@ -89,20 +91,19 @@ const Societypayments = () => {
   };
 
   return (
-    <div className="m-5">
-      <strong className="text-xl m-5 font-semibold">Make your Payments</strong>
-      <div className="grid gap-5 p-5">
-        <select onChange={handlePurposeChange} value={purpose} className="p-2 rounded-sm shadow-lg border border-black" name="Complaint type" id="type">
-          <option value="None">Choose for what</option>
-          <option value="Maintenance">Monthly Maintenance</option>
+    <div className="container mx-auto px-4 py-8 bg-gray-100 rounded-lg shadow-xl">
+      <strong className="text-xl mb-5 block text-center font-semibold">Make Your Payments</strong>
+      <div className="grid gap-5 p-5 bg-white rounded-lg shadow-md">
+        <select onChange={handlePurposeChange} value={purpose} className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500">
+          <option value="None">Choose Payment Type</option>
+          <option value="MAINTENANCE">Monthly Maintenance</option>
           <option value="Corpus Fund">Corpus Fund</option>
           <option value="Saraswati Puja Donation">Saraswati Puja Donation</option>
-          <option value="Other">Other</option>
         </select>
-        {purpose === "Maintenance" ?
+        {purpose === "MAINTENANCE" &&
           <div className="grid grid-cols-4 gap-2">
             {months.map((month, index) => (
-              <label key={index} className={`cursor-pointer p-2 flex gap-2 ${(monthsPaid.includes(month)) ? "bg-green-500" : "bg-red-500"}`}>
+              <label key={index} className={`cursor-pointer p-2 flex gap-2 ${(monthsPaid.includes(month)) ? "bg-green-500" : "bg-red-500"} rounded-lg shadow-sm`}>
                 <input
                   type="checkbox"
                   checked={isMonthSelected(month)}
@@ -112,11 +113,14 @@ const Societypayments = () => {
                 {month}
               </label>
             ))}
-            <p>Payable Amount = {amount}</p>
-          </div> : <></>
+            <div className="col-span-4 flex justify-between items-center">
+              <p>Payable Amount:</p>
+              <p className="font-semibold text-xl text-blue-500">₹{amount.toFixed(2)}</p>
+            </div>
+          </div>
         }
       </div>
-      <button onClick={handleCheckout} className="m-5 bg-black text-white px-5 py-2 rounded-xl hover:opacity-80">Continue & Pay</button>
+      <button onClick={handleCheckout} className="mt-5 bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition duration-300">Continue & Pay</button>
     </div>
   );
 };

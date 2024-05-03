@@ -2,39 +2,42 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 export default function MaidLog() {
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")))
-    console.log(user._id)
-    const [maid, setmaid] = useState([]);
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+    const [maid, setMaid] = useState([]);
+
     useEffect(() => {
         const getMaid = async () => {
             try {
-                const response = await axios.post("/api/v1/maid/getmaidbyflat", {_id: user._id},{ withCredentials: true });
-                setmaid(response.data.data.response);
+                const response = await axios.post("/api/v1/maid/getmaidbyflat", {_id: user._id}, { withCredentials: true });
+                setMaid(response.data.data.response);
             } catch (error) {
-                console.log(error);
+                console.error("Error fetching maid logs:", error);
             }
         };
+
         getMaid();
-        console.log(maid)
-    }, []);
+    }, [user._id]);
+
     return (
-        <div className='bg-white px-4 pt-3 pb-4 rounded-sm border border-gray-200 flex-1'>
-            <strong>Maid Log</strong>
-            <div className='mt-3'>
-                <table className='w-full text-gray-700 text-center'>
-                    <thead className='bg-gray-100'>
+        <div className='bg-white rounded-md shadow-md overflow-hidden'>
+            <div className='bg-blue-500 text-white py-3 px-4'>
+                <strong className='text-lg'>Maid Log</strong>
+            </div>
+            <div className='px-4 py-3'>
+                <table className='w-full text-gray-700 border-collapse border border-gray-300'>
+                    <thead className='bg-gray-200'>
                         <tr>
-                            <th>Name</th>
-                            <th>Mobile</th>
-                            <th>Check In</th>
+                            <th className='px-4 py-2 border border-gray-300'>Name</th>
+                            <th className='px-4 py-2 border border-gray-300'>Mobile</th>
+                            <th className='px-4 py-2 border border-gray-300'>Check In</th>
                         </tr>
                     </thead>
                     <tbody className='border-t border-gray-400'>
-                        {maid.map(ele => (
-                            <tr key={ele._id}>
-                                <td>{ele.name}</td>
-                                <td>{ele.mobile}</td>
-                                <td>{ele.checkin}</td>
+                        {maid.map(maid => (
+                            <tr key={maid._id} className='hover:bg-gray-100 transition-all'>
+                                <td className='px-4 py-2 border border-gray-300'>{maid.name}</td>
+                                <td className='px-4 py-2 border border-gray-300'>{maid.mobile}</td>
+                                <td className='px-4 py-2 border border-gray-300'>{maid.checkin}</td>
                             </tr>
                         ))}
                     </tbody>

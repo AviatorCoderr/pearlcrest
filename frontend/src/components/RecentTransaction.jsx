@@ -1,50 +1,56 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
 export default function RecentTransaction() {
-  const [transaction, setTransaction] = useState([])
-  useEffect(() => {
-    const getTrans = async() => {
-        try {
-            const response = await axios.get("/api/v1/account/get-trans-5", {withCredentials: true})
-            setTransaction(response.data.data)
-        } catch (error) {
-            console.log(error.message)
-        }
-    }
-    getTrans()
-    console.log(transaction)
-  }, []);   
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
-};
-  return (
-    <div className='bg-white px-4 pt-3 pb-4 rounded-sm border border-gray-200 flex-1'>
-        <strong>Recent Transactions</strong>
-        <div className='mt-3'>
-        <table className='w-full text-gray-700 text-center'>
-            <thead className='bg-gray-100'>
-                <tr>
-                    <td>ID</td>
-                    <td>Type</td>
-                    <td>Amount</td>
-                    <td>Month</td>
-                    <td>Date</td>
-                </tr>
-            </thead>
-            <tbody className='border-t border-gray-400'>
-                {transaction?.map((ele, index) => (
-                    <tr key={index}>
-                        <td>{ele._id}</td>
-                        <td>{ele.purpose}</td>
-                        <td>{ele.amount}</td>
-                        <td>{ele.months.join(", ")}</td>
-                        <td>{formatDate(ele.createdAt)}</td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+    const [transactions, setTransactions] = useState([]);
+
+    useEffect(() => {
+        const fetchTransactions = async () => {
+            try {
+                const response = await axios.get("/api/v1/account/get-trans-5", { withCredentials: true });
+                setTransactions(response.data.data);
+            } catch (error) {
+                console.error("Error fetching transactions:", error.message);
+            }
+        };
+
+        fetchTransactions();
+    }, []);
+
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('en-US', options);
+    };
+
+    return (
+        <div className='bg-white rounded-sm border border-gray-200 overflow-hidden'>
+            <div className='bg-blue-500 text-white py-3 px-4'>
+                <strong className='text-lg'>Recent Transactions</strong>
+            </div>
+            <div className='overflow-x-auto'>
+                <table className='w-full table-auto text-gray-700 border-collapse border border-gray-400'>
+                    <thead className='bg-gray-200'>
+                        <tr>
+                            <th className='px-4 py-2 border border-gray-400'>ID</th>
+                            <th className='px-4 py-2 border border-gray-400'>Type</th>
+                            <th className='px-4 py-2 border border-gray-400'>Amount</th>
+                            <th className='px-4 py-2 border border-gray-400'>Month</th>
+                            <th className='px-4 py-2 border border-gray-400'>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody className='border-t border-gray-400'>
+                        {transactions.map((transaction, index) => (
+                            <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : ''}>
+                                <td className='px-4 py-2 border border-gray-400'>{transaction._id}</td>
+                                <td className='px-4 py-2 border border-gray-400'>{transaction.purpose}</td>
+                                <td className='px-4 py-2 border border-gray-400'>{transaction.amount}</td>
+                                <td className='px-4 py-2 border border-gray-400'>{transaction.months.join(", ")}</td>
+                                <td className='px-4 py-2 border border-gray-400'>{formatDate(transaction.createdAt)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-  )
+    );
 }
