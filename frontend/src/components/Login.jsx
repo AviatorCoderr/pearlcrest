@@ -1,36 +1,52 @@
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import axios from "axios"
-import { useState } from "react";
+import axios from "axios";
 import Swal from "sweetalert2";
+import { RingLoader } from 'react-spinners';
+
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();    
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const navigate = useNavigate();
+
   const handleLogin = () => {
-    console.log(username)
-    axios.post("/api/v1/users/login", {
-      flatnumber: username,
-      password: password
-    },
-    {
-      withCredentials: true
-    })
-    .then(response => {
-      console.log(response)
-      console.log("Login success:", JSON.stringify(response.data.data.flat)); 
-      localStorage.setItem("user", JSON.stringify(response.data.data.flat))               
-      navigate("/db")
-    })
-    .catch(error => {
-      Swal.fire({
-        title: "Invalid Credentials",
-        text: "Check your flatnumber or password",
-        icon: "error",
-        confirmButtonText: "OK",
+    setIsLoggingIn(true);
+    axios
+      .post(
+        "/api/v1/users/login",
+        {
+          flatnumber: username,
+          password: password,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        console.log(response);
+        console.log("Login success:", JSON.stringify(response.data.data.flat));
+        localStorage.setItem("user", JSON.stringify(response.data.data.flat));
+        navigate("/db");
+      })
+      .catch((error) => {
+        Swal.fire({
+          title: "Invalid Credentials",
+          text: "Check your flatnumber or password",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+        console.error("Login error:", error);
+      })
+      .finally(() => {
+        setIsLoggingIn(false);
       });
-      console.error("Login error:", error);
-    });
-  }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div className="w-full min-h-screen flex flex-col md:flex-row items-stretch">
@@ -56,12 +72,21 @@ export default function Login() {
               className="w-full text-black py-2 my-2 bg-transparent border-b border-black outline-none focus:outline-none"
               onChange={(e) => setUsername(e.target.value)}
             />
-            <input
-              type="password"
-              placeholder="Password"
-              className="w-full text-black py-2 my-2 bg-transparent border-b border-black outline-none focus:outline-none"
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                className="w-full text-black py-2 my-2 bg-transparent border-b border-black outline-none focus:outline-none"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                className="absolute right-4 top-4 text-gray-600 hover:text-gray-800"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? "Hide" : "Show"} Password
+              </button>
+            </div>
           </div>
           <div className="w-full flex items-center justify-between">
             <div className="w-full flex items-center">
@@ -74,9 +99,10 @@ export default function Login() {
           </div>
 
           <div className="w-full flex flex-col my-4">
-            <button 
+            <button
               className="bg-black text-white w-full rounded-md p-4 text-center flex items-center justify-center my-2 hover:bg-black/90"
-              onClick={handleLogin}>
+              onClick={handleLogin}
+            >
               Log In
             </button>
             <button className="font-semibold bg-white text-black w-full rounded-md p-4 text-center flex items-center justify-center my-2 border-2 border-black">
@@ -93,6 +119,16 @@ export default function Login() {
           </p>
         </div>
       </div>
+
+      {/* Spinner and message */}
+      {isLoggingIn && (
+        <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-8 rounded-lg flex flex-col items-center">
+            <RingLoader color="#4a90e2" size={100} />
+            <p className="mt-4 text-gray-800">Thank you for your patience logging in to your flat...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@ import axios from "axios";
 
 const Societypayments = () => {
   const [selectedMonths, setSelectedMonths] = useState([]);
-  const [purpose, setPurpose] = useState("None"); // Set default purpose
+  const [purpose, setPurpose] = useState("None");
   const [monthsPaid, setMonthsPaid] = useState([]);
   const [amount, setAmount] = useState(0);
   const [paydemand, setpaydemand] = useState([]);
@@ -32,16 +32,17 @@ const Societypayments = () => {
   }, []);
 
   useEffect(() => {
-    setAmount(selectedMonths.length*1700);
-  }, [selectedMonths]);
+    if(purpose === "MAINTENANCE") {
+      setAmount(selectedMonths.length * 1700);
+    } else {
+      const selectedAmount = paydemand.find((ele) => ele.type === purpose)?.amount || 0;
+      setAmount(selectedAmount);
+    }
+  }, [selectedMonths, purpose, paydemand]);
 
   const handlePurposeChange = (e) => {
     const selectedPurpose = e.target.value;
     setPurpose(selectedPurpose);
-    if(purpose!=="MAINTENANCE"){
-      const selectedAmount = paydemand.find((ele) => ele.type === selectedPurpose)?.amount || 0;
-      setAmount(selectedAmount);
-    }
   };
 
   const handleMonthToggle = (month) => {
@@ -106,7 +107,7 @@ const Societypayments = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 bg-gray-100 rounded-lg shadow-xl">
-      <strong className="text-xl mb-5 block text-center font-semibold">Make Your Payments</strong>
+    <h2 className="text-3xl font-semibold mb-8">Make Your Payments</h2>
       <div className="grid gap-5 p-5 bg-white rounded-lg shadow-md">
         <select onChange={handlePurposeChange} className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500">
           <option value="">Choose Payment Purpose</option>

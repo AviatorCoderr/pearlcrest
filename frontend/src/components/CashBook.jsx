@@ -85,6 +85,7 @@ export default function CashBook() {
     };
     return (
         <div className='m-5'>
+            <h2 className="text-3xl font-semibold mb-8">CashBook</h2>
             <button className="bg-blue-500 p-3 mb-5 text-white font-medium" onClick={generateExcel}>Generate Current Report</button>
 
             <h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Cash Income</h2>

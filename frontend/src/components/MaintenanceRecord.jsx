@@ -106,6 +106,7 @@ export default function MaintenanceRecord() {
     
     return (
         <div className='m-5'>
+            <h2 className="text-3xl font-semibold mb-8">Maintenance Records</h2>
             <button className="p-2 bg-blue-500 text-white font-medium rounded-lg" onClick={handleExportToExcel}>Download Excel</button>
             <div className='overflow-auto'>
             <table className='w-full overflow-scroll text-gray-700 text-center shadow-lg bg-white divide-y divide-gray-200 rounded-lg mt-5'>

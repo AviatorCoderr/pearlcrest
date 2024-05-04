@@ -114,29 +114,29 @@ export default function PaymentHistory() {
     }
 
     return (
-        <div className='bg-white px-4 pt-3 pb-4 rounded-sm border border-gray-200 flex-1'>
-            <strong className='bg-blue-500 text-white py-3 px-4 flex items-center justify-between'>Recent Transactions</strong>
-            <div className='mt-3'>
-                <table className='w-full text-gray-700 text-center'>
+        <div className='bg-white px-4 pt-3 pb-4 rounded-sm border border-gray-200 flex-1 overflow-auto'>
+            <h2 className="text-3xl font-semibold mb-8">Your Payment History</h2>
+            <div className='mt-3 overflow-auto'>
+                <table className='w-full text-gray-700 text-center border border-gray-300'>
                     <thead className='bg-gray-100'>
                         <tr>
-                            <td>ID</td>
-                            <td>Type</td>
-                            <td>Amount</td>
-                            <td>Month</td>
-                            <td>Date</td>
-                            <td>Receipt</td>
+                            <th className="border border-gray-300">ID</th>
+                            <th className="border border-gray-300">Type</th>
+                            <th className="border border-gray-300">Amount</th>
+                            <th className="border border-gray-300">Month</th>
+                            <th className="border border-gray-300">Date</th>
+                            <th className="border border-gray-300">Receipt</th>
                         </tr>
                     </thead>
-                    <tbody className='border-t border-gray-400'>
+                    <tbody>
                         {transaction.map((ele, index) => (
                             <tr key={index}>
-                                <td>{ele._id}</td>
-                                <td>{ele.purpose}</td>
-                                <td>{ele.amount}</td>
-                                <td>{ele.months.join(", ")}</td>
-                                <td>{formatDate(ele.createdAt)}</td>
-                                <td><button className="bg-green-500 hover:bg-green-700 text-white font-bold m-1 px-4 rounded" onClick={() => jsPdfGenerator(ele._id, new Date(), user.flatnumber, ele.amount, formatDate(ele.createdAt), ele.months.join(", "), ele.purpose)}>Download Now</button></td>
+                                <td className="border border-gray-300">{ele._id}</td>
+                                <td className="border border-gray-300">{ele.purpose}</td>
+                                <td className="border border-gray-300">{ele.amount}</td>
+                                <td className="border border-gray-300">{ele.months.join(", ")}</td>
+                                <td className="border border-gray-300">{formatDate(ele.createdAt)}</td>
+                                <td className="border border-gray-300"><button className="bg-green-500 hover:bg-green-700 text-white font-bold m-1 px-4 py-1 rounded" onClick={() => jsPdfGenerator(ele._id, new Date(), user.flatnumber, ele.amount, formatDate(ele.createdAt), ele.months.join(", "), ele.purpose)}>Download Now</button></td>
                             </tr>
                         ))}
                     </tbody>
