@@ -1,3 +1,28 @@
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Home from "./components/Home";
+import Layout from "./components/Layout";
+import Dashboard from "./components/Dashboard";
+import FacilityReservation from "./components/FacilityReservation";
+import Societypayments from "./components/Societypayments";
+import UserProfile from "./components/UserProfile";
+import Login from "./components/Login";
+import IncomeExpAccount from "./components/IncomeExpAccount"
+import Payementhistory from "./components/Payementhistory";
+import VisitorsLog from "./components/VisitorsLog";
+import AddIncome from "./components/AddIncome";
+import FlatDetails from "./components/FlatDetails"
+import FindVehicle from "./components/FindVehicle";
+import IncomeStatement from "./components/IncomeStatement";
+import AddPaymentVoucher from "./components/AddPaymentVoucher"
+import ExpenditureStatements from "./components/ExpenditureStatements";
+import CashBook from "./components/CashBook";
+import BankBook from "./components/BankBook";
+import MaintenanceRecord from "./components/MaintenanceRecord";
+import PaymentSucess from "./components/PaymentSuccess"
+import AddVisitor from "./components/AddVisitor"
+import MaidManagement from "./components/MaidManagement";
+import MaidLog from "./components/MaidLogs";
 function App() {
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
