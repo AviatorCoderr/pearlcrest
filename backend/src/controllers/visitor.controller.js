@@ -12,11 +12,14 @@ const addvisitor = asyncHandler(async (req, res) => {
         }
         const flatid = flat._id;
         console.log(flatid)
+        const datetime = new Date()
+        const datetimeformat = datetime.toLocaleString('en-IN', timeZone: 'Asia/Kolkata')
         const visitor = await Visitor.create({
             flat: flatid,
             name,
             mobile,
-            purpose
+            purpose,
+            checkin: datetimeformat
         });
         res.status(201).json(new ApiResponse(201, { visitor }, "Visitor created"));
     } catch (error) {
@@ -33,9 +36,12 @@ const getvisitor = asyncHandler(async( req, res) => {
     try {
         const flatid = req?.flat._id
         console.log(flatid)
-        const visitors = await Visitor.find({
-            flat: flatid
-        })
+        const today = new Date();
+        const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
+        const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 0, 0, 0);
+        const visitors = await Visitor.find({flat: flatid, $and: [
+            { checkin: { $gte: startOfToday }, checkin: { $lt: endOfToday } }
+        ]});
         res
         .status(200)
         .json(new ApiResponse(200, {visitors}, "all visitors data returned"))

@@ -20,8 +20,7 @@ const visitorSchema = new mongoose.Schema({
         trim: true
     },
     checkin: {
-        type: Date,
-        default: new Date()
+        type: String
     }
 });
 
