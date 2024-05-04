@@ -107,7 +107,7 @@ const isMaidCheckedIn = async (maidId) => {
 const checkin = asyncHandler(async(req, res) => {
     const {_id} = req.body;
     const currentTime = new Date();
-    const isoTime = currentTime.toLocaleString(); // Convert date to ISO 8601 format
+    const isoTime = currentTime.toLocaleString("en-US", {timeZone: "Asia/Kolkata"}); 
     const response = await Maid.updateOne({_id}, {$set: {checkin: isoTime}});
     res.status(200).json(new ApiResponse(200, {response}, "Check in time updated"));
 });

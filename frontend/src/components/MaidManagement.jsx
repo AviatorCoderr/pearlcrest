@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-
+import { RingLoader } from 'react-spinners';
 export default function MaidManagement() {
   const [maidList, setMaidList] = useState([]);
   const [addClick, setAddClick] = useState(false);
@@ -11,14 +11,10 @@ export default function MaidManagement() {
   const [aadhar, setAadhar] = useState('');
   const [flatelement, setFlatelement] = useState('');
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const getAllMaids = async () => {
-      const response = await axios.get("/api/v1/maid/get-all-maid");
-      setMaidList(response.data.data.Maidlist);
-    };
     getAllMaids();
-    console.log(maidList)
   }, []);
 
   const getAllMaids = async () => {
@@ -102,6 +98,18 @@ export default function MaidManagement() {
     }
   };
 
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter maids based on search query
+  const filteredMaidList = maidList.filter(maid =>
+    maid.name.toUpperCase().includes(searchQuery.toUpperCase()) ||
+    maid.mobile.includes(searchQuery)
+  );
+  const today = new Date();
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
+  const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 0, 0, 0);
   return (
     <div className="mx-auto">
       <button onClick={handleAddMaid} className='block w-full max-w-lg m-auto py-2 bg-blue-500 text-white rounded-lg'>Add Maid</button>
@@ -141,28 +149,40 @@ export default function MaidManagement() {
           <button onClick={handleAddClick} className="p-2 px-10 mt-4 bg-blue-500 text-white rounded-lg">Submit</button>
         </div>
       )}
+      <div className="mt-4">
+        <input
+          type="text"
+          placeholder="Search by name or phone number"
+          value={searchQuery}
+          onChange={handleSearch}
+          className="w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+        />
+      </div>
       {loading ? (
-        <div>Loading...</div>
+        <RingLoader className="mt-10 mx-auto" color="#00BFFF" loading={loading} size={60} />
       ) : (
-        <table className='w-full text-gray-700 text-center table-auto shadow-lg bg-white divide-y divide-gray-200 rounded-lg overflow-hidden mt-5'>
-          <thead className='bg-gray-200 text-gray-800 uppercase'>
-            <tr>
-              <th className="px-6 py-3 text-center text-sm font-semibold">Name</th>
-              <th className="px-6 py-3 text-center text-sm font-semibold">Mobile</th>
-              <th className="px-6 py-3 text-center text-sm font-semibold">Aadhar</th>
-              <th className="px-6 py-3 text-center text-sm font-semibold">Check In</th>
-            </tr>
-          </thead>
-          <tbody>
-            {maidList?.map((maid, index) => (
-              <tr key={index} className={(index % 2 === 0) ? 'bg-gray-100' : 'bg-white'}>
-                <td className="px-6 py-4">{maid.name}</td>
-                <td className="px-6 py-4">{maid.mobile}</td>
-                <td className="px-6 py-4">{maid.aadhar}</td>
-                <td className="px-6 py-4">{(maid.checkedin)?`${maid.checkin}`:<button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg'>Check In</button>}</td>              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className='text-gray-700 w-full text-center shadow-lg bg-white rounded-lg overflow-hidden mt-5'>
+            <thead className='bg-gray-200 text-gray-800 uppercase'>
+              <tr>
+                <th className="px-4 py-2 border border-gray-300">Name</th>
+                <th className="px-4 py-2 border border-gray-300">Mobile</th>
+                <th className="px-4 py-2 border border-gray-300">Aadhar</th>
+                <th className="px-4 py-2 border border-gray-300">Check In</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredMaidList.map((maid, index) => (
+                <tr key={index} className={(index % 2 === 0) ? 'bg-gray-100' : 'bg-white'}>
+                  <td className="px-4 py-2 border border-gray-300">{maid.name}</td>
+                  <td className="px-4 py-2 border border-gray-300">{maid.mobile}</td>
+                  <td className="px-4 py-2 border border-gray-300">{maid.aadhar}</td>
+                  <td className="px-4 py-2 border border-gray-300">{((maid?.checkedin)>=startOfToday && maid?.checkedin<=endOfToday)?`${maid.checkin}`:<button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg'>Check In</button>}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
