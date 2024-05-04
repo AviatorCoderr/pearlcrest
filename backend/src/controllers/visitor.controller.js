@@ -13,7 +13,8 @@ const addvisitor = asyncHandler(async (req, res) => {
         const flatid = flat._id;
         console.log(flatid)
         const datetime = new Date()
-        const datetimeformat = datetime.toLocaleString('en-IN', timeZone: 'Asia/Kolkata')
+        const datetimeformat = datetime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
         const visitor = await Visitor.create({
             flat: flatid,
             name,
