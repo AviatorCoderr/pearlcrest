@@ -14,16 +14,26 @@ import { useLocation } from 'react-router-dom';
 const linkClasses = 'flex items-center gap-6 font-light p-2.5 hover:bg-neutral-700 hover:no-underline active:bg-neutral rounded-sm text-base';
 
 export default function Header() {
-  const user = JSON.parse(localStorage.getItem("user"))
+  const user = JSON.parse(localStorage.getItem("user"));
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000); // Update every second
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   const handleLogout = () => {
     axios.get("/api/v1/users/logout-user", {
       withCredentials: true
     })
     .then(response => {
       console.log("Logout success:", response.data);
-      localStorage.removeItem("user")
+      localStorage.removeItem("user");
       navigate("/log");
     })
     .catch(error => {
@@ -31,29 +41,23 @@ export default function Header() {
     });
   };
 
-  useEffect(() => {
-    const handlePageChange = () => {
-      setIsNavbarOpen(false); 
-    };
-
-    window.addEventListener('beforeunload', handlePageChange);
-    return () => window.removeEventListener('beforeunload', handlePageChange);
-  }, []);
-
   const closeNavbar = () => {
     setIsNavbarOpen(false);
   };
+
   let sidebarData = "";
 
-    if (user.flatnumber === "PCS") {
-        sidebarData = admin_navi;
-    } else if (user.position === "executive") {
-        sidebarData = exe_det;
-    } else if (user.flatnumber === "ABC") {
-        sidebarData = guard_det;
-    }
-    else
-    sidebarData = sidebar_det
+  if (user.flatnumber === "PCS") {
+    sidebarData = admin_navi;
+  } else if (user.position === "executive") {
+    sidebarData = exe_det;
+  } else if (user.flatnumber === "ABC") {
+    sidebarData = guard_det;
+  }
+  else {
+    sidebarData = sidebar_det;
+  }
+
   return (
     <div className='sticky top-0 z-40 bg-white h-16 px-4 flex w-full py-2 items-center border-b border-gray-200'>
       <div className='flex'>
@@ -103,7 +107,8 @@ export default function Header() {
           Welcome, {user.flatnumber}
         </div>
       </div>
-      <div className='pl-6 flex ml-auto items-center gap-2 mr-2'>
+      <div className='ml-auto flex items-center gap-2 mr-2'>
+        <div className="mr-4 text-gray-600">{currentTime.toLocaleString()}</div>
         <Menu as="div" className="relative">
           <div className='inline-flex'>
             <Menu.Button className="ml-2 inline-flex rounded-full bg-grey-200 focus:outline-none focus:ring-2 focus:ring-neutral-400">
@@ -149,7 +154,7 @@ export default function Header() {
         </Menu>
       </div>
     </div>
-  )
+  );
 }
 
 function Sidebarlink({ ele, closeNavbar }) {

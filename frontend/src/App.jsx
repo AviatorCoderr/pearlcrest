@@ -23,21 +23,21 @@ import PaymentSucess from "./components/PaymentSuccess"
 import AddVisitor from "./components/AddVisitor"
 import MaidManagement from "./components/MaidManagement";
 import MaidLog from "./components/MaidLogs";
+
 function App() {
-  const storedUser = localStorage.getItem("user");
-  const user = storedUser ? JSON.parse(storedUser) : null;
+  // State to hold user data
+  const [user, setUser] = useState(null);
 
-  // Function to check if user is authorized for a specific route
-  const isAuthorized = (roles) => {
-    if (!user || !user.position || !user.flatnumber) return false;
-    if (!roles || roles.length === 0) return true;
-    return roles.includes(user.position) || roles.includes(user.flatnumber);
-  };
+  useEffect(() => {
+    // Fetch user data from localStorage
+    const userData = JSON.parse(localStorage.getItem("user"));
+    setUser(userData);
+  }, []);
 
-  // Function to render a route if user is authorized, otherwise redirect to login
-  const renderAuthorizedRoute = (path, element, roles = []) => {
-    return isAuthorized(roles) ? <Route path={path} element={element} /> : <Navigate to="/log" />;
-  };
+  // Functions to check user roles
+  const isExecutive = user?.position === "executive";
+  const isAdmin = user?.flatnumber === "PCS";
+  const isGuard = user?.flatnumber === "ABC";
 
   return (
     <div>
@@ -48,30 +48,75 @@ function App() {
           <Route path="/paymentsuccess" element={<PaymentSucess />} />
           <Route
             path="/db"
-            element={user && user.flatnumber ? <Layout /> : <Navigate to="/log" />}
+            element={<Layout />}
           >
-            {renderAuthorizedRoute("/", <Dashboard />)}
-            {renderAuthorizedRoute("reserve", <FacilityReservation />)}
-            {renderAuthorizedRoute("payments", <Societypayments />)}
-            {renderAuthorizedRoute("profile", <UserProfile />)}
-            {renderAuthorizedRoute("trackpay", <Payementhistory />)}
-            {renderAuthorizedRoute("visitor", <VisitorsLog />)}
-            {renderAuthorizedRoute("maids", <MaidLog />)}
-            {renderAuthorizedRoute("addincome", <AddIncome />, ["executive", "PCS"])}
-            {renderAuthorizedRoute("flat-details-change-perm", <FlatDetails />, ["PCS"])}
-            {renderAuthorizedRoute("facility-reservation-booking-account", null, ["executive", "PCS"])}
-            {renderAuthorizedRoute("income-details-deptwise", <IncomeStatement />)}
-            {renderAuthorizedRoute("expenditure-details-deptwise", <ExpenditureStatements />)}
-            {renderAuthorizedRoute("income-expenditure-account", <IncomeExpAccount />)}
-            {renderAuthorizedRoute("cashbook", <CashBook />)}
-            {renderAuthorizedRoute("bankbook", <BankBook />)}
-            {renderAuthorizedRoute("maintenance-tracking", <MaintenanceRecord />)}
-            {renderAuthorizedRoute("addpv", <AddPaymentVoucher />, ["executive", "PCS"])}
-            {renderAuthorizedRoute("visitor-manage", <AddVisitor />, ["ABC"])}
-            {renderAuthorizedRoute("maidmanage", <MaidManagement />, ["ABC"])}
-            {renderAuthorizedRoute("findvehicle", <FindVehicle />, ["executive", "PCS", "ABC"])}
-            {renderAuthorizedRoute("owner-details", null, ["executive", "PCS"])}
-            {renderAuthorizedRoute("renter-details", null, ["executive", "PCS"])}
+            <Route index element={<Dashboard />} />
+            <Route path="reserve" element={<FacilityReservation />} />
+            <Route path="payments" element={<Societypayments />} />
+            <Route path="profile" element={<UserProfile />} />
+            <Route path="trackpay" element={<Payementhistory />} />
+            <Route path="visitor" element={<VisitorsLog />} />
+            <Route path="maids" element={<MaidLog />} />
+            <Route
+              path="addincome"
+              element={isAdmin ? <AddIncome /> : <Navigate to="/log" />}
+            />
+            <Route
+              path="flat-details-change-perm"
+              element={isAdmin ? <FlatDetails /> : <Navigate to="/log" />}
+            />
+            <Route
+              path="facility-reservation-booking-account"
+              element={(isAdmin || isExecutive) ? <></> : <Navigate to="/log" />}
+            />
+            <Route
+              path="income-details-deptwise"
+              element={<IncomeStatement/>}
+            />
+            <Route
+              path="expenditure-details-deptwise"
+              element={<ExpenditureStatements/>}
+            />
+            <Route
+              path="income-expenditure-account"
+              element={<IncomeExpAccount/>}
+            />
+            <Route
+              path="cashbook"
+              element={<CashBook/>}
+            />
+            <Route
+              path="bankbook"
+              element={<BankBook/>}
+            />
+            <Route
+              path="maintenance-tracking"
+              element={<MaintenanceRecord />}
+            />
+            <Route
+              path="addpv"
+              element={(isExecutive || isAdmin) ? <AddPaymentVoucher /> : <Navigate to="/log" />}
+            />
+            <Route
+              path="visitor-manage"
+              element={(isGuard) ? <AddVisitor /> : <></>}
+            />
+            <Route
+              path="maidmanage"
+              element={isGuard ? <MaidManagement/> : <Navigate to="/log" />}
+            />
+            <Route
+              path="findvehicle"
+              element={(isExecutive || isAdmin || isGuard) ? <FindVehicle /> : <Navigate to="/log" />}
+            />
+            <Route
+              path="owner-details"
+              element={(isExecutive || isAdmin) ? <></> : <Navigate to="/log" />}
+            />
+            <Route
+              path="renter-details"
+              element={(isExecutive || isAdmin) ? <></> : <Navigate to="/log" />}
+            />
           </Route>
         </Routes>
       </Router>
