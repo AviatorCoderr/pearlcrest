@@ -3,19 +3,21 @@ import axios from 'axios';
 
 export default function MaidLog() {
     const [maid, setMaid] = useState([]);
-
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')))
     useEffect(() => {
         const getMaid = async () => {
             try {
-                const response = await axios.post("/api/v1/maid/getmaidbyflat", { withCredentials: true });
+                const response = await axios.post("/api/v1/maid/getmaidbyflat", {
+                _id: user._id
+                }, { withCredentials: true });
                 setMaid(response.data.data.response);
             } catch (error) {
                 console.error("Error fetching maid logs:", error);
             }
         };
-
         getMaid();
-    }, [user._id]);
+        console.log(maid)
+    }, []);
 
     return (
         <div className='bg-white rounded-md shadow-md overflow-hidden'>
