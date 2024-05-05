@@ -25,12 +25,12 @@ const LabeledInput = ({ value, label, onChange, editable }) => (
 export default function UserProfile() {
   const [owner, setOwner] = useState(null);
   const [renter, setRenter] = useState(null);
-  const [vehicle, setVehicle] = useState(null);
+  const [vehicle, setVehicle] = useState([]);
   const [pet, setPet] = useState(null);
   const [ownerEditMode, setOwnerEditMode] = useState(false);
   const [renterEditMode, setRenterEditMode] = useState(false);
   const [petEditMode, setPetEditMode] = useState(false);
-  const [vehicleEditMode, setVehicleEditMode] = useState(false);
+  const [vehicleEditMode, setVehicleEditMode] = useState([]);
 
   const [ownerName, setOwnerName] = useState('');
   const [ownerEmail, setOwnerEmail] = useState('');
@@ -45,6 +45,10 @@ export default function UserProfile() {
   const [renterAadhar, setRenterAadhar] = useState('');
   const [renterSpouseName, setRenterSpouseName] = useState('');
   const [renterSpouseMobile, setRenterSpouseMobile] = useState('');
+
+  const [vehicleType, setvehcileType] = useState(null);
+  const [vehicleModel, setvehicleModel] = useState(null);
+  const [vehicleReg, setvehicleReg] = useState(null);
 
   const [vehicleEntries, setVehicleEntries] = useState([]);
   const [loading, setLoading] = useState(true); // State for loading
@@ -66,8 +70,17 @@ export default function UserProfile() {
         setOwnerAadhar(ownerData.aadhar);
         setOwnerSpouseName(ownerData.spouse_name);
         setOwnerSpouseMobile(ownerData.spouse_mobile);
-        setRenter(renterResponse.data.data);
-        setVehicle(vehicleResponse.data.data);
+        const renterData = renterResponse.data.data
+        setRenter(renterData);
+        setRenterName(renterData.name);
+        setRenterEmail(renterData.email);
+        setRenterMobile(renterData.mobile);
+        setRenterAadhar(renterData.aadhar);
+        setRenterSpouseName(renterData.spouse_name);
+        setRenterSpouseMobile(renterData.spouse_mobile);
+        const vehicleData = vehicleResponse.data.data.vehicles;
+        setVehicle(vehicleData);
+        setVehicleEditMode(new Array(vehicleData.length).fill(false))
         setPet(petResponse.data.data);
         setLoading(false); // Data fetched, loading state to false
       } catch (error) {
@@ -76,21 +89,22 @@ export default function UserProfile() {
     };
 
     fetchData();
+    console.log(vehicle)
   }, []);
 
   const toggleOwnerEditMode = () => {
     setOwnerEditMode(!ownerEditMode);
   };
 
-  const togglePetEditMode = () => {
-    setPetEditMode(!petEditMode);
-  };
+  const toggleVehicleEditMode = (index) => {
+    setVehicleEditMode(prevEditMode => {
+      const updatedEditMode = [...prevEditMode];
+      updatedEditMode[index] = !updatedEditMode[index];
+      return updatedEditMode;
+    });
+};
 
-  const toggleVehicleEditMode = () => {
-    setVehicleEditMode(!vehicleEditMode);
-  };
-
-  const saveOwnerChanges = () => {
+  const saveOwnerChanges = async () => {
     console.log(ownerAadhar, ownerEmail, ownerMobile)
     axios.patch("/api/v1/owners/update-owner", {
       _id: owner?._id,
@@ -116,7 +130,7 @@ export default function UserProfile() {
       console.log(error);
     });
   };
-  const saveRenterChanges = () => {
+  const saveRenterChanges = async() => {
     axios.patch("/api/v1/renters/update-renter", {
       _id: renter?._id,
       name: renterName,
@@ -145,14 +159,33 @@ export default function UserProfile() {
   const toggleRenterEditMode = () => {
     setRenterEditMode(!renterEditMode);
   };
-  const savePetChanges = () => {
-    togglePetEditMode();
-  };
 
-  const addVehicleEntry = () => {
-    setVehicleEntries([...vehicleEntries, {}]);
+  const saveVehicleChanges = async (_id, index) => {
+    try {
+      const response = await axios.patch("/api/v1/vehicle/update-vehicle", {
+        _id,
+        type: vehicleType,
+        model: vehicleModel,
+        reg_no: vehicleReg
+      });
+      
+      if (response.status === 200) {
+        toggleVehicleEditMode(index); 
+        Swal.fire({
+          title: 'Vehicle Updated',
+          timer: 1500,
+          showConfirmButton: false
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        console.error("Failed to update vehicle.");
+      }
+    } catch (error) {
+      console.error("Error updating vehicle:", error.message);
+    }
   };
-
   return (
     <div className='m-5'>
       {loading ? ( // Render loader if loading is true
@@ -211,10 +244,48 @@ export default function UserProfile() {
                 </>
               )}
             </div>
+            <h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Vehicles</h2>
+{vehicle?.map((ele, index) => (
+  <div key={index}>
+    <p className='bg-blue-500 font-medium text-white py-3 px-4 flex items-center justify-between'>Vehicle {index+1}</p>
+    {vehicleEditMode[index] ? (
+      <div>
+        <button className="p-2 px-5 m-2 bg-green-700 text-white rounded-sm" onClick={() => saveVehicleChanges(ele._id, index)}>Save</button>
+        <button className="p-2 px-5 m-2 bg-red-500 text-white rounded-sm" onClick={() => toggleVehicleEditMode(index)}>Cancel</button>
+      </div>
+    ) : (
+      <button className="bg-black m-3 p-2 w-1/2 text-white rounded-sm" onClick={() => toggleVehicleEditMode(index)}>Update</button>
+    )}
+    <div className='md:grid gap-5 grid-cols-2'>
+      {vehicleEditMode[index] ? (
+        <>
+          <label className="relative m-2">
+            <div className='p-2 m-2 bg-neutral-100 rounded-sm border text-black border-black w-full'>
+              <select className="bg-transparent rounded-sm border border-transparent w-full focus:border-black focus:ring-0" placeholder={ele?.type} label="Type" onChange={(e) => setvehcileType(e.target.value)} editable={vehicleEditMode[index]}>
+                <option value="FourWheeler">FourWheeler</option>
+                <option value="TwoWheeler">TwoWheeler</option>
+              </select>
+            </div>
+            <span className="truncate absolute top-[1rem] md:top-[-0.5rem] left-6 text-opacity-80 font-medium bg-neutral-100 px-2">
+              Type
+            </span>
+          </label>
+          <LabeledInput value={ele?.reg_no} label="Registration Number" onChange={(e) => setvehicleReg(e.target.value)} editable={vehicleEditMode[index]} />
+          <LabeledInput value={ele?.model} label="Model" onChange={(e) => setvehicleModel(e.target.value)} editable={vehicleEditMode[index]} />               
+        </>
+      ) : (
+        <>
+          <LabeledInput value={ele?.type} label="Type" editable={vehicleEditMode[index]} />
+          <LabeledInput value={ele?.reg_no} label="Registration Number" editable={vehicleEditMode[index]} />
+          <LabeledInput value={ele?.model} label="Model" editable={vehicleEditMode[index]} />
+        </>
+      )}
+    </div>
+  </div>
+))}
 
 
-            {/* Similar sections for pets and vehicles */}
-          </div>
+        </div>
         </>
       )}
     </div>

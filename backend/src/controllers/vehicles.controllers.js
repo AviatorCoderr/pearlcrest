@@ -20,7 +20,8 @@ const AddVehicle = asyncHandler(async(req, res) => {
 })
 const getVehicles = asyncHandler(async (req, res) => {
     const flatid = req?.flat._id;
-    const vehicles = await Vehicle.find({ flatid });
+    const vehicles = await Vehicle.find({ flat: flatid });
+    console.log(vehicles)
     res.status(200).json(new ApiResponse(200, { vehicles }, "Vehicle data received"));
 });
 const getVehiclebyNumber = asyncHandler(async (req, res) => {
@@ -42,4 +43,19 @@ const getVehiclebyNumber = asyncHandler(async (req, res) => {
         console.log(error.message)
     }
 })
-export {AddVehicle, getVehicles, getVehiclebyNumber}
+const updateVehicles = asyncHandler(async (req, res) => {
+    const { _id, type, model, reg_no } = req.body;
+    const updateFields = {
+        ...(type && { type }),
+        ...(model && { model }),
+        ...(reg_no && { reg_no })
+    };
+    if (Object.keys(updateFields).length === 0) {
+        return res.status(400).json({ success: false, message: "No fields provided for update." });
+    }
+    const response = await Vehicle.updateOne({ _id }, { $set: updateFields });
+
+    res.status(200).json({ success: true, message: "Vehicle updated successfully." });
+});
+
+export {AddVehicle, getVehicles, getVehiclebyNumber, updateVehicles}
