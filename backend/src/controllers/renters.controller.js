@@ -58,25 +58,43 @@ const updateAdminRenter = asyncHandler(async (req, res) => {
 })
 //update renter if logged in
 const updateRenter = asyncHandler(async (req, res) => {
-    const { name, mobile, aadhar, email, spouse_name, spouse_mobile } = req.body;
-    const loggedInFlat = req?.flat._id.toString()
-    console.log(loggedInFlat)
-    const renter = await Renter.findOne({flat: loggedInFlat})
-    console.log(renter)
-    if(!renter){
-        throw new ApiError(401, "Owner for this flat not exists")
+    try {
+        const { _id, name, mobile, aadhar, email, spouse_name, spouse_mobile } = req.body;
+        const flatid = req?.flat._id
+        console.log(_id)
+        let renter
+        if(!_id){
+            renter = await Renter.create({
+                flat: flatid,
+                name, 
+                mobile, 
+                aadhar, 
+                email,
+                spouse_name,
+                spouse_mobile
+            })
+        }
+        else{
+            renter = await Renter.findOne({_id})
+            console.log(renter)
+            if(!renter){
+                throw new ApiError(401, "Renter for this flat not exists")
+            }
+            console.log(renter)
+            renter.name = name
+            renter.mobile = mobile
+            renter.aadhar = aadhar
+            renter.email = email
+            renter.spouse_name = spouse_name
+            renter.spouse_mobile = spouse_mobile
+            await renter.save({validateBeforeSave: false})
+        }
+        return res
+        .status(200)
+        .json(new ApiResponse(200, {renter}, "Owner details updated"))
+    } catch (error) {
+        console.log(error.message)
     }
-    console.log(renter)
-    renter.name = name
-    renter.mobile = mobile
-    renter.aadhar = aadhar
-    renter.email = email
-    renter.spouse_name = spouse_name
-    renter.spouse_mobile = spouse_mobile
-    await renter.save({validateBeforeSave: false})
-    return res
-    .status(200)
-    .json(new ApiResponse(200, {renter}, "Owner details updated"))
 })
 const getRenter = asyncHandler(async (req, res) => {
     const loggedIn = req?.flat._id.toString()

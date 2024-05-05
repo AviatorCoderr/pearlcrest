@@ -26,7 +26,9 @@ export default function Header() {
 
     return () => clearInterval(intervalId);
   }, []);
-
+  const dayOfWeek = currentTime.toLocaleDateString('en-US', { weekday: 'long' });
+  const time = currentTime.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour12: true, hour: 'numeric', minute: 'numeric', second: 'numeric'});
+  const date = currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata', day: 'numeric'});
   const handleLogout = () => {
     axios.get("/api/v1/users/logout-user", {
       withCredentials: true
@@ -108,7 +110,7 @@ export default function Header() {
         </div>
       </div>
       <div className='ml-auto flex items-center gap-2 mr-2'>
-        <div className="mr-4 text-gray-600">{currentTime.toLocaleString()}</div>
+        <div className="mr-4 text-gray-600">{dayOfWeek} {date}, {time}</div>
         <Menu as="div" className="relative">
           <div className='inline-flex'>
             <Menu.Button className="ml-2 inline-flex rounded-full bg-grey-200 focus:outline-none focus:ring-2 focus:ring-neutral-400">

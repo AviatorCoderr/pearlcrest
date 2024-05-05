@@ -58,26 +58,28 @@ const updateAdminOwner = asyncHandler(async (req, res) => {
 })
 //update owner if logged in
 const updateOwner = asyncHandler(async (req, res) => {
-    const { name, mobile, aadhar, email, spouse_name, spouse_mobile } = req.body;
-    const loggedInFlat = req?.flat._id.toString()
-    console.log(loggedInFlat)
-    const owner = await Owner.findOne({flat: {$in: loggedInFlat}})
-    console.log(owner)
-    if(!owner){
-        throw new ApiError(401, "Owner for this flat not exists")
+    const { _id, name, mobile, aadhar, email, spouse_name, spouse_mobile } = req.body;
+    const owner = await Owner.findOne({ _id });
+    
+    if (!owner) {
+        throw new ApiError(401, "Owner for this flat does not exist");
     }
-    console.log(owner)
-    owner.name = name
-    owner.mobile = mobile
-    owner.aadhar = aadhar
-    owner.email = email
-    owner.spouse_name = spouse_name
-    owner.spouse_mobile = spouse_mobile
-    await owner.save({validateBeforeSave: false})
-    return res
-    .status(200)
-    .json(new ApiResponse(200, {owner}, "Owner details updated"))
-})
+
+    // Update owner properties
+    owner.name = name;
+    owner.mobile = mobile;
+    console.log(aadhar)
+    owner.aadhar = aadhar;
+    owner.email = email;
+    owner.spouse_name = spouse_name;
+    owner.spouse_mobile = spouse_mobile;
+
+    // Save the updated owner
+    await owner.save();
+
+    return res.status(200).json(owner);
+});
+
 //get owner details
 const getOwner = asyncHandler(async (req, res) => {
     const loggedIn = req?.flat._id.toString()
