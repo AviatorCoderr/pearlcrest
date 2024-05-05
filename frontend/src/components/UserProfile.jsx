@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import Swal from "sweetalert2";
-
 const LabeledInput = ({ value, label, onChange, editable }) => (
   <label className="relative m-2">
     <div className="p-2 m-2 bg-neutral-100 rounded-sm border text-black border-black w-full">
@@ -16,7 +15,7 @@ const LabeledInput = ({ value, label, onChange, editable }) => (
         <div>{value}</div>
       )}
     </div>
-    <span className="absolute top-[-1.5rem] md:top-[-0.85rem] left-6 text-opacity-80 font-medium bg-neutral-100 px-2">
+    <span className="truncate absolute top-[1rem] md:top-[-0.5rem] left-6 text-opacity-80 font-medium bg-neutral-100 px-2">
       {label}
     </span>
   </label>
@@ -48,6 +47,7 @@ export default function UserProfile() {
   const [renterSpouseMobile, setRenterSpouseMobile] = useState('');
 
   const [vehicleEntries, setVehicleEntries] = useState([]);
+  const [loading, setLoading] = useState(true); // State for loading
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,6 +69,7 @@ export default function UserProfile() {
         setRenter(renterResponse.data.data);
         setVehicle(vehicleResponse.data.data);
         setPet(petResponse.data.data);
+        setLoading(false); // Data fetched, loading state to false
       } catch (error) {
         console.log(error);
       }
@@ -154,62 +155,68 @@ export default function UserProfile() {
 
   return (
     <div className='m-5'>
-      <h1 className='text-2xl m-3 font-semibold border-b-2 border-black w-1/4'>Your Profile</h1>
-      <div className='grid gap-5 p-5'>
-        <h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Owner</h2>
-        <div className='md:grid gap-5 grid-cols-2'>
-          {ownerEditMode ? (
-            <>
-              <LabeledInput value={owner?.name} label="Name" onChange={(e) => setOwnerName(e.target.value)} editable={ownerEditMode} />
-              <LabeledInput value={owner?.email} label="Email" onChange={(e) => setOwnerEmail(e.target.value)} editable={ownerEditMode} />
-              <LabeledInput value={owner?.mobile} label="Mobile" onChange={(e) => setOwnerMobile(e.target.value)} editable={ownerEditMode} />
-              <LabeledInput value={owner?.aadhar} label="Aadhar" onChange={(e) => setOwnerAadhar(e.target.value)} editable={ownerEditMode} />
-              <LabeledInput value={owner?.spouse_name} label="Spouse Name" onChange={(e) => setOwnerSpouseName(e.target.value)} editable={ownerEditMode} />
-              <LabeledInput value={owner?.spouse_mobile} label="Spouse Mobile" onChange={(e) => setOwnerSpouseMobile(e.target.value)} editable={ownerEditMode} />
-              <button className="m-5 p-2 w-1/4 bg-blue-700 text-white rounded-sm" onClick={saveOwnerChanges}>Save</button>
-              <button className="m-5 p-2 w-1/4 bg-red-500 text-white rounded-sm" onClick={toggleOwnerEditMode}>Cancel</button>
-            </>
-          ) : (
-            <>
-              <LabeledInput value={owner?.name} label="Name" editable={ownerEditMode} />
-              <LabeledInput value={owner?.email} label="Email" editable={ownerEditMode} />
-              <LabeledInput value={owner?.mobile} label="Mobile" editable={ownerEditMode} />
-              <LabeledInput value={owner?.aadhar} label="Aadhar" editable={ownerEditMode} />
-              <LabeledInput value={owner?.spouse_name} label="Spouse Name" editable={ownerEditMode} />
-              <LabeledInput value={owner?.spouse_mobile} label="Spouse Mobile" editable={ownerEditMode} />
-              <button className="m-5 p-2 w-1/4 bg-black text-white rounded-sm" onClick={toggleOwnerEditMode}>Edit</button>
-            </>
-          )}
+      {loading ? ( // Render loader if loading is true
+        <div className="flex items-center justify-center h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
         </div>
-        <h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Renter</h2>
-        <div className='md:grid gap-5 grid-cols-2'>
-          {renterEditMode ? (
-            <>
-              <LabeledInput value={renter?.name} label="Name" onChange={(e) => setRenterName(e.target.value)} editable={renterEditMode} />
-              <LabeledInput value={renter?.email} label="Email" onChange={(e) => setRenterEmail(e.target.value)} editable={renterEditMode} />
-              <LabeledInput value={renter?.mobile} label="Mobile" onChange={(e) => setRenterMobile(e.target.value)} editable={renterEditMode} />
-              <LabeledInput value={renter?.aadhar} label="Aadhar" onChange={(e) => setRenterAadhar(e.target.value)} editable={renterEditMode} />
-              <LabeledInput value={renter?.spouse_name} label="Spouse Name" onChange={(e) => setRenterSpouseName(e.target.value)} editable={renterEditMode} />
-              <LabeledInput value={renter?.spouse_mobile} label="Spouse Mobile" onChange={(e) => setRenterSpouseMobile(e.target.value)} editable={renterEditMode} />
-              <button className="m-5 p-2 w-1/4 bg-blue-700 text-white rounded-sm" onClick={saveRenterChanges}>Save</button>
-              <button className="m-5 p-2 w-1/4 bg-red-500 text-white rounded-sm" onClick={toggleRenterEditMode}>Cancel</button>
-            </>
-          ) : (
-            <>
-              <LabeledInput value={renter?.name} label="Name" editable={renterEditMode} />
-              <LabeledInput value={renter?.email} label="Email" editable={renterEditMode} />
-              <LabeledInput value={renter?.mobile} label="Mobile" editable={renterEditMode} />
-              <LabeledInput value={renter?.aadhar} label="Aadhar" editable={renterEditMode} />
-              <LabeledInput value={renter?.spouse_name} label="Spouse Name" editable={renterEditMode} />
-              <LabeledInput value={renter?.spouse_mobile} label="Spouse Mobile" editable={renterEditMode} />
-              <button className="m-5 p-2 w-1/4 bg-black text-white rounded-sm" onClick={toggleRenterEditMode}>Edit</button>
-            </>
-          )}
-        </div>
+      ) : (
+        <>
+          <h1 className='text-2xl m-3 font-semibold border-b-2 border-black w-1/4'>Your Profile</h1>
+          <div className='grid gap-5 p-5'>
+            <h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Owner <button className="float-right py-1 px-10 bg-black text-white rounded-sm" onClick={toggleOwnerEditMode}>Update</button></h2>
+            <div className='md:grid gap-5 grid-cols-2'>
+              {ownerEditMode ? (
+                <>
+                  <LabeledInput value={owner?.name} label="Name" onChange={(e) => setOwnerName(e.target.value)} editable={ownerEditMode} />
+                  <LabeledInput value={owner?.email} label="Email" onChange={(e) => setOwnerEmail(e.target.value)} editable={ownerEditMode} />
+                  <LabeledInput value={owner?.mobile} label="Mobile" onChange={(e) => setOwnerMobile(e.target.value)} editable={ownerEditMode} />
+                  <LabeledInput value={owner?.aadhar} label="Aadhar" onChange={(e) => setOwnerAadhar(e.target.value)} editable={ownerEditMode} />
+                  <LabeledInput value={owner?.spouse_name} label="Spouse Name" onChange={(e) => setOwnerSpouseName(e.target.value)} editable={ownerEditMode} />
+                  <LabeledInput value={owner?.spouse_mobile} label="Spouse Mobile" onChange={(e) => setOwnerSpouseMobile(e.target.value)} editable={ownerEditMode} />
+                  <button className="m-5 p-2 w-1/4 bg-blue-700 text-white rounded-sm" onClick={saveOwnerChanges}>Save</button>
+                  <button className="m-5 p-2 w-1/4 bg-red-500 text-white rounded-sm" onClick={toggleOwnerEditMode}>Cancel</button>
+                </>
+              ) : (
+                <>
+                  <LabeledInput value={owner?.name} label="Name" editable={ownerEditMode} />
+                  <LabeledInput value={owner?.email} label="Email" editable={ownerEditMode} />
+                  <LabeledInput value={owner?.mobile} label="Mobile" editable={ownerEditMode} />
+                  <LabeledInput value={owner?.aadhar} label="Aadhar" editable={ownerEditMode} />
+                  <LabeledInput value={owner?.spouse_name} label="Spouse Name" editable={ownerEditMode} />
+                  <LabeledInput value={owner?.spouse_mobile} label="Spouse Mobile" editable={ownerEditMode} />
+                </>
+              )}
+            </div>
+            <h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Renter <button className="float-right py-1 px-10 bg-black text-white rounded-sm" onClick={toggleRenterEditMode}>Update</button></h2>
+            <div className='md:grid gap-5 grid-cols-2'>
+              {renterEditMode ? (
+                <>
+                  <LabeledInput value={renter?.name} label="Name" onChange={(e) => setRenterName(e.target.value)} editable={renterEditMode} />
+                  <LabeledInput value={renter?.email} label="Email" onChange={(e) => setRenterEmail(e.target.value)} editable={renterEditMode} />
+                  <LabeledInput value={renter?.mobile} label="Mobile" onChange={(e) => setRenterMobile(e.target.value)} editable={renterEditMode} />
+                  <LabeledInput value={renter?.aadhar} label="Aadhar" onChange={(e) => setRenterAadhar(e.target.value)} editable={renterEditMode} />
+                  <LabeledInput value={renter?.spouse_name} label="Spouse Name" onChange={(e) => setRenterSpouseName(e.target.value)} editable={renterEditMode} />
+                  <LabeledInput value={renter?.spouse_mobile} label="Spouse Mobile" onChange={(e) => setRenterSpouseMobile(e.target.value)} editable={renterEditMode} />
+                  <button className="m-5 p-2 w-1/4 bg-blue-700 text-white rounded-sm" onClick={saveRenterChanges}>Save</button>
+                  <button className="m-5 p-2 w-1/4 bg-red-500 text-white rounded-sm" onClick={toggleRenterEditMode}>Cancel</button>
+                </>
+              ) : (
+                <>
+                  <LabeledInput value={renter?.name} label="Name" editable={renterEditMode} />
+                  <LabeledInput value={renter?.email} label="Email" editable={renterEditMode} />
+                  <LabeledInput value={renter?.mobile} label="Mobile" editable={renterEditMode} />
+                  <LabeledInput value={renter?.aadhar} label="Aadhar" editable={renterEditMode} />
+                  <LabeledInput value={renter?.spouse_name} label="Spouse Name" editable={renterEditMode} />
+                  <LabeledInput value={renter?.spouse_mobile} label="Spouse Mobile" editable={renterEditMode} />
+                </>
+              )}
+            </div>
 
 
-        {/* Similar sections for pets and vehicles */}
-      </div>
+            {/* Similar sections for pets and vehicles */}
+          </div>
+        </>
+      )}
     </div>
   );
 }
