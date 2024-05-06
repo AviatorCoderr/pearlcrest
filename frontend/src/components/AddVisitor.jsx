@@ -24,19 +24,53 @@ export default function AddVisitor() {
   };
 
   const handleAddClick = () => {
+    // Regular expression for mobile number validation
+    const mobileRegex = /^\d{10}$/;
+
+    // Validation checks
+    if (!flat || !name || !mobile || !purpose) {
+      Swal.fire({
+        title: 'Validation Error',
+        text: 'Please fill in all fields',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+
+    if (!mobileRegex.test(mobile)) {
+      Swal.fire({
+        title: 'Validation Error',
+        text: 'Please enter a valid mobile number',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+
     axios.post("/api/v1/visitor/add-visitor", {
       flatnumber: flat,
       name,
       mobile,
       purpose
     })
-    setFlat('');
-    setName('');
-    setMobile('');
-    setPurpose('');
-    // Optionally, you can close the form here
-    setAddClick(false);
-    window.location.reload()
+    .then(() => {
+      setFlat('');
+      setName('');
+      setMobile('');
+      setPurpose('');
+      setAddClick(false);
+      window.location.reload();
+    })
+    .catch(error => {
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to add visitor',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      console.error('Add visitor error:', error);
+    });
   };
 
   return (

@@ -21,9 +21,46 @@ export default function AddPaymentVoucher() {
   const [partyname, setPartyname] = useState('');
   const [partycontact, setPartycontact] = useState('');
   const [description, setDescription] = useState('');
-  const user = JSON.parse(localStorage.getItem("user"))
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleSubmit = async () => {
+    // Validation checks
+    if (!partyname || !partycontact || !department || !description || !mode || !amount) {
+      Swal.fire({
+        title: 'Validation Error',
+        text: 'Please fill in all fields',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+
+    // Regular expression for mobile number validation
+    const mobileRegex = /^\d{10}$/;
+
+    // Regular expression for amount validation
+    const amountRegex = /^\d+(\.\d{1,2})?$/;
+
+    if (!mobileRegex.test(partycontact)) {
+      Swal.fire({
+        title: 'Validation Error',
+        text: 'Please enter a valid mobile number',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+
+    if (!amountRegex.test(amount)) {
+      Swal.fire({
+        title: 'Validation Error',
+        text: 'Please enter a valid amount (e.g., 100 or 100.50)',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+
     try {
       const confirmation = await Swal.fire({
         title: 'Confirm Details',
@@ -60,6 +97,15 @@ export default function AddPaymentVoucher() {
               confirmButtonText: 'OK',
             });
           })
+          .catch(error => {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to add expense',
+              icon: 'error',
+              confirmButtonText: 'OK',
+            });
+            console.error('Add expense error:', error);
+          });
       }
     } catch (error) {
       Swal.fire({
@@ -99,7 +145,7 @@ export default function AddPaymentVoucher() {
             <option value='Electricity Bill Paid'>Electricity Bill Paid</option>
             <option value='Garbage collection Charges'>Garbage collection Charges</option>
             <option value='Genset Maintenance Charges'>Genset Maintenance Charges</option>
-            <option value='OTIS Elevator Maintenace Charges'>OTIS Elevator Maintenace Charges</option>
+            <option value='OTIS Elevator Maintenance Charges'>OTIS Elevator Maintenance Charges</option>
             <option value='Plumbing Charges'>Plumbing Charges</option>
             <option value='Household Items Purchased'>Household Items Purchased</option>
             <option value='HouseKeeping Charges'>HouseKeeping Charges</option>

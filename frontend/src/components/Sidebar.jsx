@@ -9,7 +9,6 @@ import classNames from "classnames";
 import { HiOutlineLogout } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { IoIosArrowBack } from "react-icons/io";
-
 const linkclasses = 'flex items-center gap-6 font-light p-2.5 hover:bg-neutral-700 hover:no-underline active:bg-neutral rounded-sm text-base';
 
 function Sidebar() {

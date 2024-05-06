@@ -36,6 +36,24 @@ export default function MaidManagement() {
   const handleAddClick = async () => {
     setLoading(true);
     try {
+      // Validate mobile number format
+      const mobilePattern = /^[6-9]\d{9}$/;
+      if (!mobilePattern.test(mobile)) {
+        throw new Error('Invalid mobile number');
+      }
+  
+      // Validate Aadhar number format
+      const aadharPattern = /^\d{12}$/;
+      if (!aadharPattern.test(aadhar)) {
+        throw new Error('Invalid Aadhar number');
+      }
+  
+      // Validate flat number format
+      const flatPattern = /^[ABC][123G]0[1-6]$/;
+      if (!flatPattern.test(flat)) {
+        throw new Error('Invalid flat number. Flat number must be like A104, A206, B301, C201.');
+      }
+  
       await axios.post("/api/v1/maid/add-maid", {
         flatnumber: flat,
         name,
@@ -57,17 +75,18 @@ export default function MaidManagement() {
     } catch (error) {
       console.error('Error adding maid:', error);
       Swal.fire({
-        icon: 'error',
+        icon: 'warning',
         title: 'Oops...',
-        text: 'Something went wrong!',
+        text: error.message || 'Something went wrong!',
       });
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleAddFlat = () => {
-    setFlat([...flat, flatelement]);
+    setFlat([...flat, flatelement.toUpperCase()]);
     setFlatelement('');
   };
 
@@ -101,15 +120,15 @@ export default function MaidManagement() {
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
   };
-
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    return new Date(dateString).toLocaleString(undefined, options);
+  };
   // Filter maids based on search query
   const filteredMaidList = maidList.filter(maid =>
     maid.name.toUpperCase().includes(searchQuery.toUpperCase()) ||
     maid.mobile.includes(searchQuery)
   );
-  const today = new Date();
-  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
-  const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 0, 0, 0);
   return (
     <div className="mx-auto">
       <button onClick={handleAddMaid} className='block w-full max-w-lg m-auto py-2 bg-blue-500 text-white rounded-lg'>Add Maid</button>
@@ -177,7 +196,7 @@ export default function MaidManagement() {
                   <td className="px-4 py-2 border border-gray-300">{maid.name}</td>
                   <td className="px-4 py-2 border border-gray-300">{maid.mobile}</td>
                   <td className="px-4 py-2 border border-gray-300">{maid.aadhar}</td>
-                  <td className="px-4 py-2 border border-gray-300">{((maid?.checkedin)>=startOfToday && maid?.checkedin<=endOfToday)?`${maid.checkin}`:<button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg'>Check In</button>}</td>
+                  <td className="px-4 py-2 border border-gray-300">{((maid?.checkedin)==true)?`${formatDate(maid.checkin)}`:<button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg'>Check In</button>}</td>
                 </tr>
               ))}
             </tbody>

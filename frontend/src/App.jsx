@@ -25,16 +25,7 @@ import MaidManagement from "./components/MaidManagement";
 import MaidLog from "./components/MaidLogs";
 
 function App() {
-  // State to hold user data
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    // Fetch user data from localStorage
-    const userData = JSON.parse(localStorage.getItem("user"));
-    setUser(userData);
-  }, []);
-
-  // Functions to check user roles
+  const user = JSON.parse(localStorage.getItem("user"))
   const isExecutive = user?.position === "executive";
   const isAdmin = user?.flatnumber === "PCS";
   const isGuard = user?.flatnumber === "ABC";

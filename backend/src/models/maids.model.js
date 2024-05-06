@@ -19,7 +19,7 @@ const maidSchema = new mongoose.Schema({
         trim: true
     },
     checkin: {
-        type: String
+        type: Date
     }
 });
 

@@ -71,12 +71,7 @@ const getAllMaid = asyncHandler(async (req, res) => {
 const getAllMaidByFlat = asyncHandler(async (req, res) => {
     try {
         const {_id} =  req.body
-        const today = new Date();
-        const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
-        const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 0, 0, 0);
-        const response = await Maid.find({flat: _id, $and: [
-            { checkin: { $gte: startOfToday }, checkin: { $lt: endOfToday } }
-        ]});
+        const response = await Maid.find({flat: _id});
         console.log(response)
         res.status(200).json(new ApiResponse(200, { response }, "Maid data received"));
     } catch (error) {
@@ -90,7 +85,7 @@ const isMaidCheckedIn = async (maidId) => {
         const today = new Date();
         const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
         const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 0, 0, 0);
-
+        
         const maid = await Maid.findOne({
             _id: maidId,
             $and: [
@@ -107,15 +102,14 @@ const isMaidCheckedIn = async (maidId) => {
 const checkin = asyncHandler(async(req, res) => {
     const {_id} = req.body;
     const currentTime = new Date();
-    const isoTime = currentTime.toLocaleString("en-US", {timeZone: "Asia/Kolkata"}); 
-    const response = await Maid.updateOne({_id}, {$set: {checkin: isoTime}});
+    const response = await Maid.updateOne({_id}, {$set: {checkin: currentTime}});
     res.status(200).json(new ApiResponse(200, {response}, "Check in time updated"));
 });
 
 const checkout = asyncHandler(async(req, res) => {
     const {_id} = req.body;
     const currentTime = new Date();
-    const isoTime = currentTime.toLocaleString(); // Convert date to ISO 8601 format
+    const isoTime = currentTime.toLocaleString("en-IN", {timeZone: "Asia/Kolkata"}); // Convert date to ISO 8601 format
     const response = await Maid.updateOne({_id}, {$set: {checkout: isoTime}});
     res.status(200).json(new ApiResponse(200, {response}, "Check out time updated"));
 });
