@@ -40,7 +40,6 @@ function Showcase() {
             From Payments to Complaints: Pearl Crest Puts it All at Your
             Fingertips
           </h2>
-          {/* direct directly to dashboard if user exists */}
           <Link className="m-auto md:m-0" to="/log">
             <button className="px-10 py-4 text-center bg-black hover:opacity-80 border-white text-white border-2 rounded-l-3xl rounded-r-3xl">
               Login
@@ -48,7 +47,7 @@ function Showcase() {
           </Link>
         </div>
       </div>
-      <div className="md:hidden h-full m-1">
+      <div className="md:hidden h-full m-5">
         <Slider {...settings}>
           <div>
             <img

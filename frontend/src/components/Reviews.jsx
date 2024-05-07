@@ -17,7 +17,7 @@ export default function Reviews() {
   }, []);
 
   return (
-    <div className="reviews-container mx-auto p-8 bg-gray-100 rounded-lg shadow-lg">
+    <div className="m-4 p-8 mb-10 bg-gray-100 rounded-lg shadow-lg">
       <h2 className="text-4xl mb-8 text-center">Customer Reviews</h2>
       <Carousel
         showArrows={true}
