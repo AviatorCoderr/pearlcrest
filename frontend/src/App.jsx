@@ -25,6 +25,7 @@ import MaidManagement from "./components/MaidManagement";
 import MaidLog from "./components/MaidLogs";
 import Owners from "./components/Owners";
 import Renters from "./components/Renters";
+import ForgotPass from "./components/ForgotPass";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/log" element={<Login />} />
           <Route path="/" element={<Home />} />
           <Route path="/paymentsuccess" element={<PaymentSucess />} />
+          <Route path="/forgot-password" element={<ForgotPass />} />
           <Route
             path="/db"
             element={<Layout />}

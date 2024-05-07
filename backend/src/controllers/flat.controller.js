@@ -1,9 +1,24 @@
 import {asyncHandler} from "../utils/asynchandler.js"
 import {Flat} from "../models/flats.model.js"
+import otpverification from "../models/otpverification.model.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
+import {Owner} from "../models/owners.model.js"
+import {Renter} from "../models/renters.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import bcrypt from "bcrypt"
+import nodemailer from "nodemailer"
 // for admin to create flat database
+// nodemailer stuff
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+        user: process.env.AUTH_EMAIL,
+        pass: process.env.AUTH_PASSWORD
+    }
+});
 const registerFlat = asyncHandler(async (req, res) => {
     try {
         const flatdet = req.body;
@@ -36,30 +51,6 @@ const registerFlat = asyncHandler(async (req, res) => {
     }
 });
 
-// for flatier if forgot password
-const changePassword = asyncHandler(async (req, res) => {
-    try {
-        const {flatnumber, oldpassword, newpassword} = req.body
-        if([flatnumber, oldpassword, newpassword].some((field) => field?.trim() === "")){
-            throw new ApiError(400, "some field is missing")
-        }
-        const flat = await Flat.findOne({flatnumber})
-        if(!flat){
-            throw new ApiError(409, "Flatnumber is wrong or Flat not exists")
-        }
-        const isPasswordCorrect = await bcrypt.compare(oldpassword, flat.password)
-        if(!isPasswordCorrect){
-            throw new ApiError(400, "Invalid password")
-        }
-        flat.password = newpassword
-        await flat.save({validateBeforeSave: false})
-        return res
-        .status(200)
-        .json(new ApiResponse(200, {}, "Password Changed Succesfully"))
-    } catch (error) {
-        console.log(error.message)
-    }
-})
 // for admin to reset password with a click if owner changes
 const adminresetpassword = asyncHandler(async(req, res) => {
     const {flatnumber} = req.body
@@ -151,4 +142,95 @@ const logoutUser = asyncHandler( async(req, res) => {
     res.clearCookie('refreshToken')
     res.json(new ApiResponse(200, "user logged out successfully"))
 })
-export {registerFlat, changePassword, adminresetpassword, loginFlat, displayFlats, getCurrentUser, logoutUser}
+
+const sendOtpVerificationEmail = asyncHandler(async(req, res) => {
+    try {
+        const {flatnumber, oldpassword} = req.body;
+        const flat = await Flat.findOne({flatnumber});
+        const isPasswordCorrect = await bcrypt.compare(oldpassword, flat.password)
+        console.log(isPasswordCorrect)
+        if(!isPasswordCorrect){
+            throw new ApiError(401, "Unauthorised access")
+        }
+        if(!flat)
+            throw new ApiError(401, "No such flat exists")
+        const flatid = flat?._id;
+        const owner = await Owner.findOne({flat: {$in: flatid}})
+        const otp = `${Math.floor(Math.random()*9000+1000)}`
+        const owneremail = owner?.email
+        const mailOptions = {
+            from: '"Pearl Crest Society" <kushagra.sahay@gmail.com>',
+            to: owneremail,
+            subject: "Verify Your Account",
+            html: `<h3>From Mr. Manish, The Treasurer on behalf of Pearl Crest Flat Owner's Society.</h3><p>Thank you for trusting Pearl Crest Society. Enter <b>${otp}</b> in the website to verify your account</p>
+            <p>This code <b>expires in 5 minutes</b>.</p>`
+        }
+        const saltRounds = 10;
+        const hashedOTP = await bcrypt.hash(otp, saltRounds)
+        const response = await otpverification.create({
+            userId: flatid,
+            otp: hashedOTP,
+            createdAt: Date.now(),
+            expiresAt: Date.now() + 360000
+        })
+        const info = await transporter.sendMail(mailOptions)
+        return res.status(200).json({
+            status: "PENDING",
+            info,
+            message: "Verification otp email sent",
+            data: {
+                userId: flatid,
+                owneremail
+            }
+        })
+    } catch (error) {
+        const mess = error.message
+        throw new ApiError(500, {mess})
+    }
+})
+const changepassword = asyncHandler(async(req, res) => {
+    try {
+        const {flatnumber, otp, newpassword} = req.body
+        if(!flatnumber || !otp || !newpassword)
+            throw new ApiError(400, "enter all fields")
+        const flat = await Flat.findOne({flatnumber})
+        console.log(flat)
+        const flatid = flat?._id
+        const otpverify = await otpverification.find({
+            userId: flatid,
+        })
+        console.log(otpverify)
+        if(otpverify.length<=0){
+            throw new ApiError(401, "Account record doesn't exist or has been verified already. please login")
+        }
+        const {expiresAt} = otpverify[0]
+        const hashedOTP = otpverify[0].otp
+        if(expiresAt < Date.now()){
+            await otpverification.deleteMany({userId: flatid})
+            throw new ApiError(400, "Code has expired. Please request again")
+        }
+        else{
+            const validOTP= bcrypt.compare(otp, hashedOTP)
+            console.log(validOTP)
+            if(!validOTP){
+                throw new ApiError("Invalid code. Check your Inbox")
+            }
+            else {
+                const savepass = await bcrypt.hash(newpassword, 10);
+                const response = await Flat.updateOne({_id: flatid}, {$set: {password: savepass}})
+                await otpverification.deleteMany({userId: flatid})
+                return res.json({
+                    status: "Verified",
+                    message: "user email verified successfully",
+                    response
+                })
+            }
+        }
+    } catch (error) {
+        res.json({
+            status: "Failed",
+            message: error.message
+        })
+    }
+})
+export {registerFlat, adminresetpassword, loginFlat, displayFlats, getCurrentUser, logoutUser, sendOtpVerificationEmail, changepassword}

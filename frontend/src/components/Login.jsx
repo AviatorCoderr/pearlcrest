@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { RingLoader } from 'react-spinners';
-
+import { Link } from 'react-router-dom';
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -93,9 +93,11 @@ export default function Login() {
               <input type="checkbox" className="w-4 h-4 mr-2" />
               <p className="text-sm">Remember Me</p>
             </div>
-            <p className="text-sm cursor-pointer underline underline-offset-2 font-medium whitespace-nowrap">
-              Forgot Password
-            </p>
+            <Link to="/forgot-password">
+              <p className="text-sm cursor-pointer underline underline-offset-2 font-medium whitespace-nowrap">
+                Forgot Password
+              </p>
+            </Link>
           </div>
 
           <div className="w-full flex flex-col my-4">
@@ -105,18 +107,7 @@ export default function Login() {
             >
               Log In
             </button>
-            <button className="font-semibold bg-white text-black w-full rounded-md p-4 text-center flex items-center justify-center my-2 border-2 border-black">
-              Sign Up
-            </button>
           </div>
-        </div>
-        <div className="w-full items-center justify-center flex">
-          <p className="text-sm font-normal text-black">
-            Dont have an account?
-            <span className="font-semibold underline underline-offset cursor-pointer">
-              Sign up
-            </span>
-          </p>
         </div>
       </div>
 
