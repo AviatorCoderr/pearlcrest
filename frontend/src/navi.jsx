@@ -18,6 +18,18 @@ export const sidebar_det = [
         icon: MdOutlinePayment
     },
     {
+        key: 'reservation',
+        label: 'Facility Reservation',
+        path: '/db/reserve',
+        icon: FaLock
+    },
+    {
+        key: 'trackreceipts',
+        label: 'Payment History',
+        path: '/db/trackpay',
+        icon: FaReceipt
+    },
+    {
         key: 'visitors',
         label: 'Visitors Log',
         path: '/db/visitor',
@@ -40,17 +52,5 @@ export const sidebar_det = [
         label: 'Maintenance',
         path: '/db/maintenance-tracking',
         icon: FaWarehouse
-    },
-    {
-        key: 'reservation',
-        label: 'Facility Reservation',
-        path: '/db/reserve',
-        icon: FaLock
-    },
-    {
-        key: 'trackreceipts',
-        label: 'Payment History',
-        path: '/db/trackpay',
-        icon: FaReceipt
     }
 ];

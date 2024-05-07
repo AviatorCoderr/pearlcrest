@@ -95,7 +95,16 @@ export default function AddPaymentVoucher() {
               text: 'Data added successfully',
               icon: 'success',
               confirmButtonText: 'OK',
-            });
+            })
+            .then(() => {
+              setMode('');
+              setAmount('');
+              setDepartment('');
+              setPartyname('');
+              setPartycontact('');
+              setDescription('');
+              window.location.reload()
+            })
           })
           .catch(error => {
             Swal.fire({
@@ -103,7 +112,7 @@ export default function AddPaymentVoucher() {
               text: 'Failed to add expense',
               icon: 'error',
               confirmButtonText: 'OK',
-            });
+            })
             console.error('Add expense error:', error);
           });
       }
@@ -113,7 +122,7 @@ export default function AddPaymentVoucher() {
         text: 'Failed to add expense',
         icon: 'error',
         confirmButtonText: 'OK',
-      });
+      })
       console.error('Add expense error:', error);
     }
   };

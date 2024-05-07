@@ -64,20 +64,20 @@ export default function UserProfile() {
         ]);
         const ownerData = ownerResponse.data.data;
         setOwner(ownerData);
-        setOwnerName(ownerData.name);
-        setOwnerEmail(ownerData.email);
-        setOwnerMobile(ownerData.mobile);
-        setOwnerAadhar(ownerData.aadhar);
-        setOwnerSpouseName(ownerData.spouse_name);
-        setOwnerSpouseMobile(ownerData.spouse_mobile);
+        setOwnerName(ownerData?.name);
+        setOwnerEmail(ownerData?.email);
+        setOwnerMobile(ownerData?.mobile);
+        setOwnerAadhar(ownerData?.aadhar);
+        setOwnerSpouseName(ownerData?.spouse_name);
+        setOwnerSpouseMobile(ownerData?.spouse_mobile);
         const renterData = renterResponse.data.data
         setRenter(renterData);
-        setRenterName(renterData.name);
-        setRenterEmail(renterData.email);
-        setRenterMobile(renterData.mobile);
-        setRenterAadhar(renterData.aadhar);
-        setRenterSpouseName(renterData.spouse_name);
-        setRenterSpouseMobile(renterData.spouse_mobile);
+        setRenterName(renterData?.name);
+        setRenterEmail(renterData?.email);
+        setRenterMobile(renterData?.mobile);
+        setRenterAadhar(renterData?.aadhar);
+        setRenterSpouseName(renterData?.spouse_name);
+        setRenterSpouseMobile(renterData?.spouse_mobile);
         const vehicleData = vehicleResponse.data.data.vehicles;
         setVehicle(vehicleData);
         setVehicleEditMode(new Array(vehicleData.length).fill(false))

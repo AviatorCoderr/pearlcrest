@@ -116,7 +116,7 @@ const Societypayments = () => {
           ))}
         </select>
         {purpose === "MAINTENANCE" ?
-          <div className="grid grid-cols-4 gap-2">
+          <div className="flex flex-col md:grid md:grid-cols-4 gap-2">
             {months.map((month, index) => (
               <label key={index} className={`cursor-pointer p-2 flex gap-2 ${(monthsPaid.includes(month)) ? "bg-green-500" : "bg-red-500"} rounded-lg shadow-sm`}>
                 <input

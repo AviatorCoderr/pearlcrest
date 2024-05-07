@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import ExcelJs from "exceljs"
 export default function FlatDetails() {
     const [flat_det, setFlat_det] = useState([]);
 
@@ -15,9 +15,38 @@ export default function FlatDetails() {
         };
         getFlats();
     }, []);
-
+    const formatDate = (lastLogIn) => {
+        const newdate = new Date(lastLogIn)
+        if(!lastLogIn) return "Not Logged In"
+        const date = newdate.toLocaleString('en-IN', {timeZone: "Asia/Kolkata"})
+        return date
+    }
+    const generateExcelReport = () => {
+        const workbook = new ExcelJs.Workbook();
+        const worksheet = workbook.addWorksheet('Flat Details');
+    
+        // Add headers
+        worksheet.addRow(['Sl No', 'Flat Number', 'Current Stay', 'Position', 'Last Logged In']);
+    
+        // Add data
+        flat_det.forEach((ele, index) => {
+            worksheet.addRow([index + 1, ele.flatnumber, ele.currentstay, ele.position, formatDate(ele.lastLogIn)]);
+        });
+    
+        // Generate Excel file
+        workbook.xlsx.writeBuffer().then((buffer) => {
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'flat_details.xlsx';
+            a.click();
+        });
+    };
+    
     return (
-        <div className='m-5'>
+        <div className='m-5 overflow-auto'>
+            <button className="p-3 bg-blue-500 text-white font-medium m-3" onClick={generateExcelReport}>Generate Excel Report</button>
             <table className='w-full text-gray-700 text-center table-auto shadow-lg bg-white divide-y divide-gray-200 rounded-lg overflow-hidden'>
                 <thead className='bg-gray-200 text-gray-800 uppercase'>
                     <tr>
@@ -25,7 +54,7 @@ export default function FlatDetails() {
                         <th className="px-6 py-3 text-center text-sm font-semibold">Flat Number</th>
                         <th className="px-6 py-3 text-center text-sm font-semibold">Current Stay</th>
                         <th className="px-6 py-3 text-center text-sm font-semibold">Position</th>
-                        <th className="px-6 py-3 text-center text-sm font-semibold">Grant Permission</th>
+                        <th className="px-6 py-3 text-center text-sm font-semibold">Last Logged In</th>
                     </tr>
                 </thead>
                 <tbody className='divide-y divide-gray-200'>
@@ -35,7 +64,7 @@ export default function FlatDetails() {
                             <td className="px-6 py-4 whitespace-nowrap">{ele.flatnumber}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{ele.currentstay}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{ele.position}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{/* Grant Permission content */}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{formatDate(ele.lastLogIn)}</td>
                         </tr>
                     ))}
                 </tbody>

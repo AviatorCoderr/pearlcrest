@@ -4,14 +4,17 @@ import Showcase from "./Showcase";
 import Pillarmem from "./Pillars";
 import Features from "./Features";
 import Footer from "./Footer";
+import MeetDev from "./MeetDeveloper"
+import Reviews from "./Reviews";
 function Home(){
-    // get current user and store it globally as user using redux
     return (
         <div>
             <Navbar />
             <Showcase />
             <Pillarmem />
+            <Reviews />
             <Features />
+            <MeetDev />
             <Footer />
         </div>
     )

@@ -18,7 +18,12 @@ export default function MaidLog() {
         getMaid();
         console.log(maid)
     }, []);
-
+    const formatDate = (date) => {
+        if(!date) return "NA"
+        date = new Date(date)
+        const newdate = date.toLocaleString('en-IN', {timeZone: "Asia/Kolkata"})
+        return newdate
+    }
     return (
         <div className='bg-white rounded-md shadow-md overflow-hidden'>
             <div className='bg-blue-500 text-white py-3 px-4'>
@@ -38,7 +43,7 @@ export default function MaidLog() {
                             <tr key={maid._id} className='hover:bg-gray-100 transition-all'>
                                 <td className='px-4 py-2 border border-gray-300'>{maid.name}</td>
                                 <td className='px-4 py-2 border border-gray-300'>{maid.mobile}</td>
-                                <td className='px-4 py-2 border border-gray-300'>{maid.checkin}</td>
+                                <td className='px-4 py-2 border border-gray-300'>{formatDate(maid.checkin)}</td>
                             </tr>
                         ))}
                     </tbody>

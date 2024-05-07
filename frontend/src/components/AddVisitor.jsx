@@ -55,12 +55,19 @@ export default function AddVisitor() {
       purpose
     })
     .then(() => {
-      setFlat('');
-      setName('');
-      setMobile('');
-      setPurpose('');
-      setAddClick(false);
-      window.location.reload();
+      Swal.fire({
+        title: 'Visitor Added',
+        icon: 'success',
+        timer: 2000,
+      })
+      .then(() => {
+        setFlat('');
+        setName('');
+        setMobile('');
+        setPurpose('');
+        setAddClick(false);
+        window.location.reload();
+      })
     })
     .catch(error => {
       Swal.fire({

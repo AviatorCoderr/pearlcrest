@@ -70,7 +70,17 @@ export default function AddIncome() {
                 text: 'Data added successfully',
                 icon: 'success',
                 confirmButtonText: 'OK',
-            });
+            })
+            .then(() => {
+              setMode('');
+              setPurpose('');
+              setAmount('');
+              setMonths([]);
+              setFlat('');
+              setTransactionId('');
+              window.location.reload()
+            })
+
         })
         }
       }
@@ -80,8 +90,17 @@ export default function AddIncome() {
         text: 'Failed to add income',
         icon: 'error',
         confirmButtonText: 'OK',
-      });
-      console.error('Add expense error:', error);
+      })
+      .then(() => {
+        setMode('');
+        setPurpose('');
+        setAmount('');
+        setMonths([]);
+        setFlat('');
+        setTransactionId('');
+        window.location.reload()
+      })
+      console.error('Add income error:', error);
     } 
   };
   const getMonthYearString = (date) => {

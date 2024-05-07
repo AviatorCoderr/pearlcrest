@@ -135,6 +135,7 @@ export default function ExpenditureStatements() {
             <label htmlFor="end_date" className="block mb-2">End Date:</label>
             <input id="end_date" type="date" className="border border-gray-300 rounded-md p-1 mb-4" onChange={(e) => setEnd(e.target.value)} />
             <button onClick={generateReport} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Download Report</button>
+            <div className='overflow-auto'>
             <table className='w-full text-gray-700 text-center table-auto shadow-lg bg-white divide-y divide-gray-200 rounded-lg overflow-hidden'>
                 <thead className='bg-gray-200 text-gray-800 uppercase'>
                     <tr>
@@ -165,6 +166,7 @@ export default function ExpenditureStatements() {
                     ))}
                 </tbody>
             </table>
+            </div>
         </div>
     );
 }

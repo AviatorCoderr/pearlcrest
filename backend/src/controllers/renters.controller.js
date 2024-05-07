@@ -103,5 +103,10 @@ const getRenter = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, renter, "Renter data recieved"))
 })
 
+const getAllRenter = asyncHandler(async (req, res) => {
+    const renters = await Renter.find().populate("flat")
+    return res.status(200).json(new ApiResponse(200, renters, "renters data recieved"))
+})
 
-export {addRenter, updateRenter, updateAdminRenter, getRenter}
+
+export {addRenter, updateRenter, updateAdminRenter, getRenter, getAllRenter}

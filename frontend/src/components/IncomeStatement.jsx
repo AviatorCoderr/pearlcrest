@@ -119,6 +119,7 @@ export default function IncomeStatement() {
             <label className="block mb-2">End Date:</label>
             <input onChange={(e) => setEnd(e.target.value)} type="date" className="block mb-2 border border-gray-300 rounded px-3 py-2" />
             <button onClick={handleDownload} className="block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Download Report</button>
+            <div className='overflow-auto'>
             <table className='w-full text-gray-700 text-center table-auto shadow-lg bg-white divide-y divide-gray-200 rounded-lg overflow-hidden mt-5'>
                 <thead className='bg-gray-200 text-gray-800 uppercase'>
                     <tr>
@@ -143,6 +144,7 @@ export default function IncomeStatement() {
                     ))}
                 </tbody>
             </table>
+            </div>
         </div>
     );
 }

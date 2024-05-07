@@ -4,8 +4,8 @@ import pillarsdet from "../pillarsdet";
 function Pillarmem(){
   return (
     <div className="my-20 p-10 md:grid grid-cols-3 bg-cover bg-center">
-      {pillarsdet.map(ele =>
-      <Pillars ele={ele}/>
+      {pillarsdet.map((ele, index) =>
+      <Pillars key={index} ele={ele}/>
       )}
     </div>
   )
