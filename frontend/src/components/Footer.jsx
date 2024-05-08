@@ -6,9 +6,11 @@ function Footer() {
   const [flatNumber, setFlatNumber] = useState("");
   const [name, setName] = useState("");
   const [review, setReview] = useState("");
+  const [submitting, setSubmitting] = useState(false); 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setSubmitting(true); 
 
     try {
       const response = await axios.post("/api/v1/review/add-review", {
@@ -17,15 +19,13 @@ function Footer() {
         review,
       });
 
-      // Assuming the response status is 200 for successful submission
       if (response.status === 200) {
-        // Review submitted successfully
         Swal.fire({
           icon: "success",
           title: "Success!",
           text: "Review submitted successfully!",
         });
-        // You may want to reset the form fields here
+
         setFlatNumber("");
         setName("");
         setReview("");
@@ -38,6 +38,8 @@ function Footer() {
         title: "Error!",
         text: "An error occurred while submitting the review.",
       });
+    } finally {
+      setSubmitting(false); 
     }
   };
 
@@ -112,8 +114,9 @@ function Footer() {
         <button
           className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
           onClick={handleSubmit}
+          disabled={submitting} 
         >
-          Submit
+          {submitting ? 'Submitting...' : 'Submit'}
         </button>
       </div>
     </div>

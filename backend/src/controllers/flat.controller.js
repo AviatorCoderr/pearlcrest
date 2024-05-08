@@ -81,6 +81,7 @@ const generateAccessandRefreshTokens = asyncHandler(async(flatId) => {
 })
 // for log in of flatier
 const loginFlat = asyncHandler(async (req, res) => {
+    console.log("hello")
     const {flatnumber, password} = req.body
     if([flatnumber, password].some((field) => field?.trim() === "")){
         throw new ApiError(400, "flatnumber or password is missing")

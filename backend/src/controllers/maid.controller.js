@@ -5,41 +5,50 @@ import Maid from "../models/maids.model.js";
 import {Flat} from "../models/flats.model.js"
 import mongoose from "mongoose";
 
-const addMaidByFlat = asyncHandler(async(req, res) =>  {
-    const {flatnumber, name, mobile, aadhar} = req.body
-    const flat = await Flat.findOne({flatnumber})
-    const flatid = flat._id
-    const existingMaid = await Maid.find({mobile})
-    let response
-    if(existingMaid){
-        const flatworking = existingMaid.flatid
-        const newflatworking = [...flatworking, flatid]
-        const maidId = existingMaid._id
-        response = await Maid.updateOne({maidId}, {$set: {flat: newflatworking}})
+const addMaidByFlat = asyncHandler(async (req, res) => {
+    const { _id } = req.body;
+    const flatId = req?.flat?._id;
+
+    // Find existing maid by ID
+    const existingMaid = await Maid.findById(_id);
+
+    // Check if maid exists
+    if (!existingMaid) {
+        throw new ApiError(404, "Maid not found");
     }
-    else{
-        const newflatworking = [flatid]
-        response = await Maid.create({
-            flat: newflatworking,
-            name, 
-            mobile,
-            aadhar
-        })
+
+    // Check if maid is already linked to the flat
+    const flatWorking = existingMaid.flat || [];
+    if (flatWorking.includes(flatId)) {
+        return res.status(400).json({ statusCode: 400, message: "Maid already linked" });
     }
-    res.status(200).json(new ApiResponse(200, {response}, "Maid data updated"))
-})
+
+    // Update maid's working flat
+    const newFlatWorking = [...flatWorking, flatId];
+
+    // Update maid document with new flat
+    await Maid.findByIdAndUpdate(_id, { flat: newFlatWorking });
+
+    // Respond with success message
+    res.status(200).json(new ApiResponse(200, null, "Maid added to flat"));
+});
+
 const addMaid = asyncHandler(async (req, res) => {
     try {
         const { flatnumber, name, mobile, aadhar } = req.body;
-        const existingMaid = await Maid.find({ mobile });
-        if (existingMaid.length > 0) {
-            throw new ApiError(400, "Maid already exists");
+        const existingMaid = await Maid.findOne({
+            $or: [{ mobile: mobile }, { aadhar: aadhar }]
+          });
+          console.log(existingMaid)
+        if (existingMaid) {
+            console.log("hello")
+            res.status(404).json(new ApiError(404, "Maid already exists"));
         }
         console.log(flatnumber)
         let flatidList = [];
         for (const element of flatnumber) {
             const flat = await Flat.findOne({ flatnumber: element });
-            const flatid = flat._id;
+            const flatid = flat?._id;
             flatidList.push(flatid);
         }
         const response = await Maid.create({

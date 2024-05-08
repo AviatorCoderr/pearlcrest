@@ -49,18 +49,20 @@ export default function UserProfile() {
   const [vehicleType, setvehcileType] = useState(null);
   const [vehicleModel, setvehicleModel] = useState(null);
   const [vehicleReg, setvehicleReg] = useState(null);
-
+  const [maidlist, setMaidlist] = useState([])
   const [vehicleEntries, setVehicleEntries] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true); // State for loading
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [ownerResponse, renterResponse, vehicleResponse, petResponse] = await Promise.all([
+        const [ownerResponse, renterResponse, vehicleResponse, petResponse, maidResponse] = await Promise.all([
           axios.get("/api/v1/owners/get-owner", { withCredentials: true }),
           axios.get("/api/v1/renters/get-renter", { withCredentials: true }),
           axios.get("/api/v1/vehicle/get-vehicles", { withCredentials: true }),
-          axios.get("/api/v1/pets/get-pets", { withCredentials: true })
+          axios.get("/api/v1/pets/get-pets", { withCredentials: true }),
+          axios.get("/api/v1/maid/get-all-maid")
         ]);
         const ownerData = ownerResponse.data.data;
         setOwner(ownerData);
@@ -80,6 +82,8 @@ export default function UserProfile() {
         setRenterSpouseMobile(renterData?.spouse_mobile);
         const vehicleData = vehicleResponse.data.data.vehicles;
         setVehicle(vehicleData);
+        
+        setMaidlist(maidResponse.data.data.Maidlist)
         setVehicleEditMode(new Array(vehicleData.length).fill(false))
         setPet(petResponse.data.data);
         setLoading(false); // Data fetched, loading state to false
@@ -91,7 +95,8 @@ export default function UserProfile() {
     fetchData();
     console.log(vehicle)
   }, []);
-
+  const user = JSON.parse(localStorage.getItem('user'))
+  const flatid = user?._id
   const toggleOwnerEditMode = () => {
     setOwnerEditMode(!ownerEditMode);
   };
@@ -186,6 +191,23 @@ export default function UserProfile() {
       console.error("Error updating vehicle:", error.message);
     }
   };
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
+  const filteredMaidList = maidlist.filter(maid =>
+    maid.name.toUpperCase().includes(searchQuery.toUpperCase()) ||
+    maid.mobile.includes(searchQuery)
+  );
+  const handleAdd = async(_id) => {
+    try {
+      await axios.post("/api/v1/maid/add-maid-by-flat", { _id })
+      .then(response => {
+        console.log(response)
+      })
+    } catch (error) {
+      console.log('Error adding maid:', error);
+    }
+  }
   return (
     <div className='m-5'>
       {loading ? ( // Render loader if loading is true
@@ -281,10 +303,50 @@ export default function UserProfile() {
         </>
       )}
     </div>
+    
   </div>
 ))}
 
-
+<div className="mt-4">
+        <input
+          type="text"
+          placeholder="Search by name or phone number"
+          value={searchQuery}
+          onChange={handleSearch}
+          className="w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+        />
+      </div>
+    <div className="overflow-x-auto">
+          <table className='text-gray-700 w-full text-center shadow-lg bg-white rounded-lg overflow-hidden mt-5'>
+            <thead className='bg-gray-200 text-gray-800 uppercase'>
+              <tr>
+                <th className="px-4 py-2 border border-gray-300">Name</th>
+                <th className="px-4 py-2 border border-gray-300">Mobile</th>
+                <th className="px-4 py-2 border border-gray-300">Aadhar</th>
+                <th className="px-4 py-2 border border-gray-300">Add as Your Maid</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredMaidList.map((maid, index) => (
+                <tr key={index} className={(index % 2 === 0) ? 'bg-gray-100' : 'bg-white'}>
+                  <td className="px-4 py-2 border border-gray-300">{maid.name}</td>
+                  <td className="px-4 py-2 border border-gray-300">{maid.mobile}</td>
+                  <td className="px-4 py-2 border border-gray-300">{maid.aadhar}</td> 
+                  <td>
+                  {/* Conditional Rendering */}
+                  {maid.flat.some(flat => flat._id === flatid) ? (
+                    "Added"
+                  ) : (
+                    <button onClick={() => handleAdd(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg'>
+                      Add
+                    </button>
+                  )}
+                </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         </div>
         </>
       )}

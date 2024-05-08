@@ -59,26 +59,36 @@ export default function MaidManagement() {
         name,
         mobile,
         aadhar
-      });
-      Swal.fire({
-        icon: 'success',
-        title: 'Maid added successfully!',
-        showConfirmButton: false,
-        timer: 1500
-      });
-      setFlat([]);
-      setName('');
-      setMobile('');
-      setAadhar('');
-      setAddClick(false);
-      await getAllMaids();
+      })
+      .then(response => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Maid added successfully!',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        setFlat([]);
+        setName('');
+        setMobile('');
+        setAadhar('');
+        setAddClick(false);
+        getAllMaids();
+      })
+      .catch(error => {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Oops...',
+          text: error.message || 'Something went wrong!'
+        });
+        console.log('Error adding maid:', error);
+      })
     } catch (error) {
-      console.error('Error adding maid:', error);
       Swal.fire({
         icon: 'warning',
         title: 'Oops...',
-        text: error.message || 'Something went wrong!',
+        text: error.message || 'Something went wrong!'
       });
+      console.log('Error adding maid:', error);
     } finally {
       setLoading(false);
     }
@@ -124,7 +134,7 @@ export default function MaidManagement() {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
     return new Date(dateString).toLocaleString(undefined, options);
   };
-  // Filter maids based on search query
+
   const filteredMaidList = maidList.filter(maid =>
     maid.name.toUpperCase().includes(searchQuery.toUpperCase()) ||
     maid.mobile.includes(searchQuery)
