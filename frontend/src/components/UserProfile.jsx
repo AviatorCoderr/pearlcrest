@@ -53,7 +53,10 @@ export default function UserProfile() {
   const [vehicleEntries, setVehicleEntries] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true); // State for loading
-
+  const [name, setName] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [aadhar, setAadhar] = useState('');
+  const [addClick, setAddClick] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -208,6 +211,66 @@ export default function UserProfile() {
       console.log('Error adding maid:', error);
     }
   }
+  const handleAddClick = async () => {
+    setLoading(true);
+    try {
+      // Validate mobile number format
+      const mobilePattern = /^[6-9]\d{9}$/;
+      if (!mobilePattern.test(mobile)) {
+        throw new Error('Invalid mobile number');
+      }
+  
+      // Validate Aadhar number format
+      const aadharPattern = /^\d{12}$/;
+      if (!aadharPattern.test(aadhar)) {
+        throw new Error('Invalid Aadhar number');
+      }
+      let flat = [];
+      flat.push(user?.flatnumber)
+      console.log(flat);
+      await axios.post("/api/v1/maid/add-maid", {
+        flatnumber: flat,
+        name,
+        mobile,
+        aadhar
+      })
+      .then(response => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Maid added successfully!',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        setName('');
+        setMobile('');
+        setAadhar('');
+        setAddClick(false);
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
+      })
+      .catch(error => {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Oops...',
+          text: error.message || 'Something went wrong!'
+        });
+        console.log('Error adding maid:', error);
+      })
+    } catch (error) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Oops...',
+        text: error.message || 'Something went wrong!'
+      });
+      console.log('Error adding maid:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleAddMaid = () => {
+    setAddClick(true);
+  };
   return (
     <div className='m-5'>
       {loading ? ( // Render loader if loading is true
@@ -306,11 +369,35 @@ export default function UserProfile() {
     
   </div>
 ))}
-
+<h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Manage your HouseMaids</h2>
+<button onClick={handleAddMaid} className='block w-full max-w-lg m-auto py-2 bg-blue-500 text-white rounded-lg'>Add Maid</button>
+      {addClick && (
+        <div className="mt-4 bg-white rounded-lg shadow-md p-4">
+          <input
+            placeholder="Name"
+            type="text"
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+          />
+          <input
+            placeholder="Mobile"
+            type="text"
+            onChange={(e) => setMobile(e.target.value)}
+            className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+          />
+          <input
+            placeholder="Aadhar"
+            type="text"
+            onChange={(e) => setAadhar(e.target.value)}
+            className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+          />
+          <button onClick={handleAddClick} className="p-2 px-10 mt-4 bg-blue-500 text-white rounded-lg">Submit</button>
+        </div>
+      )}
 <div className="mt-4">
         <input
           type="text"
-          placeholder="Search by name or phone number"
+          placeholder="Search maids name or phone number"
           value={searchQuery}
           onChange={handleSearch}
           className="w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"

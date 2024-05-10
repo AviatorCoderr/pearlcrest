@@ -41,8 +41,7 @@ const addMaid = asyncHandler(async (req, res) => {
           });
           console.log(existingMaid)
         if (existingMaid) {
-            console.log("hello")
-            res.status(404).json(new ApiError(404, "Maid already exists"));
+            new ApiError(404, "Maid already exists");
         }
         console.log(flatnumber)
         let flatidList = [];

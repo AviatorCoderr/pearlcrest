@@ -6,7 +6,26 @@ import "slick-carousel/slick/slick-theme.css";
 
 function Showcase() {
   const [isVisible, setIsVisible] = useState(false);
-
+  const img_urls = [
+    {
+      url : "/static/images/PC4.jpg"
+    },
+    {
+      url: "/static/images/PC5.jpg"
+    },
+    {
+      url: "/static/images/PC6.jpg"
+    },
+    {
+      url: "/static/images/PC3.jpg"
+    },
+    {
+      url: "/static/images/IMG-20230402-WA0098.jpg"
+    },
+    {
+      url: "/static/images/IMG-20230402-WA0054.jpg"
+    }
+  ]
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -33,9 +52,10 @@ function Showcase() {
   };
 
   return (
-    <div className="m-0 md:h-[30rem]">
+    <>
+    <div className="m-0">
       <div className="flex flex-col-reverse md:flex-row items-center p-6 mx-auto space-y-0">
-        <div className="flex flex-col ml-5 md:mb-32 space-y-12 md:w-2/3">
+        <div className="flex flex-col ml-5 space-y-12 md:w-2/3">
           <h2 className="w-full m-0 md:p-1 md:mt-10 text-3xl text-center md:text-5xl md:text-left text-black ">
             From Payments to Complaints: Pearl Crest Puts it All at Your
             Fingertips
@@ -47,29 +67,24 @@ function Showcase() {
           </Link>
         </div>
       </div>
-      <div className="md:hidden h-full m-5">
+    </div>
+      <div className=" h-full m-6">
         <Slider {...settings}>
-          <div>
+          {img_urls.map((ele, index) => { 
+            return (
+            <div key={index}>
             <img
               className={`w-full h-[20rem] md:h-[30rem] object-cover border-2 border-black rounded-3xl ${
                 isVisible ? "show" : ""
               }`}
-              src="/static/images/PC4.jpg"
-              alt=""
+              src={ele.url}
+              alt="pcpics"
             />
           </div>
-          <div>
-            <img
-              className={`w-full h-[20rem] md:h-[30rem] object-cover border-2 border-black rounded-3xl ${
-                isVisible ? "show" : ""
-              }`}
-              src="/static/images/PC5.jpg"
-              alt=""
-            />
-          </div>
+          )})}
         </Slider>
       </div>
-    </div>
+      </>
   );
 }
 

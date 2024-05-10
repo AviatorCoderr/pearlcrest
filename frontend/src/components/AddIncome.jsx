@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import jsPDF from "jspdf";
-import { CircleLoader } from 'react-spinners';
+import { ClipLoader } from 'react-spinners';
 export default function AddIncome() {
   const [mode, setMode] = useState('');
   const [purpose, setPurpose] = useState('');
@@ -206,7 +206,6 @@ export default function AddIncome() {
           }, 2000);
         }
       }
-      setLoading(false);
     } catch (error) {
       Swal.fire({
         title: 'Error',
@@ -215,6 +214,9 @@ export default function AddIncome() {
         confirmButtonText: 'OK',
       });
       console.error('Add income error:', error);
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -307,7 +309,7 @@ export default function AddIncome() {
         disabled={loading} // Disable button when loading
       >
         {loading ? (
-          <CircleLoader color='#ffffff' loading={loading} size={20} />
+          <ClipLoader color='#ffffff' loading={loading} size={20} />
         ) : (
           'Submit'
         )}
