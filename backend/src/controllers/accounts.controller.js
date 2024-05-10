@@ -7,12 +7,66 @@ import Maintenance from "../models/maintenance.model.js"
 import mongoose from "mongoose";
 import {Flat} from "../models/flats.model.js"
 import Expenditure from "../models/expenditures.model.js";
-
+import { Owner } from "../models/owners.model.js";
+import { Renter } from "../models/renters.model.js";
+import nodemailer from "nodemailer"
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  auth: {
+      user: process.env.AUTH_EMAIL,
+      pass: process.env.AUTH_PASSWORD
+  }
+});
+const sendEmail = asyncHandler(async(req, res) => {
+  try {
+    const {flatnumber, trans_id} = req.body;
+    const file = req?.file?.path
+    console.log(file)
+    if(!file)
+      throw new ApiError(400, "Receipt is not generated");
+    const flat = await Flat.findOne({flatnumber});
+    if(!flat){
+        throw new ApiError(404, "Flat Number is invalid")
+    }
+    const flatid = flat?._id;
+    const owner = await Owner.findOne({flat: {$in: flatid}})
+    const renter = await Renter.findOne({flat: {$in: flatid}})
+    const owneremail = owner?.email
+    const renteremail = renter?.email
+    const mailOptions = {
+        from: '"Pearl Crest Society" <pearlcrestsociety@gmail.com>',
+        to: [owneremail, renteremail],
+        subject: "Payment Successful",
+        html: 
+        `<h3>From Mr. Manish, The Treasurer on behalf of Pearl Crest Flat Owner's Society.
+        </h3><p>Thank you for trusting the commitee. We have recived your payment. Here is the receipt attached</p>`,
+        attachments: [{
+          filename: `${flatnumber, trans_id}.pdf`,
+          path: file
+        }]
+    }
+    
+    const info = await transporter.sendMail(mailOptions)
+    console.log(info)
+    return res.status(200).json({
+        status: "success",
+        info,
+        message: "email sent",
+    })
+  } catch (error) {
+    console.log(error)
+  }
+})
 const addTransaction = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
     const { mode, purpose, amount, months, transactionId } = req.body;
+    if(!mode || !purpose || !amount || !months || !transactionId) 
+      throw new ApiError(400, "One or More fields are missing")
     const flatid = req?.flat._id.toString();
     const trans = await Transaction.create(
       [{
@@ -68,7 +122,11 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
   session.startTransaction();
   try {
     const { flatnumber, mode, purpose, amount, months, transactionId, date } = req.body;
+    if(!mode || !purpose || !amount || !months) 
+      throw new ApiError(400, "One or More fields are missing")
     const flat = await Flat.findOne({ flatnumber });
+    if(!flat)
+      throw new ApiError(404, "Invalid Flatnumber/ Flat not exists")
     const flatid = flat._id;
     const trans = await Transaction.create(
       [{
@@ -122,7 +180,7 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     console.error(error);
-    res.status(500).json(new ApiResponse(500, null, "Failed to add transaction and income"));
+    throw new ApiError(error.statusCode, error.message)
   } finally {
     session.endSession();
   }
@@ -242,8 +300,9 @@ const getTotalIncome = asyncHandler(async (req, res) => {
       }
     }
   ])
+  console.log(totalIncomeBank)
   const cash = (totalIncomeCash[0])?totalIncomeCash[0].totalIncome : 0
-  const bank = (totalIncomeBank[0])?totalIncomeCash[0].totalIncome : 0
+  const bank = (totalIncomeBank[0])?totalIncomeBank[0].totalIncome : 0
   console.log("cash", cash)
   console.log("bank", bank)
   res.status(200)
@@ -399,4 +458,4 @@ const cashbook = asyncHandler(async(req, res) => {
 })
 export { addTransaction, addTransactionByAdmin, addIncomeByAdmin, 
   addExpenditure, getTransaction, getTotalIncome, getTotalExpenditure,
-getCashBalance, getTransaction5, getMaintenanceRecord, getIncomeStatements, getAllMaintenanceRecord, getExpenditureStatements, incomeexpaccount, cashbook};
+getCashBalance, getTransaction5, getMaintenanceRecord, getIncomeStatements, getAllMaintenanceRecord, getExpenditureStatements, incomeexpaccount, cashbook, sendEmail};

@@ -9,6 +9,7 @@ import bcrypt from "bcrypt"
 import nodemailer from "nodemailer"
 // for admin to create flat database
 // nodemailer stuff
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
@@ -145,49 +146,47 @@ const logoutUser = asyncHandler( async(req, res) => {
 })
 
 const sendOtpVerificationEmail = asyncHandler(async(req, res) => {
-    try {
-        const {flatnumber, oldpassword} = req.body;
-        const flat = await Flat.findOne({flatnumber});
-        const isPasswordCorrect = await bcrypt.compare(oldpassword, flat.password)
-        console.log(isPasswordCorrect)
-        if(!isPasswordCorrect){
-            throw new ApiError(401, "Unauthorised access")
-        }
-        if(!flat)
-            throw new ApiError(401, "No such flat exists")
-        const flatid = flat?._id;
-        const owner = await Owner.findOne({flat: {$in: flatid}})
-        const otp = `${Math.floor(Math.random()*9000+1000)}`
-        const owneremail = owner?.email
-        const mailOptions = {
-            from: '"Pearl Crest Society" <kushagra.sahay@gmail.com>',
-            to: owneremail,
-            subject: "Verify Your Account",
-            html: `<h3>From Mr. Manish, The Treasurer on behalf of Pearl Crest Flat Owner's Society.</h3><p>Thank you for trusting Pearl Crest Society. Enter <b>${otp}</b> in the website to verify your account</p>
-            <p>This code <b>expires in 5 minutes</b>.</p>`
-        }
-        const saltRounds = 10;
-        const hashedOTP = await bcrypt.hash(otp, saltRounds)
-        const response = await otpverification.create({
-            userId: flatid,
-            otp: hashedOTP,
-            createdAt: Date.now(),
-            expiresAt: Date.now() + 360000
-        })
-        const info = await transporter.sendMail(mailOptions)
-        return res.status(200).json({
-            status: "PENDING",
-            info,
-            message: "Verification otp email sent",
-            data: {
-                userId: flatid,
-                owneremail
-            }
-        })
-    } catch (error) {
-        const mess = error.message
-        throw new ApiError(500, {mess})
+    const {flatnumber, oldpassword} = req.body;
+    const flat = await Flat.findOne({flatnumber});
+    if(!flat){
+        throw new ApiError(404, "Flat Number is invalid")
     }
+    const isPasswordCorrect = await bcrypt.compare(oldpassword, flat?.password)
+    console.log(isPasswordCorrect)
+    if(!isPasswordCorrect){
+        throw new ApiError(401, "Incorrect password")
+    }
+    const flatid = flat?._id;
+    const owner = await Owner.findOne({flat: {$in: flatid}})
+    const renter = await Renter.findOne({flat: {$in: flatid}})
+    const otp = `${Math.floor(Math.random()*9000+1000)}`
+    const owneremail = owner?.email
+    const renteremail = renter?.email
+    const mailOptions = {
+        from: '"Pearl Crest Society" <pearlcrestsociety@gmail.com>',
+        to: [owneremail, renteremail],
+        subject: "Verify Your Account",
+        html: `<h3>From Mr. Manish, The Treasurer on behalf of Pearl Crest Flat Owner's Society.</h3><p>Thank you for trusting Pearl Crest Society. Enter <b>${otp}</b> in the website to verify your account</p>
+        <p>This code <b>expires in 5 minutes</b>.</p>`
+    }
+    const saltRounds = 10;
+    const hashedOTP = await bcrypt.hash(otp, saltRounds)
+    const response = await otpverification.create({
+        userId: flatid,
+        otp: hashedOTP,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 360000
+    })
+    const info = await transporter.sendMail(mailOptions)
+    return res.status(200).json({
+        status: "PENDING",
+        info,
+        message: "Verification otp email sent",
+        data: {
+            userId: flatid,
+            owneremail
+        }
+    })
 })
 const changepassword = asyncHandler(async(req, res) => {
     try {

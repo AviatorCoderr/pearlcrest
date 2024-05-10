@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { ClipLoader } from 'react-spinners';
+
 export default function ForgotPass() {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
@@ -10,6 +12,7 @@ export default function ForgotPass() {
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [otp, setOtp] = useState('');
+    const [loading, setLoading] = useState(false); // State for loading spinner
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -20,78 +23,83 @@ export default function ForgotPass() {
     };
 
     const getOtp = async() => {
-        await axios.post("/api/v1/users/send-otp", {
-            flatnumber: flatNumber,
-            oldpassword: oldPassword
-        })
-        .then(response => {
-            console.log(response)
+        setLoading(true); // Set loading state to true
+        try {
+            const response = await axios.post("/api/v1/users/send-otp", {
+                flatnumber: flatNumber,
+                oldpassword: oldPassword
+            });
+            console.log(response);
             Swal.fire({
                 title: 'OTP SENT',
-                text: 'OTP sent to owner mailId. It is valid for 5 minutes only.',
+                text: "OTP sent to owner's and renter's email address. Check in your spam folders. It is valid for 5 minutes only.",
                 icon: 'success',
                 showConfirmButton: true
-            })
-        })
-        .catch(error => {
+            });
+        } catch (error) {
+            console.log(error);
             Swal.fire({
-                title: 'Something went wrong',
-                text: error.message,
+                title: "Something went wrong",
+                text: error?.response?.data?.message,
                 icon: 'error',
                 showConfirmButton: true
-            })
-        })
-    }
+            });
+        } finally {
+            setLoading(false); // Reset loading state
+        }
+    };
 
     const changepass = async() => {
-        if(confirmNewPassword!==newPassword){
+        if (confirmNewPassword !== newPassword) {
             Swal.fire({
                 title: 'Passwords not match',
                 text: 'reconfirm password',
                 icon: 'error',
                 showConfirmButton: true
-            })
-            return 
+            });
+            return;
         }
-        await axios.post("api/v1/users/change-password", {
-            flatnumber: flatNumber,
-            newpassword: newPassword,
-            otp
-        })
-        .then(response => {
-            const status = response.data.status
-            const message = response.data.message
-            let icon
-            if(status==="Pending") icon="Warning"
-            else if(status==="Verified") icon="Success"
-            console.log(status)
-            console.log(message)
+        setLoading(true); // Set loading state to true
+        try {
+            const response = await axios.post("api/v1/users/change-password", {
+                flatnumber: flatNumber,
+                newpassword: newPassword,
+                otp
+            });
+            const status = response.data.status;
+            const message = response.data.message;
+            let icon;
+            if (status === "Pending") icon = "Warning";
+            else if (status === "Verified") icon = "Success";
+            console.log(status);
+            console.log(message);
             Swal.fire({
                 title: status.toString(),
                 text: message.toString(),
                 icon: icon,
                 showConfirmButton: true
-            })
+            });
             setTimeout(() => {
-                setConfirmNewPassword('')
-                setFlatNumber('')
-                setNewPassword('')
-                setOldPassword('')
-                setOtp('')
-                setShowPassword('')
-                setShowPassword2('')
-                window.location.reload()
-            }, 1500)
-        })
-        .catch(error =>{
+                setConfirmNewPassword('');
+                setFlatNumber('');
+                setNewPassword('');
+                setOldPassword('');
+                setOtp('');
+                setShowPassword('');
+                setShowPassword2('');
+                window.location.reload();
+            }, 1500);
+        } catch (error) {
             Swal.fire({
                 title: 'Something went wrong',
                 text: error.message,
                 icon: 'error',
                 showConfirmButton: true
-            })
-        })
-    }
+            });
+        } finally {
+            setLoading(false); // Reset loading state
+        }
+    };
 
     return (
         <div className="w-full min-h-screen flex flex-col md:flex-row items-stretch">
@@ -134,10 +142,15 @@ export default function ForgotPass() {
                     </div>
                     <div className="w-full flex flex-col my-4">
                         <button
-                            className="bg-black text-white w-full rounded-md p-4 text-center flex items-center justify-center my-2 hover:bg-black/90"
+                            className={`bg-black text-white w-full rounded-md p-4 text-center flex items-center justify-center my-2 hover:bg-black/90 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                             onClick={getOtp}
+                            disabled={loading} // Disable button while loading
                         >
-                            Get OTP
+                            {loading ? (
+                                <ClipLoader color={"#ffffff"} loading={true} size={20} />
+                            ) : (
+                                "Get OTP"
+                            )}
                         </button>
                     </div>
                     <div className="relative">
@@ -180,10 +193,15 @@ export default function ForgotPass() {
                     </div>
                     <div className="w-full flex flex-col my-4">
                         <button
-                            className="bg-black text-white w-full rounded-md p-4 text-center flex items-center justify-center my-2 hover:bg-black/90"
+                            className={`bg-black text-white w-full rounded-md p-4 text-center flex items-center justify-center my-2 hover:bg-black/90 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                             onClick={changepass}
+                            disabled={loading} // Disable button while loading
                         >
-                            Change Password
+                            {loading ? (
+                                <ClipLoader color={"#ffffff"} loading={true} size={20} />
+                            ) : (
+                                "Change Password"
+                            )}
                         </button>
                     </div>
                     <div className="w-full flex items-center justify-between">

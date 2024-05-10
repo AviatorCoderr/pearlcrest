@@ -34,6 +34,8 @@ export default function Dashboardstatsgrid() {
 
     getIncome();
     getExp();
+    console.log(income)
+    console.log(exp)
   }, []);
 
   const incomeoverexp = income[0] + income[1] - exp[0] - exp[1];
