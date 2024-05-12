@@ -22,13 +22,13 @@ export default function Header() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(new Date());
-    }, 1000); // Update every second
+    }, 1000); 
 
     return () => clearInterval(intervalId);
   }, []);
   const dayOfWeek = currentTime.toLocaleDateString('en-US', { weekday: 'long' });
   const time = currentTime.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour12: true, hour: 'numeric', minute: 'numeric', second: 'numeric'});
-  const date = currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata', day: 'numeric'});
+  const date = currentTime.toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short'});
   const handleLogout = () => {
     axios.get("/api/v1/users/logout-user", {
       withCredentials: true

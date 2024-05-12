@@ -27,6 +27,7 @@ import paymentRouter from "./routes/payment.router.js"
 import maidRouter from "./routes/maid.routes.js"
 import demandRouter from "./routes/paydemand.routes.js"
 import reviewRouter from "./routes/review.routes.js"
+import bookingRouter from "./routes/facilityreservation.routes.js"
 // routes declaration
 app.use("/api/v1/users", flatRouter)
 app.use("/api/v1/owners", ownerRouter)
@@ -39,6 +40,7 @@ app.use("/api/v1/payment", paymentRouter)
 app.use("/api/v1/maid", maidRouter)
 app.use("/api/v1/demand", demandRouter)
 app.use("/api/v1/review", reviewRouter)
+app.use("/api/v1/booking", bookingRouter)
 app.use("/api/v1/getkey", (req, res) =>
     res.status(200).json({key: process.env.RAZORPAY_API_KEY})
 )

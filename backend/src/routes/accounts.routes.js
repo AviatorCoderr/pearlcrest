@@ -1,6 +1,6 @@
 import {Router} from "express"
 const router = Router();
-import { addExpenditure, addIncomeByAdmin, addTransaction, addTransactionByAdmin, cashbook, getAllMaintenanceRecord, getExpenditureStatements, getIncomeStatements, getMaintenanceRecord, getTotalExpenditure, getTotalIncome, getTransaction, getTransaction5, incomeexpaccount, sendEmail } from "../controllers/accounts.controller.js";
+import { addExpenditure, addIncomeByAdmin, addTransaction, addTransactionByAdmin, cashbook, generatedQr, getAllMaintenanceRecord, getExpenditureStatements, getIncomeStatements, getMaintenanceRecord, getTotalExpenditure, getTotalIncome, getTransaction, getTransaction5, incomeexpaccount, sendEmail } from "../controllers/accounts.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js"
 import { upload } from "../middlewares/multer.middleware.js"
 router.route("/add-transaction").post(verifyJWT, addTransaction)
@@ -18,4 +18,5 @@ router.route("/get-income-exp-record").get(verifyJWT, incomeexpaccount)
 router.route("/get-books").post(verifyJWT, cashbook)
 router.route("/get-all-record").get(verifyJWT, getAllMaintenanceRecord)
 router.route("/sendrecieptmail").post(upload.single('receipt'), sendEmail)
+router.route("/generate-qr").post(verifyJWT, generatedQr)
 export default router

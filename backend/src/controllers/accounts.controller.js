@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asynchandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import Transaction from "../models/transactions.model.js";
+import UnTransaction from "../models/transactionUnverified.models.js"
 import Income from "../models/income.model.js";
 import Maintenance from "../models/maintenance.model.js"
 import mongoose from "mongoose";
@@ -10,6 +11,9 @@ import Expenditure from "../models/expenditures.model.js";
 import { Owner } from "../models/owners.model.js";
 import { Renter } from "../models/renters.model.js";
 import nodemailer from "nodemailer"
+import QRcode from "qrcode"
+
+//utilities like send mail, generate qr etc
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   host: 'smtp.gmail.com',
@@ -60,212 +64,18 @@ const sendEmail = asyncHandler(async(req, res) => {
     console.log(error)
   }
 })
-const addTransaction = asyncHandler(async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
+const generatedQr = asyncHandler(async(req, res) => {
   try {
-    const { mode, purpose, amount, months, transactionId } = req.body;
-    if(!mode || !purpose || !amount || !months || !transactionId) 
-      throw new ApiError(400, "One or More fields are missing")
-    const flatid = req?.flat._id.toString();
-    const trans = await Transaction.create(
-      [{
-        flat: flatid,
-        mode,
-        purpose,
-        amount,
-        createdAt: new Date(),
-        date: new Date(),
-        months,
-        transactionId
-      },],
-      { session: session }
-    );
-    const incomerecord = await Income.create(
-      [{
-        flat: flatid,
-        mode,
-        purpose,
-        amount,
-        createdAt: new Date(),
-      },],
-      { session: session }
-    );
-    if(purpose==="Maintenance"){
-      const maintenanceRecord = await Maintenance.findOne(flatid);
-      const monthsPaid = maintenanceRecord.months
-      console.log(monthsPaid)
-      months.forEach(newmonth => {
-        monthsPaid.push(newmonth)
-      });
-      const maintenance = await Maintenance.create(
-        [{
-          flat: flatid,
-          months: monthsPaid
-        },],
-        { session: session}
-      )
-    }
-    await session.commitTransaction();
-    res.status(201).json(
-      new ApiResponse(200, { trans, incomerecord }, "transaction and income added successfully")
-    );
+    const {amount} = req.body
+    const qrcodeUrl = `upi://pay?pa=${process.env.ACCOUNT_NUM}@${process.env.IFSC_CODE}.ifsc.npci&pn=${process.env.PN}&am=${amount}`
+    const qrCodeDataUri = await QRcode.toDataURL(qrcodeUrl)
+    res.send({qrCodeDataUri, qrcodeUrl})
   } catch (error) {
-    await session.abortTransaction();
-    throw new ApiError(500, error.message);
-  } finally {
-    session.endSession();
-  }
-});
-const addTransactionByAdmin = asyncHandler(async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    const { flatnumber, mode, purpose, amount, months, transactionId, date } = req.body;
-    if(!mode || !purpose || !amount || !months) 
-      throw new ApiError(400, "One or More fields are missing")
-    const flat = await Flat.findOne({ flatnumber });
-    if(!flat)
-      throw new ApiError(404, "Invalid Flatnumber/ Flat not exists")
-    const flatid = flat._id;
-    const trans = await Transaction.create(
-      [{
-        flat: flatid,
-        mode,
-        purpose,
-        amount,
-        createdAt: new Date(),
-        months,
-        transactionId,
-        date
-      }],
-      { session: session }
-    );
-    const incomerecord = await Income.create(
-      [{
-        flat: flatid,
-        mode,
-        purpose,
-        amount,
-        createdAt: date,
-      }],
-      { session: session }
-    );
-    if (purpose === "Maintenance") {
-      const maintenanceRecord = await Maintenance.findOne({ flat: flatid });
-      let maintenance;
-      if (!maintenanceRecord) {
-        maintenance = await Maintenance.create(
-          [{
-            flat: flatid,
-            months
-          }],
-          { session: session }
-        );
-      } else {
-        const monthsPaid = [...maintenanceRecord.months, ...months];
-        maintenance = await Maintenance.updateOne(
-          { flat: flatid },
-          {
-            $set: { months: monthsPaid }
-          },
-          { session: session }
-        );
-      }
-    }
-    await session.commitTransaction();
-    res.status(201).json(
-      new ApiResponse(200, { trans, incomerecord }, "Transaction and income added successfully")
-    );
-  } catch (error) {
-    await session.abortTransaction();
-    console.error(error);
-    throw new ApiError(error.statusCode, error.message)
-  } finally {
-    session.endSession();
-  }
-});
-const addIncomeByAdmin = asyncHandler(async (req, res) => {
-  const { mode, purpose, amount } = req.body;
-  const flatnumber = "PCS";
-  const flat = await Flat.findOne({ flatnumber });
-  const flatid = flat._id;
-
-  if (purpose === "Cash withdrawal" || purpose === "Cash Deposit") {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    try {
-      const incomeMode = purpose === "Cash withdrawal" ? "cash" : "bank";
-      const expenseMode = purpose === "Cash withdrawal" ? "bank" : "cash";
-
-      const income = await Income.create([{
-        flat: flatid,
-        mode: incomeMode,
-        purpose,
-        amount,
-        createdAt: new Date() 
-      }],
-        { session: session }
-      );
-
-      const expense = await Expenditure.create([{
-        mode: expenseMode,
-        amount,
-        department: "Contra Entry",
-        createdAt: new Date(),
-      }],
-        { session: session }
-      );
-
-      await session.commitTransaction();
-      res.status(201).json(
-        new ApiResponse(200, { expense, income }, "Income and expense added successfully")
-      );
-    } catch (error) {
-      session.abortTransaction();
-      console.error(error);
-      res.status(500).json(new ApiResponse(500, null, "Failed to add income and expense"));
-    } finally {
-      session.endSession();
-    }
-  } else {
-    try {
-      const income = await Income.create({
-        flat: "admin",
-        mode,
-        purpose,
-        amount,
-        createdAt: new Date()
-      });
-      res.status(201).json(new ApiResponse(200, { income }, "Income added successfully"));
-    } catch (error) {
-      console.error(error);
-      res.status(500).json(new ApiResponse(500, null, "Failed to add income"));
-    }
-  }
-});
-const addExpenditure = asyncHandler(async(req, res) => {
-  try {
-    const { mode, amount, executive_name, department, partyname, partycontact, description } = req.body;
-    const expense = await Expenditure.create(
-      {
-        mode,
-        amount,
-        executive_name,
-        department,
-        partyname,
-        partycontact,
-        description,
-        createdAt: new Date(),
-      }
-    );
-    res.status(201).json(
-      new ApiResponse(200, { expense }, "expense added successfully")
-    );
-  } catch (error) {
-    throw new ApiError(500, error.message);
+    console.log("error generating qr code");
   }
 })
+
+// generation of reports
 const getTransaction = asyncHandler(async(req, res) => {
   const flatid = req?.flat._id
   const data = await Transaction.find({flat: flatid})
@@ -456,6 +266,219 @@ const cashbook = asyncHandler(async(req, res) => {
   console.log(cashexpense)
   res.status(200).json(new ApiResponse(200, {cashincomeState, cashexpense}, "cashbook data received"))
 })
+
+// add into accounts
+const addTransaction = asyncHandler(async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const { mode, purpose, amount, months, transactionId } = req.body;
+    if(!mode || !purpose || !amount || !months || !transactionId) 
+      throw new ApiError(400, "One or More fields are missing")
+    const flatid = req?.flat._id.toString();
+    const trans = await Transaction.create(
+      [{
+        flat: flatid,
+        mode,
+        purpose,
+        amount,
+        createdAt: new Date(),
+        date: new Date(),
+        months,
+        transactionId
+      },],
+      { session: session }
+    );
+    const incomerecord = await Income.create(
+      [{
+        flat: flatid,
+        transaction: trans?._id,
+        mode,
+        purpose,
+        amount,
+        createdAt: new Date(),
+      },],
+      { session: session }
+    );
+    if(purpose==="MAINTENANCE"){
+      const maintenanceRecord = await Maintenance.findOne(flatid);
+      const monthsPaid = maintenanceRecord.months
+      console.log(monthsPaid)
+      months.forEach(newmonth => {
+        monthsPaid.push(newmonth)
+      });
+      const maintenance = await Maintenance.create(
+        [{
+          flat: flatid,
+          months: monthsPaid
+        },],
+        { session: session}
+      )
+    }
+    await session.commitTransaction();
+    res.status(201).json(
+      new ApiResponse(200, { trans, incomerecord }, "transaction and income added successfully")
+    );
+  } catch (error) {
+    await session.abortTransaction();
+    throw new ApiError(500, error.message);
+  } finally {
+    session.endSession();
+  }
+});
+const addTransactionByAdmin = asyncHandler(async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const { flatnumber, mode, purpose, amount, months, transactionId, date } = req.body;
+    if(!mode || !purpose || !amount || !months) 
+      throw new ApiError(400, "One or More fields are missing")
+    const flat = await Flat.findOne({ flatnumber });
+    if(!flat)
+      throw new ApiError(404, "Invalid Flatnumber/ Flat not exists")
+    const flatid = flat._id;
+    const trans = await Transaction.create(
+      [{
+        flat: flatid,
+        mode,
+        purpose,
+        amount,
+        createdAt: new Date(),
+        months,
+        transactionId,
+        date
+      }],
+      { session: session }
+    );
+    const incomerecord = await Income.create(
+      [{
+        flat: flatid,
+        transaction: trans._id,
+        mode,
+        purpose,
+        amount,
+        createdAt: date,
+      }],
+      { session: session }
+    );
+    if (purpose === "MAINTENANCE") {
+      const maintenanceRecord = await Maintenance.findOne({ flat: flatid });
+      let maintenance;
+      if (!maintenanceRecord) {
+        maintenance = await Maintenance.create(
+          [{
+            flat: flatid,
+            months
+          }],
+          { session: session }
+        );
+      } else {
+        const monthsPaid = [...maintenanceRecord.months, ...months];
+        maintenance = await Maintenance.updateOne(
+          { flat: flatid },
+          {
+            $set: { months: monthsPaid }
+          },
+          { session: session }
+        );
+      }
+    }
+    await session.commitTransaction();
+    res.status(201).json(
+      new ApiResponse(200, { trans, incomerecord }, "Transaction and income added successfully")
+    );
+  } catch (error) {
+    await session.abortTransaction();
+    console.error(error);
+    throw new ApiError(error.statusCode, error.message)
+  } finally {
+    session.endSession();
+  }
+});
+const addIncomeByAdmin = asyncHandler(async (req, res) => {
+  const { mode, purpose, amount } = req.body;
+  const flatnumber = "PCS";
+  const flat = await Flat.findOne({ flatnumber });
+  const flatid = flat._id;
+
+  if (purpose === "CASH WITHDRAWAL" || purpose === "CASH DEPOSIT") {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const incomeMode = purpose === "CASH WITHDRAWAL" ? "cash" : "bank";
+      const expenseMode = purpose === "CASH WITHDRAWAL" ? "bank" : "cash";
+
+      const income = await Income.create([{
+        flat: flatid,
+        mode: incomeMode,
+        purpose,
+        amount,
+        createdAt: new Date() 
+      }],
+        { session: session }
+      );
+
+      const expense = await Expenditure.create([{
+        mode: expenseMode,
+        amount,
+        department: "Contra Entry",
+        createdAt: new Date(),
+      }],
+        { session: session }
+      );
+
+      await session.commitTransaction();
+      res.status(201).json(
+        new ApiResponse(200, { expense, income }, "Income and expense added successfully")
+      );
+    } catch (error) {
+      session.abortTransaction();
+      console.error(error);
+      res.status(500).json(new ApiResponse(500, null, "Failed to add income and expense"));
+    } finally {
+      session.endSession();
+    }
+  } else {
+    try {
+      const income = await Income.create({
+        flat: "admin",
+        mode,
+        purpose,
+        amount,
+        createdAt: new Date()
+      });
+      res.status(201).json(new ApiResponse(200, { income }, "Income added successfully"));
+    } catch (error) {
+      console.error(error);
+      res.status(500).json(new ApiResponse(500, null, "Failed to add income"));
+    }
+  }
+});
+const addExpenditure = asyncHandler(async(req, res) => {
+  try {
+    const { mode, amount, executive_name, department, partyname, partycontact, description } = req.body;
+    const expense = await Expenditure.create(
+      {
+        mode,
+        amount,
+        executive_name,
+        department,
+        partyname,
+        partycontact,
+        description,
+        createdAt: new Date(),
+      }
+    );
+    res.status(201).json(
+      new ApiResponse(200, { expense }, "expense added successfully")
+    );
+  } catch (error) {
+    throw new ApiError(500, error.message);
+  }
+})
+
+// exports
 export { addTransaction, addTransactionByAdmin, addIncomeByAdmin, 
   addExpenditure, getTransaction, getTotalIncome, getTotalExpenditure,
-getCashBalance, getTransaction5, getMaintenanceRecord, getIncomeStatements, getAllMaintenanceRecord, getExpenditureStatements, incomeexpaccount, cashbook, sendEmail};
+getCashBalance, getTransaction5, getMaintenanceRecord, getIncomeStatements, getAllMaintenanceRecord, getExpenditureStatements, incomeexpaccount, cashbook, sendEmail
+, generatedQr};

@@ -1,6 +1,6 @@
 import { RiDashboardLine } from 'react-icons/ri';
-import { FaExchangeAlt, FaFileAlt, FaMoneyBillAlt, FaBalanceScale, FaMoneyCheckAlt, FaHandHoldingUsd, FaBook, FaWarehouse, FaUserFriends } from 'react-icons/fa';
-import { MdSecurity, MdLocalParking } from 'react-icons/md';
+import { FaExchangeAlt, FaFileAlt, FaMoneyBillAlt, FaBalanceScale, FaMoneyCheckAlt, FaHandHoldingUsd, FaBook, FaWarehouse, FaUserFriends, FaPrayingHands, FaCross } from 'react-icons/fa';
+import { MdSecurity, MdLocalParking, MdCloseFullscreen, MdCancel } from 'react-icons/md';
 
 export const admin_navi = [
     {
@@ -10,16 +10,40 @@ export const admin_navi = [
         icon: RiDashboardLine
     },
     {
+        key: 'add-income',
+        label: 'Add Income',
+        path: '/db/addincome',
+        icon: FaHandHoldingUsd
+    },
+    {
+        key: 'addpv',
+        label: 'Issue Payment Voucher',
+        path: '/db/addpv',
+        icon: FaMoneyCheckAlt
+    },
+    {
+        key: 'demands',
+        label: 'Raise Demand',
+        path: '/db/raise-demand',
+        icon: FaPrayingHands
+    },
+    {
+        key: 'facility-reservation',
+        label: 'Booking Request',
+        path: '/db/hall-booking',
+        icon: MdSecurity
+    },
+    {
+        key: 'booking-details',
+        label: 'Booking Details',
+        path: '/db/booking-details',
+        icon: MdCancel
+    },
+    {
         key: 'flat-details',
         label: 'Flat Details',
         path: '/db/flat-details-change-perm',
         icon: FaExchangeAlt
-    },
-    {
-        key: 'facility-reservation',
-        label: 'Facility Reservation',
-        path: '/db/facility-reservation-booking-account',
-        icon: MdSecurity
     },
     {
         key: 'income-details',
@@ -40,12 +64,6 @@ export const admin_navi = [
         icon: FaBalanceScale
     },
     {
-        key: 'add-income',
-        label: 'Add Income',
-        path: '/db/addincome',
-        icon: FaHandHoldingUsd
-    },
-    {
         key: 'cashbook',
         label: 'Cashbook',
         path: '/db/cashbook',
@@ -62,12 +80,6 @@ export const admin_navi = [
         label: 'Maintenance',
         path: '/db/maintenance-tracking',
         icon: FaWarehouse
-    },
-    {
-        key: 'addpv',
-        label: 'Payment Voucher',
-        path: '/db/addpv',
-        icon: FaMoneyCheckAlt
     },
     {
         key: 'findvehicle',

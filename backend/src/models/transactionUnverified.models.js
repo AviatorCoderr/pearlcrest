@@ -1,13 +1,14 @@
 import mongoose from "mongoose";
 
-const incomeSchema = new mongoose.Schema({
+const transactionSchema = new mongoose.Schema({
     flat: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Flat'
     },
-    transaction: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Transaction'
+    transactionId: {
+        type: String,
+        trim: true,
+        uppercase: true
     },
     mode: {
         type: String,
@@ -15,22 +16,27 @@ const incomeSchema = new mongoose.Schema({
     },
     purpose: {
         type: String,
-        required: true,
         trim: true,
         uppercase: true
     },
     amount: {
         type: Number,
-        required: true,
         min: 0
+    },
+    date: {
+        type: Date,
+        default: Date.now()
     },
     createdAt: {
         type: Date,
-        required: true,
         default: Date.now
-    }
+    },
+    months: [{
+        type: String,
+        required: true
+    }]
 });
 
-const Income = mongoose.model("Income", incomeSchema);
+const UnTransaction = mongoose.model("UnTransaction", transactionSchema);
 
-export default Income;
+export default UnTransaction;

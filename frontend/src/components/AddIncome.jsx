@@ -250,7 +250,7 @@ export default function AddIncome() {
           <option value='Cash Deposit'>Cash Deposit</option>
           <option value='Bank Interest'>Bank Interest</option>
         </select>
-        {purpose !== "Cash withdrawal" && purpose !== "Cash Deposit" && purpose !== "Bank Interest" ?
+        {purpose !== "CASH WITHDRAWAL" && purpose !== "CASH DEPOSIT" && purpose !== "BANK INTEREST" ?
           <input
             className='p-2 rounded-sm shadow-lg border border-black'
             type='text'

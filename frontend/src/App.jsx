@@ -26,6 +26,9 @@ import MaidLog from "./components/MaidLogs";
 import Owners from "./components/Owners";
 import Renters from "./components/Renters";
 import ForgotPass from "./components/ForgotPass";
+import RaiseDemand from "./components/RaiseDemand.";
+import HallBooking from "./components/HallBooking";
+import BookingDetails from "./components/BookingDetails";
 
 function App() {
   return (
@@ -62,6 +65,9 @@ function App() {
             <Route path="findvehicle" element={<FindVehicle />} />
             <Route path="owner-details" element={<Owners />} />
             <Route path="renter-details" element={<Renters />} />
+            <Route path="raise-demand" element={<RaiseDemand />} />
+            <Route path="hall-booking" element={<HallBooking />} />
+            <Route path="booking-details" element={<BookingDetails />} />
           </Route>
         </Routes>
       </Router>

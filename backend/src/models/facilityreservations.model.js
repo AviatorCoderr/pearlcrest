@@ -1,25 +1,31 @@
 import mongoose from "mongoose";
 
 const facilityReservationSchema = new mongoose.Schema({
-    flatnumber: {
-        type: String,
-        required: true
+    flat: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Flat'
     },
+    transaction: { type: mongoose.Schema.Types.ObjectId, ref: 'Transaction' },
+    transactionUn: { type: mongoose.Schema.Types.ObjectId, ref: 'UnTransaction' },
     purpose: {
         type: String,
-        required: true,
-        trim: true
+        trim: true,
+        uppercase: true
     },
-    from_date: {
-        type: Date,
-        required: true
+    type: {
+        type: String,
+        trim: true,
+        uppercase: true
     },
-    to_date: {
-        type: Date,
-        required: true
+    dates: [{
+        type: Date
+    }],
+    verified: {
+        type: Boolean,
+        default: false
     }
 });
 
-const FacilityReservation = mongoose.model("FacilityReservation", facilityReservationSchema);
+const Facility = mongoose.model("Facility", facilityReservationSchema);
 
-export default FacilityReservation;
+export default Facility;
