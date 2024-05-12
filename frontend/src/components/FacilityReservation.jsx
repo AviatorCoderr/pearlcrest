@@ -15,7 +15,25 @@ export default function FacilityReservation() {
     const [transactionId, setTransactionId] = useState(null);
     const [qrlink, setQrLink] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [checkout, setCheckout] = useState(false)
+    const [checkout, setCheckout] = useState(false);
+    const [track, setTrack] = useState([]);
+
+    useEffect(() => {
+        axios.get("/api/v1/booking/trackdates")
+        .then(response => {
+            const formattedTrackDates = response.data.data.map(date => {
+                const trackDate = new Date(date);
+                const formattedDate = `${trackDate.getMonth() + 1}/${trackDate.getDate()}/${trackDate.getFullYear()}`;
+                return new Date(formattedDate);
+            });
+            setTrack(formattedTrackDates);
+        })
+        .catch(error => {
+            console.log(error.message)
+        })
+    }, [])
+    
+
     useEffect(() => {
         const fetchAmountPerDay = async () => {
             const response = await axios.get("/api/v1/demand/getpaydemand");
@@ -40,7 +58,7 @@ export default function FacilityReservation() {
                 title: 'Oops...',
                 text: 'Please select facility, purpose, and at least one date before checkout!',
             })
-        }else{
+        } else {
             const response = await axios.post("/api/v1/account/generate-qr", { amount });
             setQrCodeDataUri(response.data.qrCodeDataUri);
             setQrLink(response.data.qrcodeUrl);
@@ -57,7 +75,7 @@ export default function FacilityReservation() {
             Number of Days: ${selectedDates.length}<br/>
             Payable Amount: ₹${amount}<br/>
         `;
-    
+
         Swal.fire({
             title: 'Please Review Your Booking Details',
             html: confirmationDetails,
@@ -116,6 +134,25 @@ export default function FacilityReservation() {
         setCheckout(!checkout)
     };
 
+    const filterDates = (date) => {
+        const formattedDate = date.toLocaleDateString();
+        const formattedTrackDates = track.map(trackDate => trackDate.toLocaleDateString());
+        return !formattedTrackDates.includes(formattedDate);
+    };
+
+    const dayClassName = (date) => {
+        const formattedDate = date.toLocaleDateString();
+        const isSelected = selectedDates.some(selectedDate => new Date(selectedDate).toLocaleDateString() === formattedDate);
+        const isTrackDate = track.some(trackDate => trackDate.toLocaleDateString() === formattedDate);
+
+        if (isSelected) {
+            return "selected";
+        } else if (isTrackDate) {
+            return "track-date";
+        }
+        return "";
+    };
+
     return (
         <div className="container mx-auto px-4 py-8">
             <h2 className="text-3xl font-semibold mb-8">Book Your Facility</h2>
@@ -152,7 +189,8 @@ export default function FacilityReservation() {
                         onChange={(date) => handleDateClick(date)}
                         inline
                         minDate={new Date()}
-                        highlightDates={selectedDates.map((dateString) => new Date(dateString))}
+                        filterDate={filterDates}
+                        dayClassName={dayClassName}
                     />
                 </div>
                 <div className='m-5'>

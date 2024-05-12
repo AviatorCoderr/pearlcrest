@@ -345,4 +345,14 @@ const cancelBooking = asyncHandler(async(req, res) => {
     }
 });
 
-export {addresbyFlat, deleteres, updateres, getres, cancelBooking, getAllBooking}
+const trackdates = asyncHandler(async(req, res) => {
+    const response = await Facility.find()
+    let dates = []
+    response.map((rec, index) => {
+        const bookdate = rec.dates
+        console.log(bookdate)
+        dates = [...dates, ...bookdate]
+    })
+    res.status(200).json(new ApiResponse(200, dates, "dates returned"))
+})
+export {addresbyFlat, deleteres, updateres, getres, cancelBooking, getAllBooking, trackdates}

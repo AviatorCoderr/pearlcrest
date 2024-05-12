@@ -181,3 +181,12 @@ input[type=number] {
   background-color: #3dcc4a; /* Example highlighted date color */
   color: #fff; /* Example highlighted date text color */
 }
+
+/* CSS */
+.selected {
+  background-color: lightgreen !important; /* Change background color for selected dates */
+}
+
+.track-date {
+  background-color: lightcoral !important; /* Change background color for track dates */
+}
