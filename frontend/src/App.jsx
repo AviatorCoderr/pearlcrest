@@ -29,6 +29,7 @@ import ForgotPass from "./components/ForgotPass";
 import RaiseDemand from "./components/RaiseDemand.";
 import HallBooking from "./components/HallBooking";
 import BookingDetails from "./components/BookingDetails";
+import PaymentApproval from "./components/PaymentApproval";
 
 function App() {
   return (
@@ -68,6 +69,7 @@ function App() {
             <Route path="raise-demand" element={<RaiseDemand />} />
             <Route path="hall-booking" element={<HallBooking />} />
             <Route path="booking-details" element={<BookingDetails />} />
+            <Route path="payment-approval" element={<PaymentApproval />} />
           </Route>
         </Routes>
       </Router>

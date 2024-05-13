@@ -1,6 +1,6 @@
 import { RiDashboardLine } from 'react-icons/ri';
 import { FaExchangeAlt, FaFileAlt, FaMoneyBillAlt, FaBalanceScale, FaMoneyCheckAlt, FaHandHoldingUsd, FaBook, FaWarehouse, FaUserFriends, FaPrayingHands, FaCross } from 'react-icons/fa';
-import { MdSecurity, MdLocalParking, MdCloseFullscreen, MdCancel } from 'react-icons/md';
+import { MdSecurity, MdLocalParking, MdCloseFullscreen, MdCancel, MdCheck } from 'react-icons/md';
 
 export const admin_navi = [
     {
@@ -35,9 +35,15 @@ export const admin_navi = [
     },
     {
         key: 'booking-details',
-        label: 'Booking Details',
+        label: 'Booking Cancellation',
         path: '/db/booking-details',
         icon: MdCancel
+    },
+    {
+        key: 'approve-pay',
+        label: 'Approve Payments',
+        path: '/db/payment-approval',
+        icon: MdCheck
     },
     {
         key: 'flat-details',

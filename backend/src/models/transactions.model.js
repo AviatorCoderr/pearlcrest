@@ -8,7 +8,8 @@ const transactionSchema = new mongoose.Schema({
     transactionId: {
         type: String,
         trim: true,
-        uppercase: true
+        uppercase: true,
+        unique: true
     },
     mode: {
         type: String,

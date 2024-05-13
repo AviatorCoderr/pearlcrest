@@ -27,6 +27,7 @@ const transporter = nodemailer.createTransport({
 const sendEmail = asyncHandler(async(req, res) => {
   try {
     const {flatnumber, trans_id} = req.body;
+    console.log(flatnumber)
     const file = req?.file?.path
     console.log(file)
     if(!file)
@@ -60,6 +61,51 @@ const sendEmail = asyncHandler(async(req, res) => {
         info,
         message: "email sent",
     })
+  } catch (error) {
+    console.log(error)
+  }
+})
+const sendFailureEmail = asyncHandler(async(trans) => {
+  console.log("hello")
+  const flatid = trans?.flat
+  const owner = await Owner.findOne({flat: {$in: flatid}})
+  const renter = await Renter.findOne({flat: {$in: flatid}})
+  const owneremail = owner?.email
+  const renteremail = renter?.email
+  const transactionId = trans?.transactionId
+  console.log(owneremail, renteremail)
+  const date = (trans?.createdAt)?.toLocaleString("en-IN", {
+      weekday: "long", 
+      year: "numeric", 
+      month: "long",
+      day: "numeric", 
+      hour: "2-digit", 
+      minute: "2-digit", 
+      second: "2-digit"
+  });
+  const amount = trans?.amount
+  try {
+      const mailOptions = {
+          from: '"Pearl Crest Society" <pearlcrestsociety@gmail.com>',
+          to: [owneremail, renteremail],
+          subject: "Payment Failed",
+          html: `
+              <h3>Notification from Mr. Manish, Treasurer of Pearl Crest Flat Owner's Society</h3>
+              <p>Dear Resident,</p>
+              <p>We extend our gratitude for your trust in the committee.</p>
+              <p>It is with regret that we inform you that your recent payment with transaction Id ${transactionId} on ${date} of amount ${amount} has been cancelled due to non-receipt of payment.</p>
+              <p>If your payment was successfully processed, we kindly request you to revisit the society payments section on our website and resubmit the necessary details, including your transaction ID.</p>
+              <h2>Note:</h2>
+              <p>Providing the correct Transaction ID is crucial to avoid cancellation of your request.</p>
+              <p>Any attempt to provide false payment data will be considered a serious offense by the committee.</p>
+              <p>We appreciate your understanding and cooperation in this matter.</p>
+              <p>Warm regards,</p>
+              <p>Pearl Crest Flat Owner's Society</p>
+              <p>Mr. Manish, Treasurer</p>
+          `
+      };
+    const info = await transporter.sendMail(mailOptions)
+    console.log(info)
   } catch (error) {
     console.log(error)
   }
@@ -162,9 +208,10 @@ const getTransaction5 = asyncHandler(async(req, res) => {
 });
 const getMaintenanceRecord = asyncHandler(async(req, res) => {
   const flatid = req?.flat._id;
-  const record = await Maintenance.findOne({flat: flatid});
+  let record = await Maintenance.findOne({flat: flatid});
+  if(!record) throw new ApiError(404, "No records found")
   res.status(200)
-  .json(new ApiResponse(200, record.months, "Data fetched successfully"))
+  .json(new ApiResponse(200, record?.months, "Data fetched successfully"))
 })
 const getAllMaintenanceRecord = asyncHandler(async(req, res) => {
   const mainrecord = await Maintenance.find().populate("flat");
@@ -266,7 +313,11 @@ const cashbook = asyncHandler(async(req, res) => {
   console.log(cashexpense)
   res.status(200).json(new ApiResponse(200, {cashincomeState, cashexpense}, "cashbook data received"))
 })
-
+const getUnTrans = asyncHandler(async(req, res) => {
+  const response = await UnTransaction.find({ purpose: {$ne: "FACILITY RESERVATION"}}).populate('flat')
+  if(!response) throw new ApiError(404, "All transactions are either verified or not exists")
+  res.status(200).json(new ApiResponse(200, response, "all unverified trans returned"))
+})
 // add into accounts
 const addTransaction = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
@@ -476,9 +527,112 @@ const addExpenditure = asyncHandler(async(req, res) => {
     throw new ApiError(500, error.message);
   }
 })
-
+const addUnVerfiedTransaction = asyncHandler(async(req, res) => {
+  const {transactionId, amount, months, purpose} = req.body
+  if(!transactionId || !amount || !purpose) throw new ApiError(400, "One or more fields are missing")
+  const flatid = req?.flat?._id
+  if(!flatid) throw new ApiError(400, "Unauthorised access. Please login")
+  const response = await UnTransaction.create({
+    flat: flatid,
+    purpose,
+    amount,
+    mode: "BANK",
+    months,
+    transactionId
+  })
+  res.status(200).json(new ApiResponse(201, response, "Transaction unverified added"))
+})
+const Approvepayment = asyncHandler(async (req, res) => {
+  console.log("i am in")
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const { flatnumber, mode, purpose, amount, months, transactionId, date, untransid } = req.body;
+    if(!mode || !purpose || !amount || !months) 
+      throw new ApiError(400, "One or More fields are missing")
+    const flat = await Flat.findOne({ flatnumber });
+    if(!flat)
+      throw new ApiError(404, "Invalid Flatnumber/ Flat not exists")
+    const flatid = flat._id;
+    const trans = await Transaction.create(
+      [{
+        flat: flatid,
+        mode,
+        purpose,
+        amount,
+        createdAt: new Date(),
+        months,
+        transactionId,
+        date
+      }],
+      { session: session }
+    );
+    const incomerecord = await Income.create(
+      [{
+        flat: flatid,
+        transaction: trans._id,
+        mode,
+        purpose,
+        amount,
+        createdAt: date,
+      }],
+      { session: session }
+    );
+    if (purpose === "MAINTENANCE") {
+      const maintenanceRecord = await Maintenance.findOne({ flat: flatid });
+      let maintenance;
+      if (!maintenanceRecord) {
+        maintenance = await Maintenance.create(
+          [{
+            flat: flatid,
+            months
+          }],
+          { session: session }
+        );
+      } else {
+        const monthsPaid = [...maintenanceRecord.months, ...months];
+        maintenance = await Maintenance.updateOne(
+          { flat: flatid },
+          {
+            $set: { months: monthsPaid }
+          },
+          { session: session }
+        );
+      }
+    }
+    console.log(untransid)
+    await UnTransaction.deleteOne({_id: untransid})
+    await session.commitTransaction();
+    res.status(201).json(
+      new ApiResponse(200, { trans, incomerecord }, "Transaction and income added successfully")
+    );
+  } catch (error) {
+    await session.abortTransaction();
+    console.error(error);
+    throw new ApiError(error.statusCode, error.message)
+  } finally {
+    session.endSession();
+  }
+});
+const denyPayment = asyncHandler(async(req, res) => {
+  const session = await mongoose.startSession()
+  session.startTransaction()
+  try {
+    const {untransid} = req.body
+    console.log(untransid)
+    const trans = await UnTransaction.findByIdAndDelete({_id: untransid}, {session: session})
+    await sendFailureEmail(trans)
+    await session.commitTransaction()
+    res.status(200).json(new ApiResponse(200, "Denied successfully"))
+  } catch (error) {
+    await session.abortTransaction()
+    throw new ApiError(500, "Something went wrong")
+  } finally {
+    await session.endSession()
+  }
+})
 // exports
 export { addTransaction, addTransactionByAdmin, addIncomeByAdmin, 
   addExpenditure, getTransaction, getTotalIncome, getTotalExpenditure,
 getCashBalance, getTransaction5, getMaintenanceRecord, getIncomeStatements, getAllMaintenanceRecord, getExpenditureStatements, incomeexpaccount, cashbook, sendEmail
-, generatedQr};
+, generatedQr, addUnVerfiedTransaction, getUnTrans, Approvepayment, denyPayment};

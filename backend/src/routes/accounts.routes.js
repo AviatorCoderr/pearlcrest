@@ -1,10 +1,10 @@
 import {Router} from "express"
 const router = Router();
-import { addExpenditure, addIncomeByAdmin, addTransaction, addTransactionByAdmin, cashbook, generatedQr, getAllMaintenanceRecord, getExpenditureStatements, getIncomeStatements, getMaintenanceRecord, getTotalExpenditure, getTotalIncome, getTransaction, getTransaction5, incomeexpaccount, sendEmail } from "../controllers/accounts.controller.js";
+import { Approvepayment, addExpenditure, addIncomeByAdmin, addTransaction, addTransactionByAdmin, addUnVerfiedTransaction, cashbook, denyPayment, generatedQr, getAllMaintenanceRecord, getExpenditureStatements, getIncomeStatements, getMaintenanceRecord, getTotalExpenditure, getTotalIncome, getTransaction, getTransaction5, getUnTrans, incomeexpaccount, sendEmail } from "../controllers/accounts.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js"
 import { upload } from "../middlewares/multer.middleware.js"
 router.route("/add-transaction").post(verifyJWT, addTransaction)
-router.route("/add-admin-transaction").post(addTransactionByAdmin)
+router.route("/add-admin-transaction").post(verifyJWT, addTransactionByAdmin)
 router.route("/add-admin-income").post(addIncomeByAdmin)
 router.route("/add-expenditure").post(verifyJWT, addExpenditure)
 router.route("/get-transaction").get(verifyJWT, getTransaction)
@@ -19,4 +19,8 @@ router.route("/get-books").post(verifyJWT, cashbook)
 router.route("/get-all-record").get(verifyJWT, getAllMaintenanceRecord)
 router.route("/sendrecieptmail").post(upload.single('receipt'), sendEmail)
 router.route("/generate-qr").post(verifyJWT, generatedQr)
+router.route("/add-untrans").post(verifyJWT, addUnVerfiedTransaction)
+router.route("/get-untrans").get(verifyJWT, getUnTrans)
+router.route("/approve").post(verifyJWT, Approvepayment)
+router.route("/deny").post(verifyJWT, denyPayment)
 export default router
