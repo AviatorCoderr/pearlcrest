@@ -36,7 +36,7 @@ export default function Header() {
     .then(response => {
       console.log("Logout success:", response.data);
       localStorage.removeItem("user");
-      navigate("/log");
+      navigate("/");
     })
     .catch(error => {
       console.error("Logout error:", error.message);

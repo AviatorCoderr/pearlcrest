@@ -21,7 +21,6 @@ const LabeledInput = ({ value, label, onChange, editable }) => (
   </label>
 );
 
-
 export default function UserProfile() {
   const [owner, setOwner] = useState(null);
   const [renter, setRenter] = useState(null);

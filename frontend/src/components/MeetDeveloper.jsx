@@ -47,6 +47,7 @@ function Card(props) {
       </div>
       <div className="text-center p-2 text-2xl bg-neutral-100 text-black font-semibold">
         <p>{props.name}</p>
+        <p>CSE, BIT MESRA</p>
       </div>
       <div className="grid grid-cols-4 p-3 bg-black">
         <a className="m-auto p-2 text-2xl" href={props.insta_id}>
