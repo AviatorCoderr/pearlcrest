@@ -40,6 +40,20 @@ function Sidebar() {
     }
     else
     sidebarData = sidebar_det
+
+    const handleLogout = () => {
+        axios.get("/api/v1/users/logout-user", {
+          withCredentials: true
+        })
+        .then(response => {
+          console.log("Logout success:", response.data);
+          localStorage.removeItem("user");
+          navigate("/log");
+        })
+        .catch(error => {
+          console.error("Logout error:", error.message);
+        });
+      };
     return (
         <aside>
             <motion.div
@@ -56,7 +70,7 @@ function Sidebar() {
                     {sidebarData.map(ele => (
                         <Sidebarlink key={ele.key} ele={ele}/>
                     ))}
-                    <div className={classNames('text-red-500 mt-[2rem] cursor-pointer border-t border-neutral-700', linkclasses)}>
+                    <div onClick={() => handleLogout} className={classNames('text-red-500 mt-[2rem] cursor-pointer border-t border-neutral-700', linkclasses)}>
                         <span className="text-xl">
                             <HiOutlineLogout />
                         </span>

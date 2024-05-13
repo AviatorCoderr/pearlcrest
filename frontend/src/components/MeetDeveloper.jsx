@@ -14,7 +14,7 @@ const dev_details = [{
 }]
 function Meetdev() {
   return (
-    <div id="developersSection" className="m-3 mt-20 md:ml-10 bg-[url('/static/images/img-bg.jpg')]">
+    <div id="developersSection" className="m-3 mt-20 md:ml-10">
       <h2 className="p-2 text-5xl text-center md:text-left mb-5 md:text-6xl">
         Meet Developer
       </h2>
