@@ -135,8 +135,8 @@ export default function PaymentHistory() {
                                 <td className="border border-gray-300">{ele.purpose}</td>
                                 <td className="border border-gray-300">{ele.amount}</td>
                                 <td className="border border-gray-300">{ele.months.join(", ")}</td>
-                                <td className="border border-gray-300">{formatDate(ele.createdAt)}</td>
-                                <td className="border border-gray-300"><button className="bg-green-500 hover:bg-green-700 text-white font-bold m-1 px-4 py-1 rounded" onClick={() => jsPdfGenerator(ele._id, new Date(), user.flatnumber, ele.amount, formatDate(ele.createdAt), ele.months.join(", "), ele.purpose)}>Download Now</button></td>
+                                <td className="border border-gray-300">{formatDate(ele.date)}</td>
+                                <td className="border border-gray-300"><button className="bg-green-500 hover:bg-green-700 text-white font-bold m-1 px-4 py-1 rounded" onClick={() => jsPdfGenerator(ele._id, formatDate(ele.createdAt), user.flatnumber, ele.amount, formatDate(ele.date), ele.months.join(", "), ele.purpose)}>Download Now</button></td>
                             </tr>
                         ))}
                     </tbody>

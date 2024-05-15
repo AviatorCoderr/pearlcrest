@@ -283,7 +283,6 @@ const getExpenditureStatements = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, { ExpRecords, ExpHeads }, "Exp statements returned"));
 });
 const incomeexpaccount = asyncHandler(async(req, res) => {
-  console.log("hello")
   const recordincome = await Income.aggregate([
     {
         $group: {
@@ -454,20 +453,19 @@ const addIncomeByAdmin = asyncHandler(async (req, res) => {
   const flatnumber = "PCS";
   const flat = await Flat.findOne({ flatnumber });
   const flatid = flat._id;
-
+  const newdate = (date!=null)? date: (new Date())
   if (purpose === "CASH WITHDRAWAL" || purpose === "CASH DEPOSIT") {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
       const incomeMode = purpose === "CASH WITHDRAWAL" ? "cash" : "bank";
       const expenseMode = purpose === "CASH WITHDRAWAL" ? "bank" : "cash";
-      const date = (date==null)? date: (new Date())
       const income = await Income.create([{
         flat: flatid,
         mode: incomeMode,
         purpose,
         amount,
-        createdAt: date
+        createdAt: newdate
       }],
         { session: session }
       );
@@ -476,7 +474,7 @@ const addIncomeByAdmin = asyncHandler(async (req, res) => {
         mode: expenseMode,
         amount,
         department: "Contra Entry",
-        createdAt: new Date(),
+        createdAt: newdate,
       }],
         { session: session }
       );
@@ -499,7 +497,7 @@ const addIncomeByAdmin = asyncHandler(async (req, res) => {
         mode,
         purpose,
         amount,
-        createdAt: new Date()
+        createdAt: newdate
       });
       res.status(201).json(new ApiResponse(200, { income }, "Income added successfully"));
     } catch (error) {
@@ -510,7 +508,10 @@ const addIncomeByAdmin = asyncHandler(async (req, res) => {
 });
 const addExpenditure = asyncHandler(async(req, res) => {
   try {
-    const { mode, amount, executive_name, department, partyname, partycontact, description } = req.body;
+    const { mode, amount, executive_name, department, partyname, partycontact, description, date } = req.body;
+    console.log("hello", date)
+    const newdate = (date!=null) ? date: (new Date())
+    console.log(newdate)
     const expense = await Expenditure.create(
       {
         mode,
@@ -520,7 +521,7 @@ const addExpenditure = asyncHandler(async(req, res) => {
         partyname,
         partycontact,
         description,
-        createdAt: new Date(),
+        createdAt: newdate,
       }
     );
     res.status(201).json(

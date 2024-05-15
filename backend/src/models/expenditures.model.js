@@ -34,9 +34,9 @@ const expenditureSchema = new mongoose.Schema({
         trim: true
     },
     createdAt: {
-        type: Date,
+        type: String,
         required: true,
-        default: Date.now
+        default: new Date()
     }
 });
 

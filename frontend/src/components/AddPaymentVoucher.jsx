@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-const LabeledInput = ({ label, value, onChange }) => (
+const LabeledInput = ({ label, value, onChange, type }) => (
   <label className="relative m-2">
     <span className='absolute top-[-1.5rem] md:top-[-0.85rem] left-6 text-opacity-80 font-medium bg-neutral-100 px-2'>{label}</span>
     <input
       className='p-2 rounded-sm shadow-lg border border-black w-full'
-      type='text'
+      type={type}
       value={value}
       onChange={onChange}
     />
@@ -21,6 +21,7 @@ export default function AddPaymentVoucher() {
   const [partyname, setPartyname] = useState('');
   const [partycontact, setPartycontact] = useState('');
   const [description, setDescription] = useState('');
+  const [date, setDate] = useState(new Date()); // State for date input
   const user = JSON.parse(localStorage.getItem("user"));
 
   const handleSubmit = async () => {
@@ -72,6 +73,7 @@ export default function AddPaymentVoucher() {
             <p><strong>Description of Work:</strong> ${description}</p>
             <p><strong>Mode of Payment:</strong> ${mode}</p>
             <p><strong>Amount:</strong> ${amount}</p>
+            <p><strong>Date:</strong> ${date}</p>
           </div>`,
         icon: 'info',
         showCancelButton: true,
@@ -87,6 +89,7 @@ export default function AddPaymentVoucher() {
           partyname: partyname,
           partycontact: partycontact,
           description: description,
+          date
         }, { withCredentials: true })
           .then(response => {
             console.log('Expense added:', response.data);
@@ -103,6 +106,7 @@ export default function AddPaymentVoucher() {
               setPartyname('');
               setPartycontact('');
               setDescription('');
+              setDate('');
               window.location.reload()
             })
           })
@@ -193,6 +197,12 @@ export default function AddPaymentVoucher() {
           label='Amount'
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
+        />
+        <LabeledInput
+          label='Date'
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          type="date"
         />
       </div>
       <button

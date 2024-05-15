@@ -14,7 +14,7 @@ export default function AddIncome() {
   const [payDemand, setPayDemand] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showTransactionId, setShowTransactionId] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date()); // New state variable for date
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     const getDemand = async () => {
@@ -196,10 +196,10 @@ export default function AddIncome() {
           const transData = response?.data?.data?.trans[0];
           const receipt = jsPdfGenerator(
             transData?._id,
-            formatDate(transData?.date),
+            formatDate(transData?.createdAt),
             flatNumber,
             transData?.amount,
-            formatDate(transData?.createdAt),
+            formatDate(transData?.date),
             transData?.months.join(", "),
             transData?.purpose,
             transData?.mode,
