@@ -142,7 +142,7 @@ export default function IncomeStatement() {
                             <td className="px-6 py-4">{ele.purpose}</td>
                             <td className="px-6 py-4">{ele.mode}</td>
                             <td className="px-6 py-4">{ele.amount}</td>
-                            <td className="px-6 py-4">{formatDate(ele.date)}</td>
+                            <td className="px-6 py-4">{formatDate(ele.createdAt)}</td>
                         </tr>
                     ))}
                 </tbody>
