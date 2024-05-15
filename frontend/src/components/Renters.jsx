@@ -57,6 +57,7 @@ export default function Renters() {
                         <th className="px-6 py-3 text-center text-sm font-semibold">Flat Number</th>
                         <th className="px-6 py-3 text-center text-sm font-semibold">Name</th>
                         <th className="px-6 py-3 text-center text-sm font-semibold">Mobile</th>
+                        <th className="px-6 py-3 text-center text-sm font-semibold">Email</th>
                         <th className="px-6 py-3 text-center text-sm font-semibold">Aadhar</th>
                         <th className="px-6 py-3 text-center text-sm font-semibold">Spouse Name</th>
                         <th className="px-6 py-3 text-center text-sm font-semibold">Spouse Mobile</th>
@@ -69,6 +70,7 @@ export default function Renters() {
                             <td className="px-6 py-4 whitespace-nowrap">{renter?.flat?.flatnumber || "NA"}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{renter.name || "NA"}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{renter.mobile || "NA"}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{renter.email || "NA"}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{renter.aadhar || "NA"}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{renter.spouse_name || "NA"}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{renter.spouse_mobile || "NA"}</td>
