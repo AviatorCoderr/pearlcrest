@@ -57,6 +57,7 @@ export default function Owners() {
                         <th className="px-6 py-3 text-center text-sm font-semibold">Flat</th>
                         <th className="px-6 py-3 text-center text-sm font-semibold">Name</th>
                         <th className="px-6 py-3 text-center text-sm font-semibold">Mobile</th>
+                        <th className="px-6 py-3 text-center text-sm font-semibold">Email</th>
                         <th className="px-6 py-3 text-center text-sm font-semibold">Aadhar</th>
                         <th className="px-6 py-3 text-center text-sm font-semibold">Spouse Name</th>
                         <th className="px-6 py-3 text-center text-sm font-semibold">Spouse Mobile</th>
@@ -69,6 +70,7 @@ export default function Owners() {
                             <td className="px-6 py-4 whitespace-nowrap">{ele.flat ? ele.flat.map(flatObj => flatObj.flatnumber).join(', ') : "NA"}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{ele.name || "NA"}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{ele.mobile || "NA"}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{ele.email || "NA"}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{ele.aadhar || "NA"}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{ele.spouse_name || "NA"}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{ele.spouse_mobile || "NA"}</td>
