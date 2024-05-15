@@ -30,7 +30,7 @@ export default function AddIncome() {
 
   useEffect(() => {
     setShowTransactionId(
-      !["CASH WITHDRAWAL", "CASH DEPOSIT", "BANK INTEREST", "CLOSING BALANCE"].includes(purpose)
+      !["CASH WITHDRAWAL", "CASH DEPOSIT", "BANK INTEREST", "OPENING BALANCE"].includes(purpose)
     );
   }, [purpose]);
 
@@ -269,7 +269,7 @@ export default function AddIncome() {
           onChange={(e) => setPurpose(e.target.value.toUpperCase())}
         >
           <option value=''>Select Purpose</option>
-          <option value='CLOSING BALANCE'>CLOSING BALANCE</option>
+          <option value='OPENING BALANCE'>OPENING BALANCE</option>
           <option value='CASH WITHDRAWAL'>CASH WITHDRAWAL</option>
           <option value='CASH DEPOSIT'>CASH DEPOSIT</option>
           <option value='BANK INTEREST'>BANK INTEREST</option>
