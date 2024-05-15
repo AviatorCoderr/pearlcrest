@@ -23,7 +23,7 @@ const incomeSchema = new mongoose.Schema({
         min: 0
     },
     createdAt: {
-        type: String,
+        type: Date,
         required: true,
         default: new Date()
     }

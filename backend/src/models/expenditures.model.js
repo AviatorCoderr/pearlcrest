@@ -34,7 +34,7 @@ const expenditureSchema = new mongoose.Schema({
         trim: true
     },
     createdAt: {
-        type: String,
+        type: Date,
         required: true,
         default: new Date()
     }
