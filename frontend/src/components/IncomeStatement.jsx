@@ -32,8 +32,11 @@ export default function IncomeStatement() {
     // Function to format the date
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleString(); // You can use any other date formatting method here
-    };
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      };
 
     // Function to handle Excel download
     const handleDownload = async () => {
