@@ -81,8 +81,11 @@ export default function CashBook() {
     };
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleString(); // You can use any other date formatting method here
-    };
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      };
     return (
         <div className='m-5'>
             <h2 className="text-3xl font-semibold mb-8">BankBook</h2>
