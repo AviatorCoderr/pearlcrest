@@ -28,6 +28,7 @@ const sendEmail = asyncHandler(async(req, res) => {
   try {
     const {flatnumber, trans_id} = req.body;
     console.log(flatnumber)
+    console.log(trans_id)
     const file = req?.file?.path
     console.log(file)
     if(!file)
@@ -384,7 +385,9 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
     const { flatnumber, mode, purpose, amount, months, transactionId, date } = req.body;
     if(!mode || !purpose || !amount || !months) 
       throw new ApiError(400, "One or More fields are missing")
+    console.log(flatnumber)
     const flat = await Flat.findOne({ flatnumber });
+    console.log(flat)
     if(!flat)
       throw new ApiError(404, "Invalid Flatnumber/ Flat not exists")
     const flatid = flat._id;

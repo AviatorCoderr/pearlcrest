@@ -1,35 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import jsPDF from "jspdf";
+import jsPDF from 'jspdf';
 import { ClipLoader } from 'react-spinners';
+
 export default function AddIncome() {
   const [mode, setMode] = useState('');
   const [purpose, setPurpose] = useState('');
   const [amount, setAmount] = useState(0);
   const [months, setMonths] = useState([]);
-  const [flatnumber, setFlat] = useState("");
-  const [transactionId, setTransactionId] = useState("");
-  const [paydemand, setPaydemand] = useState([]);
+  const [flatNumber, setFlatNumber] = useState('');
+  const [transactionId, setTransactionId] = useState('');
+  const [payDemand, setPayDemand] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showTransactionId, setShowTransactionId] = useState(false);
+
   useEffect(() => {
     const getDemand = async () => {
       try {
         const response = await axios.get("/api/v1/demand/getpaydemand");
-        setPaydemand(response.data.data.response);
+        setPayDemand(response.data.data.response);
       } catch (error) {
         console.error(error.message);
       }
     };
+
     getDemand();
-    console.log(paydemand)
   }, []);
 
   useEffect(() => {
-    if(purpose === "MAINTENANCE") {
-      setAmount(months.length * (paydemand.find((ele) => ele.type === purpose)?.amount || 0));
+    setShowTransactionId(
+      !["CASH WITHDRAWAL", "CASH DEPOSIT", "BANK INTEREST", "CLOSING BALANCE"].includes(purpose)
+    );
+  }, [purpose]);
+
+  useEffect(() => {
+    if (purpose === "MAINTENANCE") {
+      setAmount(months.length * (payDemand.find((ele) => ele.type === purpose)?.amount || 0));
     }
-  }, [months, purpose, paydemand]);
+  }, [months, purpose, payDemand]);
 
   const handleCheckboxChange = (e) => {
     const { value, checked } = e.target;
@@ -47,9 +56,11 @@ export default function AddIncome() {
 
   const jsPdfGenerator = (receiptNo, date, flatNo, amount, transactionDate, months, purpose, mode, transactionId) => {
     const doc = new jsPDF();
+
     // Add logo
     const logoData = '/static/images/favicon-32x32.png';
     doc.addImage(logoData, 'PNG', 10, 10, 20, 20);
+
     // Title
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
@@ -58,12 +69,15 @@ export default function AddIncome() {
     doc.text("PEARL CREST FLAT OWNERS’ SOCIETY", 105, 35, null, null, "center");
     doc.setFontSize(12);
     doc.text("ARGORA, PUNDAG ROAD, ARGORA, RANCHI – 834002", 105, 45, null, null, "center");
+
     // Receipt Details
     doc.setFont("times", "normal");
+
     // Draw border around receipt details
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
     doc.rect(10, 70, 185, 130);
+
     // Receipt No
     doc.setFont("helvetica", "normal");
     doc.text("Receipt No:", 15, 80);
@@ -74,38 +88,38 @@ export default function AddIncome() {
     doc.setFont("helvetica", "normal");
     doc.text("Transaction Id:", 15, 90);
     doc.setFont("helvetica", "bold");
-    doc.text(`${(transactionId) ? transactionId : "CASH"}`, 50, 90);
+    doc.text(`${transactionId ? transactionId : "CASH"}`, 50, 90);
 
     // Date
     doc.setFont("helvetica", "normal");
     doc.text("Date:", 15, 100);
     doc.setFont("helvetica", "bold");
     doc.text(`${date}`, 35, 100);
-    
+
     // Received with thanks from Flat No
     doc.setFont("helvetica", "normal");
     doc.text(`Received with thanks in ${mode} from Flat No:`, 15, 110);
     doc.setFont("helvetica", "bold");
     doc.text(`${flatNo}`, 100, 110);
-    
+
     // Amount
     doc.setFont("helvetica", "normal");
     doc.text("Amount:", 15, 120);
     doc.setFont("helvetica", "bold");
     doc.text(`${amount}/-`, 40, 120);
-    
+
     // Transaction Date
     doc.setFont("helvetica", "normal");
     doc.text("Transaction Date:", 15, 130);
     doc.setFont("helvetica", "bold");
     doc.text(`${transactionDate}`, 60, 130);
-    
+
     // For the month
     doc.setFont("helvetica", "normal");
     doc.text("For the month of", 15, 140);
     doc.setFont("helvetica", "bold");
     doc.text(`${months}`, 50, 140);
-    
+
     // On account of purpose Charges of Society
     doc.setFont("helvetica", "normal");
     doc.text(`On account of ${purpose} Charges of Society`, 15, 150);
@@ -115,11 +129,11 @@ export default function AddIncome() {
     doc.setDrawColor(0);
     doc.setLineDashPattern([1, 1], 0);
     doc.line(15, 155, 90, 155); // Draw dashed line
-    
+
     // Treasurer's Signature
     const signatureData = '/static/images/treasurersign.jpg';
     doc.addImage(signatureData, 'PNG', 95, 160, 40, 20);
-    
+
     // Treasurer
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
@@ -132,9 +146,7 @@ export default function AddIncome() {
     doc.line(15, 200, 90, 200); // Draw dashed line
 
     return doc.output('arraybuffer');
-};
-
-
+  };
 
   const handleSubmit = async () => {
     try {
@@ -143,7 +155,7 @@ export default function AddIncome() {
         title: 'Confirm Details',
         html: `
           <div>
-            <p><strong>Flat:</strong> ${flatnumber}</p>
+            <p><strong>Flat:</strong> ${flatNumber}</p>
             <p><strong>Purpose:</strong> ${purpose}</p>
             <p><strong>Mode of Payment:</strong> ${mode}</p>
             <p><strong>Amount:</strong> ${amount}</p>
@@ -154,57 +166,70 @@ export default function AddIncome() {
         confirmButtonText: 'Submit',
         cancelButtonText: 'Cancel',
       });
+
       if (confirmation.isConfirmed) {
         const currentMonthString = new Date().toLocaleString('default', { month: 'long' });
-        if (purpose === "Cash Deposit" || purpose === "Cash withdrawal") {
-          const response = await axios.post('/api/v1/account/add-admin-income', {
-            mode: mode,
-            amount: amount,
-            purpose: purpose,
+        let response;
+
+        if (!showTransactionId) {
+          response = await axios.post('/api/v1/account/add-admin-income', {
+            mode,
+            amount,
+            purpose,
             months: [...months, currentMonthString],
-            flatnumber: flatnumber
+            flatnumber: flatNumber
           });
-          Swal.fire({
-            title: 'Income Added',
-            text: 'Data added successfully',
-            icon: 'success',
-            confirmButtonText: 'OK',
-          });
-        } else if (purpose === "MAINTENANCE") {
-          const response = await axios.post('/api/v1/account/add-admin-transaction', {
-            mode: mode,
-            amount: amount,
-            purpose: purpose,
-            months: months,
-            flatnumber: flatnumber,
+        } else if (showTransactionId) {
+          response = await axios.post('/api/v1/account/add-admin-transaction', {
+            mode,
+            amount,
+            purpose,
+            months,
+            flatnumber: flatNumber,
             transactionId
           });
-          const transdata = response?.data?.data?.trans[0];
-          const receipt = jsPdfGenerator(transdata?._id, formatDate(transdata?.date), flatnumber, transdata?.amount, formatDate(transdata?.createdAt), transdata?.months.join(", "), transdata?.purpose, transdata?.mode);
-          const mailresponse = await axios.post("/api/v1/account/sendrecieptmail", {
-            flatnumber, trans_id: transdata._id, receipt
-          },
-          {
+
+          const transData = response?.data?.data?.trans[0];
+          const receipt = jsPdfGenerator(
+            transData?._id,
+            formatDate(transData?.date),
+            flatNumber,
+            transData?.amount,
+            formatDate(transData?.createdAt),
+            transData?.months.join(", "),
+            transData?.purpose,
+            transData?.mode,
+            transData?.transactionId
+          );
+
+          await axios.post("/api/v1/account/sendreceiptmail", {
+            flatnumber: flatNumber,
+            trans_id: transData?._id,
+            receipt
+          }, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
           });
-          Swal.fire({
-            title: 'Income Added',
-            text: 'Data added successfully and email sent to flatier',
-            icon: 'success',
-            showConfirmButton: false
-          });
-          setMode('');
-          setPurpose('');
-          setAmount(0);
-          setMonths([]);
-          setFlat('');
-          setTransactionId('');
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
         }
+
+        Swal.fire({
+          title: 'Income Added',
+          text: purpose === "MAINTENANCE" ? 'Data added successfully and email sent to flatier' : 'Data added successfully',
+          icon: 'success',
+          showConfirmButton: false
+        });
+
+        setMode('');
+        setPurpose('');
+        setAmount(0);
+        setMonths([]);
+        setFlatNumber('');
+        setTransactionId('');
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       }
     } catch (error) {
       Swal.fire({
@@ -214,8 +239,7 @@ export default function AddIncome() {
         confirmButtonText: 'OK',
       });
       console.error('Add income error:', error);
-    }
-    finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -244,20 +268,25 @@ export default function AddIncome() {
           className='p-2 rounded-sm shadow-lg border border-black'
           onChange={(e) => setPurpose(e.target.value.toUpperCase())}
         >
-          <option value='none'>Select Purpose</option>
-          <option value='Maintenance'>Maintenance</option>
-          <option value='Cash withdrawal'>Cash withdrawal</option>
-          <option value='Cash Deposit'>Cash Deposit</option>
-          <option value='Bank Interest'>Bank Interest</option>
+          <option value=''>Select Purpose</option>
+          <option value='CLOSING BALANCE'>CLOSING BALANCE</option>
+          <option value='CASH WITHDRAWAL'>CASH WITHDRAWAL</option>
+          <option value='CASH DEPOSIT'>CASH DEPOSIT</option>
+          <option value='BANK INTEREST'>BANK INTEREST</option>
+          {payDemand.map((ele, index) => (
+            <option key={index} value={ele.type}>{ele.type}</option>
+          ))}
         </select>
-        {purpose !== "CASH WITHDRAWAL" && purpose !== "CASH DEPOSIT" && purpose !== "BANK INTEREST" ?
+
+        {showTransactionId && (
           <input
             className='p-2 rounded-sm shadow-lg border border-black'
             type='text'
             placeholder='Flat number'
-            onChange={(e) => setFlat(e.target.value.toUpperCase())}
-          /> : <></>
-        }
+            onChange={(e) => setFlatNumber(e.target.value.toUpperCase())}
+          />
+        )}
+
         <select
           className='p-2 rounded-sm shadow-lg border border-black'
           type='text'
@@ -268,17 +297,27 @@ export default function AddIncome() {
           <option value="CASH">Cash</option>
           <option value="BANK">Bank</option>
         </select>
-        {purpose !== "MAINTENANCE" ?
+
+        {purpose!=="MAINTENANCE" && (
           <input
             className='p-2 rounded-sm shadow-lg border border-black'
             type='number'
             placeholder='Amount'
             onChange={(e) => setAmount(e.target.value)}
-          /> : <></>
-        }
-        {(purpose === "MAINTENANCE") ?
-          <div>
-            {(mode === "BANK") ? <input type="text" onChange={(e) => setTransactionId(e.target.value)} className='p-2 mb-2 w-full rounded-sm shadow-lg border border-black' placeholder='TransactionID' /> : <></>}
+          />
+        )}
+
+        {showTransactionId && mode === "BANK" && (
+          <input
+            className='p-2 mb-2 w-full rounded-sm shadow-lg border border-black'
+            type="text"
+            onChange={(e) => setTransactionId(e.target.value)}
+            placeholder='TransactionID'
+          />
+        )}
+
+        {purpose === "MAINTENANCE" && (
+          <>
             <p className='font-semibold'>Select Months:</p>
             {mon.map((month) => (
               <div key={month} className='flex items-center'>
@@ -292,17 +331,17 @@ export default function AddIncome() {
                 <label htmlFor={month} className='ml-2'>{month}</label>
               </div>
             ))}
-          </div>
-          :
-          <></>
-        }
-        {(purpose === "MAINTENANCE") ? <div className="">
+          </>
+        )}
+
+        {purpose === "MAINTENANCE" && (
+          <div>
             <p>Payable Amount:</p>
             <p className="font-semibold text-xl text-blue-500">₹{amount}</p>
           </div>
-          :
-          <></>}
+        )}
       </div>
+
       <button
         onClick={handleSubmit}
         className={`m-5 px-5 py-2 rounded-xl hover:opacity-80 ${loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-black text-white'}`}
