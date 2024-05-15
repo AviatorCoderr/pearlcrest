@@ -164,7 +164,7 @@ export default function AddPaymentVoucher() {
             <option value='HouseKeeping Charges'>HouseKeeping Charges</option>
             <option value='Festival Celebration Expenses'>Festival Celebration Expenses</option>
             <option value='Administrative Expenses'>Administrative Expenses</option>
-            <option value='Maali Charges'>Plantation Expenses</option>
+            <option value='Plantation Expenses'>Plantation Expenses</option>
             <option value='Security Expenses'>Security Expenses</option>
             <option value='Sewerage Cleaning Charges'>Sewerage Cleaning Charges</option>
             <option value='Shiv Mandir Expenses'>Shiv Mandir Expenses</option>
