@@ -14,6 +14,7 @@ export default function AddIncome() {
   const [payDemand, setPayDemand] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showTransactionId, setShowTransactionId] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date()); // New state variable for date
 
   useEffect(() => {
     const getDemand = async () => {
@@ -160,6 +161,7 @@ export default function AddIncome() {
             <p><strong>Mode of Payment:</strong> ${mode}</p>
             <p><strong>Amount:</strong> ${amount}</p>
             <p><strong>Months:</strong> ${months.join(', ')}</p>
+            <p><strong>Date:</strong> ${formatDate(selectedDate)}</p>
           </div>`,
         icon: 'info',
         showCancelButton: true,
@@ -173,6 +175,7 @@ export default function AddIncome() {
 
         if (!showTransactionId) {
           response = await axios.post('/api/v1/account/add-admin-income', {
+            date: selectedDate, // Use selected date
             mode,
             amount,
             purpose,
@@ -181,6 +184,7 @@ export default function AddIncome() {
           });
         } else if (showTransactionId) {
           response = await axios.post('/api/v1/account/add-admin-transaction', {
+            date: selectedDate, // Use selected date
             mode,
             amount,
             purpose,
@@ -340,6 +344,13 @@ export default function AddIncome() {
             <p className="font-semibold text-xl text-blue-500">₹{amount}</p>
           </div>
         )}
+
+        <input
+          type="date"
+          className='p-2 rounded-sm shadow-lg border border-black'
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+        />
       </div>
 
       <button

@@ -450,7 +450,7 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
   }
 });
 const addIncomeByAdmin = asyncHandler(async (req, res) => {
-  const { mode, purpose, amount } = req.body;
+  const { mode, purpose, amount, date } = req.body;
   const flatnumber = "PCS";
   const flat = await Flat.findOne({ flatnumber });
   const flatid = flat._id;
@@ -461,13 +461,13 @@ const addIncomeByAdmin = asyncHandler(async (req, res) => {
     try {
       const incomeMode = purpose === "CASH WITHDRAWAL" ? "cash" : "bank";
       const expenseMode = purpose === "CASH WITHDRAWAL" ? "bank" : "cash";
-
+      const date = (date==null)? date: (new Date())
       const income = await Income.create([{
         flat: flatid,
         mode: incomeMode,
         purpose,
         amount,
-        createdAt: new Date() 
+        createdAt: date
       }],
         { session: session }
       );
@@ -495,7 +495,7 @@ const addIncomeByAdmin = asyncHandler(async (req, res) => {
   } else {
     try {
       const income = await Income.create({
-        flat: "admin",
+        flat: flatid,
         mode,
         purpose,
         amount,
