@@ -43,7 +43,7 @@ export default function ExpenditureStatements() {
         const worksheet = workbook.addWorksheet('Expenditure Report');
     
         // Add column headers
-        const headers = ['Sl No', 'Party Name', 'Party Contact', 'Narration', 'Department', 'Amount', 'Mode of payment', 'Date', 'By Executive'];
+        const headers = ['Sl No', 'Party Name', 'Party Contact', 'Particulars', 'Expense Head', 'Amount', 'Mode of payment', 'Date', 'By Executive'];
         const headerRow = worksheet.addRow(headers);
         headerRow.eachCell((cell) => {
             cell.font = { bold: true };
@@ -102,9 +102,9 @@ export default function ExpenditureStatements() {
     return (
         <div className='m-5'>
             {/* department filter */}
-            <label htmlFor="department" className="block mb-2">Department:</label>
+            <label htmlFor="department" className="block mb-2">Expense Head:</label>
             <select id="department" className="border border-gray-300 rounded-md p-1 mb-4" onChange={(e) => setDepartment(e.target.value)}>
-                <option value={null} >Choose one</option>
+                <option value={null} >Choose Expense Head</option>
                 {depthead.map((ele, index) => {
                     return (
                         <option key={index} value={ele}>{ele}</option>

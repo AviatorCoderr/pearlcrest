@@ -146,13 +146,13 @@ export default function AddPaymentVoucher() {
           onChange={(e) => setPartycontact(e.target.value)}
         />
         <label className="relative m-2">
-          <span className='absolute top-[-1.5rem] md:top-[-0.85rem] left-6 text-opacity-80 font-medium bg-neutral-100 px-2'>Department</span>
+          <span className='absolute top-[-1.5rem] md:top-[-0.85rem] left-6 text-opacity-80 font-medium bg-neutral-100 px-2'>Expense Head</span>
           <select
             className='p-2 rounded-sm shadow-lg border border-black w-full'
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
           >
-            <option value=''>Select Department</option>
+            <option value=''>Select Expense Head</option>
             <option value='Labour Expenses'>Labour Expenses</option>
             <option value='Diesel Expenses for Genset'>Diesel Expenses for Genset</option>
             <option value='Electricity Bill Paid'>Electricity Bill Paid</option>
