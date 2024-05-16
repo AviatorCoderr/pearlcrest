@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-
+import { useNavigate } from 'react-router-dom';
 export default function AddVisitor() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
+    if(user!=="PCS" && user!=="GUARD") navigate("/db/unauth")
+  })
   const [visitorlist, setVisitorlist] = useState([]);
   const [addClick, setAddClick] = useState(false);
   const [flat, setFlat] = useState('');

@@ -3,8 +3,13 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import ClipLoader from 'react-spinners/ClipLoader';
 import jsPDF from 'jspdf';
-
+import { useNavigate } from 'react-router-dom';
 export default function PaymentApproval() {
+    const navigate = useNavigate()
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
+        if(user!=="PCS") navigate("/db/unauth")
+    })
     const [response, setResponse] = useState([]);
     const [loading, setLoading] = useState(true);
     const [buttonDisabled, setButtonDisabled] = useState(false);

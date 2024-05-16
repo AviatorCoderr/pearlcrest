@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BsFillMenuButtonWideFill } from "react-icons/bs";
 function Navbar() {
   const [isOpen, setOpen] = useState(false);
@@ -7,7 +7,7 @@ function Navbar() {
   const handleClick = () => {
     setOpen(!isOpen);
   };
-
+  const navigate = useNavigate()
   return (
     <div className="md:flex z-20 my-2">
       <div className="p-2 md:ml-10 text-3xl flex">
@@ -21,7 +21,7 @@ function Navbar() {
       </div>
       <div className="hidden md:block ml-auto">
         <ul className="md:flex">
-          <li className="p-3 text-lg mx-5 group">
+          <li onClick={() => navigate("/")} className="p-3 text-lg mx-5 group">
             <button className="relative overflow-hidden py-2 px-4">
               Home
               <span className="absolute hover:visible duration-200 inset-x-0 bottom-0 w-1/3 group-hover:w-full h-1 bg-black"></span>
@@ -34,12 +34,11 @@ function Navbar() {
             </button>
           </li>
           <li className="p-3 text-lg mx-5 group">
-            <button className="relative overflow-hidden py-2 px-4">
+            <button onClick={() => navigate("/council")} className="relative overflow-hidden py-2 px-4">
               Council
               <span className="absolute hover:visible duration-200 inset-x-0 bottom-0 w-1/3 group-hover:w-full h-1 bg-black"></span>
             </button>
           </li>
-          {/* direct directly to dashboard if user exists */}
           <Link to="/log">
             <li className="p-3 text-lg px-10 mx-5 bg-black hover:opacity-85 text-white border-black border-2 m-2 rounded-l-3xl rounded-r-3xl">
               <button>Login</button>

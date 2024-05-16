@@ -3,7 +3,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import jsPDF from 'jspdf';
 import { ClipLoader } from 'react-spinners';
-
+import { useNavigate } from 'react-router-dom';
 export default function AddIncome() {
   const [mode, setMode] = useState('');
   const [purpose, setPurpose] = useState('');
@@ -15,7 +15,11 @@ export default function AddIncome() {
   const [loading, setLoading] = useState(false);
   const [showTransactionId, setShowTransactionId] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-
+  const navigate = useNavigate()
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
+    if(user!=="PCS") navigate("/db/unauth")
+  })
   useEffect(() => {
     const getDemand = async () => {
       try {

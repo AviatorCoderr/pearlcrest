@@ -2,7 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { RingLoader } from 'react-spinners';
+import { useNavigate } from 'react-router-dom';
 export default function MaidManagement() {
+  const navigate = useNavigate()
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
+        if(user!=="GUARD") navigate("/db/unauth")
+    })
   const [maidList, setMaidList] = useState([]);
   const [addClick, setAddClick] = useState(false);
   const [flat, setFlat] = useState([]);

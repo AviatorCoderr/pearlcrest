@@ -7,12 +7,6 @@ import { sidebar_det } from './navi';
 export const exe_det = [
     ...sidebar_det,
     {
-        key: 'visitor-manage',
-        label: 'Visitor Management',
-        path: '/db/visitor-manage',
-        icon: FaUserFriends
-    },
-    {
         key: 'findvehicle',
         label: 'Find Vehicle',
         path: '/db/findvehicle',

@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ExcelJS from 'exceljs';
-
+import { useNavigate } from 'react-router-dom';
 export default function IncomeStatement() {
+    const navigate = useNavigate()
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
+        if(user!=="PCS") navigate("/db/unauth")
+    })
     const [income, setIncome] = useState([]);
     const [flatnumber, setFlatnumber] = useState(''); // Default flat number
     const [purpose, setPurpose] = useState(''); // Default purpose

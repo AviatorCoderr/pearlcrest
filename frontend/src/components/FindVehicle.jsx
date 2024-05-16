@@ -1,7 +1,14 @@
 import axios from 'axios';
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 function FindVehicle() {
+  const navigate = useNavigate()
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const flat = user?.flatnumber
+        const pos = user?.position
+        if(flat!=="GUARD" && pos!="executive" && flat!="PCS") navigate("/db/unauth")
+    })
   const [regNo, setRegNo] = useState('');
   const [vehicleData, setVehicleData] = useState(null);
 

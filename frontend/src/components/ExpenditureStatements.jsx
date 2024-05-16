@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ExcelJS from 'exceljs';
-
+import { useNavigate } from 'react-router-dom';
 export default function ExpenditureStatements() {
+    const navigate = useNavigate()
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
+        if(user!=="PCS") navigate("/db/unauth")
+    })
     const [department, setDepartment] = useState(null);
     const [executive_name, setExecutive_name] = useState(null);
     const [mode, setMode] = useState(null);

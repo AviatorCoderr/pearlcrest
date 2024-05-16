@@ -2,10 +2,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios'; 
 import Swal from 'sweetalert2';
 import ClipLoader from 'react-spinners/ClipLoader';
-
+import { useNavigate } from 'react-router-dom';
 export default function HallBooking() {
+    const navigate = useNavigate()
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
+        if(user!=="PCS") navigate("/db/unauth")
+    })
     const [response, setResponse] = useState(null);
-    const [loading, setLoading] = useState(true); // State to track loading
+    const [loading, setLoading] = useState(true);
     
     useEffect(() => {
         axios.get("/api/v1/booking/get-booking")

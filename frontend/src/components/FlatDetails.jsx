@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ExcelJs from "exceljs"
+import { useNavigate } from 'react-router-dom';
 export default function FlatDetails() {
+    const navigate = useNavigate()
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
+        if(user!=="PCS") navigate("/db/unauth")
+    })
     const [flat_det, setFlat_det] = useState([]);
 
     useEffect(() => {

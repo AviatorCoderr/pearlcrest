@@ -30,7 +30,8 @@ import RaiseDemand from "./components/RaiseDemand.";
 import HallBooking from "./components/HallBooking";
 import BookingDetails from "./components/BookingDetails";
 import PaymentApproval from "./components/PaymentApproval";
-
+import MemberCouncil from "./components/MemberCouncil";
+import Unauthorised from "./components/Unauthorised"
 function App() {
   return (
     <div>
@@ -40,6 +41,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/paymentsuccess" element={<PaymentSucess />} />
           <Route path="/forgot-password" element={<ForgotPass />} />
+          <Route path="/council" element={<MemberCouncil />} />
           <Route
             path="/db"
             element={<Layout />}
@@ -47,6 +49,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="reserve" element={<FacilityReservation />} />
             <Route path="payments" element={<Societypayments />} />
+            <Route path="unauth" element={<Unauthorised />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="trackpay" element={<Payementhistory />} />
             <Route path="visitor" element={<VisitorsLog />} />

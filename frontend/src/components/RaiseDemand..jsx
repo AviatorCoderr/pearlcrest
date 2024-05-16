@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { ClipLoader } from 'react-spinners';
-
+import { useNavigate } from 'react-router-dom';
 export default function RaiseDemand() {
+    const navigate = useNavigate()
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
+        if(user!=="PCS") navigate("/db/unauth")
+    })
     const [type, setType] = useState(null);
     const [amount, setAmount] = useState(0);
     const [loading, setLoading] = useState(false);
