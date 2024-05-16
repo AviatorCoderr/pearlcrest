@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Maid from '../../../backend/src/models/maids.model';
 
 export default function MaidLog() {
     const [maid, setMaid] = useState([]);
