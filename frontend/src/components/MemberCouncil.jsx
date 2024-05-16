@@ -33,14 +33,6 @@ const MemberCouncil = () => {
     { id: 12, position: 'Executive Member', name: 'Mr. Ranjan Kumar', flat: 'D-block', contact: '9334902514', url: '/static/images/executive_member.jpg' }
   ];
 
-  const mandirCommittee = [
-    { id: 1, name: 'Mrs. Smita Narayan', flat: 'A104', contact: '9835506650', url: '/static/images/committee_member.jpg' },
-    { id: 2, name: 'Mrs. Baijanti Devi', flat: 'CG4', contact: '7992351171', url: '/static/images/committee_member.jpg' },
-    { id: 3, name: 'Mrs. Sangeeta', flat: 'C102', contact: '', url: '/static/images/committee_member.jpg' },
-    { id: 4, name: 'Mr. Suman Tiwary', flat: 'C106', contact: '9771431886', url: '/static/images/committee_member.jpg' },
-    { id: 5, name: 'Mr. S.S Prasad Singh', flat: 'A302', contact: '9934198812', url: '/static/images/committee_member.jpg' }
-  ];
-
   return (
     <>
       <Navbar />
@@ -48,15 +40,6 @@ const MemberCouncil = () => {
         <h3 className="text-4xl font-bold text-center my-8 text-gray-800">EXECUTIVE COMMITTEE</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {members.map((member) => (
-            <div key={member.id} className="p-4 rounded-lg">
-              <MemberCard member={member} />
-            </div>
-          ))}
-        </div>
-
-        <h3 className="text-4xl font-bold text-center my-8 text-gray-800">MANDIR COMMITTEE</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {mandirCommittee.map((member) => (
             <div key={member.id} className="p-4 rounded-lg">
               <MemberCard member={member} />
             </div>

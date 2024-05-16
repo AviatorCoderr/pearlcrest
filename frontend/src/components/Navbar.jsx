@@ -61,7 +61,7 @@ function Navbar() {
                 <span className="absolute hover:visible duration-200 inset-x-0 bottom-0 w-1/6 group-hover:w-full h-1 bg-black"></span>
               </button>
             </li>
-            <li onClick={navigate("/council")} className="p-3 text-lg mx-5 group">
+            <li onClick={() => navigate("/council")} className="p-3 text-lg mx-5 group">
               <button className="relative overflow-hidden py-2 px-4 w-full">
                 Council
                 <span className="absolute hover:visible duration-200 inset-x-0 bottom-0 w-1/6 group-hover:w-full h-1 bg-black"></span>
