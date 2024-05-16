@@ -218,8 +218,14 @@ export default function AddIncome() {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
-          });
-        }
+          })
+          .catch(error => {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Mail not sent but data added'
+            })
+          })
+          }
 
         Swal.fire({
           title: 'Income Added',

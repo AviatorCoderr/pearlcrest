@@ -34,18 +34,22 @@ const sendEmail = asyncHandler(async(req, res) => {
     if(!flat){
         throw new ApiError(404, "Flat Number is invalid")
     }
-    const flatid = flat?._id;
+    const flatid = flat?._id
     const owner = await Owner.findOne({flat: {$in: flatid}})
     const renter = await Renter.findOne({flat: {$in: flatid}})
     const owneremail = owner?.email
     const renteremail = renter?.email
+    const validEmails = [owneremail, renteremail].filter(email => email); // Filter out null or undefined emails
+    if(validEmails.length === 0)
+      throw new ApiError(400, "No valid email addresses found");
+
     const mailOptions = {
         from: '"Pearl Crest Society" <pearlcrestsociety@gmail.com>',
-        to: [owneremail, renteremail],
+        to: validEmails,
         subject: "Payment Successful",
         html: 
         `<h3>From Mr. Manish, The Treasurer on behalf of Pearl Crest Flat Owner's Society.
-        </h3><p>Thank you for trusting the commitee. We have received your payment. Here is the receipt attached</p>
+        </h3><p>Thank you for trusting the committee. We have received your payment. Here is the receipt attached</p>
         <p>Warm regards,</p>
         <p>Pearl Crest Flat Owner's Society</p>
         <p>Mr. Manish, Treasurer</p>`,
@@ -62,15 +66,17 @@ const sendEmail = asyncHandler(async(req, res) => {
         message: "email sent",
     })
   } catch (error) {
+    throw new ApiError(500, error)
   }
 })
+
 const sendFailureEmail = asyncHandler(async(trans) => {
-  const flatid = trans?.flat
-  const owner = await Owner.findOne({flat: {$in: flatid}})
-  const renter = await Renter.findOne({flat: {$in: flatid}})
-  const owneremail = owner?.email
-  const renteremail = renter?.email
-  const transactionId = trans?.transactionId
+  const flatid = trans?.flat;
+  const owner = await Owner.findOne({flat: {$in: flatid}});
+  const renter = await Renter.findOne({flat: {$in: flatid}});
+  const owneremail = owner?.email;
+  const renteremail = renter?.email;
+  const transactionId = trans?.transactionId;
   const date = (trans?.createdAt)?.toLocaleString("en-IN", {
       weekday: "long", 
       year: "numeric", 
@@ -80,32 +86,38 @@ const sendFailureEmail = asyncHandler(async(trans) => {
       minute: "2-digit", 
       second: "2-digit"
   });
-  const amount = trans?.amount
+  const amount = trans?.amount;
+  
   try {
-      const mailOptions = {
-          from: '"Pearl Crest Society" <pearlcrestsociety@gmail.com>',
-          to: [owneremail, renteremail],
-          subject: "Payment Failed",
-          html: `
-              <h3>Notification from Mr. Manish, Treasurer of Pearl Crest Flat Owner's Society</h3>
-              <p>Dear Resident,</p>
-              <p>We extend our gratitude for your trust in the committee.</p>
-              <p>It is with regret that we inform you that your recent payment with transaction Id ${transactionId} on ${date} of amount ${amount} has been cancelled due to non-receipt of payment.</p>
-              <p>If your payment was successfully processed, we kindly request you to revisit the society payments section on our website and resubmit the necessary details, including your transaction ID.</p>
-              <h2>Note:</h2>
-              <p>Providing the correct Transaction ID is crucial to avoid cancellation of your request.</p>
-              <p>Any attempt to provide false payment data will be considered a serious offense by the committee.</p>
-              <p>We appreciate your understanding and cooperation in this matter.</p>
-              <p>Warm regards,</p>
-              <p>Pearl Crest Flat Owner's Society</p>
-              <p>Mr. Manish, Treasurer</p>
-          `
-      };
-    const info = await transporter.sendMail(mailOptions)
+    const validEmails = [owneremail, renteremail].filter(email => email); // Filter out null or undefined emails
+    if(validEmails.length === 0)
+      throw new ApiError(400, "No valid email addresses found");
+      
+    const mailOptions = {
+        from: '"Pearl Crest Society" <pearlcrestsociety@gmail.com>',
+        to: validEmails,
+        subject: "Payment Failed",
+        html: `
+            <h3>Notification from Mr. Manish, Treasurer of Pearl Crest Flat Owner's Society</h3>
+            <p>Dear Resident,</p>
+            <p>We extend our gratitude for your trust in the committee.</p>
+            <p>It is with regret that we inform you that your recent payment with transaction Id ${transactionId} on ${date} of amount ${amount} has been cancelled due to non-receipt of payment.</p>
+            <p>If your payment was successfully processed, we kindly request you to revisit the society payments section on our website and resubmit the necessary details, including your transaction ID.</p>
+            <h2>Note:</h2>
+            <p>Providing the correct Transaction ID is crucial to avoid cancellation of your request.</p>
+            <p>Any attempt to provide false payment data will be considered a serious offense by the committee.</p>
+            <p>We appreciate your understanding and cooperation in this matter.</p>
+            <p>Warm regards,</p>
+            <p>Pearl Crest Flat Owner's Society</p>
+            <p>Mr. Manish, Treasurer</p>
+        `
+    };
+    const info = await transporter.sendMail(mailOptions);
   } catch (error) {
-    throw new ApiError(500, error)
+    throw new ApiError(500, error);
   }
-})
+});
+
 const generatedQr = asyncHandler(async(req, res) => {
   try {
     const {amount} = req.body
