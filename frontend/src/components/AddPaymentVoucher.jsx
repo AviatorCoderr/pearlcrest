@@ -25,12 +25,11 @@ export default function AddPaymentVoucher() {
   const [amount, setAmount] = useState('');
   const [department, setDepartment] = useState('');
   const [partyname, setPartyname] = useState('');
-  const [partycontact, setPartycontact] = useState('');
+  const [partycontact, setPartycontact] = useState('0000000000');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date()); 
   const user = JSON.parse(localStorage.getItem("user"))
   const handleSubmit = async () => {
-    // Validation checks
     if (!department || !description || !mode || !amount) {
       Swal.fire({
         title: 'Validation Error',
@@ -40,8 +39,6 @@ export default function AddPaymentVoucher() {
       });
       return;
     }
-
-    // Regular expression for mobile number validation
     const mobileRegex = /^\d{10}$/;
 
     // Regular expression for amount validation
