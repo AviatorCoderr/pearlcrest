@@ -217,8 +217,8 @@ export default function MaidManagement() {
                   <td className="px-4 py-2 border border-gray-300">{maid.mobile}</td>
                   <td className="px-4 py-2 border border-gray-300">{maid.aadhar}</td>
                   <td className="px-4 py-2 border border-gray-300">
-                  {(maid?.checkedin && isToday(new Date(maid.checkin))) ? (
-                    `${formatDate(maid.checkin)}`
+                  {(maid?.checkedin && isToday(new Date(maid.checkin[maid.checkin.length-1]))) ? (
+                    `${formatDate(maid.checkin[maid.checkin.length-1])}`
                   ) : (
                     <button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg'>Check In</button>
                   )}

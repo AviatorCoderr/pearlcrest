@@ -20,9 +20,9 @@ const maidSchema = new mongoose.Schema({
         trim: true,
         unique: true
     },
-    checkin: {
+    checkin: [{
         type: Date
-    }
+    }]
 });
 
 const Maid = mongoose.model("Maid", maidSchema);
