@@ -20,7 +20,7 @@ export default function VisitorLog() {
     const formatDateTime = (timestamp) => {
         const date = new Date(timestamp);
         const options = { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        return date.toLocaleString('en-US', options);
+        return date.toLocaleString('en-IN', options);
     };
 
     return (

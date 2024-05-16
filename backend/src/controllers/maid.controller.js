@@ -9,58 +9,47 @@ const addMaidByFlat = asyncHandler(async (req, res) => {
     const { _id } = req.body;
     const flatId = req?.flat?._id;
 
-    // Find existing maid by ID
     const existingMaid = await Maid.findById(_id);
 
-    // Check if maid exists
     if (!existingMaid) {
         throw new ApiError(404, "Maid not found");
     }
 
-    // Check if maid is already linked to the flat
     const flatWorking = existingMaid.flat || [];
     if (flatWorking.includes(flatId)) {
         return res.status(400).json({ statusCode: 400, message: "Maid already linked" });
     }
 
-    // Update maid's working flat
     const newFlatWorking = [...flatWorking, flatId];
 
-    // Update maid document with new flat
     await Maid.findByIdAndUpdate(_id, { flat: newFlatWorking });
-
-    // Respond with success message
     res.status(200).json(new ApiResponse(200, null, "Maid added to flat"));
 });
 
 const addMaid = asyncHandler(async (req, res) => {
-    try {
-        const { flatnumber, name, mobile, aadhar } = req.body;
-        const existingMaid = await Maid.findOne({
-            $or: [{ mobile: mobile }, { aadhar: aadhar }]
-          });
-          console.log(existingMaid)
-        if (existingMaid) {
-            new ApiError(404, "Maid already exists");
-        }
-        console.log(flatnumber)
-        let flatidList = [];
-        for (const element of flatnumber) {
-            const flat = await Flat.findOne({ flatnumber: element });
-            const flatid = flat?._id;
-            flatidList.push(flatid);
-        }
-        const response = await Maid.create({
-            flat: flatidList,
-            name,
-            mobile,
-            aadhar
+    const { flatnumber, name, mobile, aadhar } = req.body;
+    const existingMaid = await Maid.findOne({
+        $or: [{ mobile: mobile }, { aadhar: aadhar }]
         });
-    
-        res.status(200).json(new ApiResponse(200, { response }, "Maid added"));
-    } catch (error) {
-        console.log(error.message)
+    console.log(existingMaid)
+    if (existingMaid) {
+        throw new ApiError(400, "Maid already exists. Check Mobile or Aadhar number again");
     }
+    console.log(flatnumber)
+    let flatidList = [];
+    for (const element of flatnumber) {
+        const flat = await Flat.findOne({ flatnumber: element });
+        const flatid = flat?._id;
+        flatidList.push(flatid);
+    }
+    const response = await Maid.create({
+        flat: flatidList,
+        name,
+        mobile,
+        aadhar
+    });
+
+    res.status(200).json(new ApiResponse(200, { response }, "Maid added"));
 });
 const getAllMaid = asyncHandler(async (req, res) => {
     try {

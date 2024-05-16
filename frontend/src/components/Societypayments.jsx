@@ -163,7 +163,7 @@ const Societypayments = () => {
           className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
           placeholder='Enter Amount you wish to contribute'
           type='number'
-          min="0"
+          min={0}
           onChange={(e) => setAmount(parseFloat(e.target.value))}>
           </input>
           :
@@ -189,7 +189,7 @@ const Societypayments = () => {
       </div>
       <div className="m-3 flex justify-between items-center">
         <p>Payable Amount:</p>
-        <p className="font-semibold text-xl text-blue-500">₹{amount}</p>
+        <p className="font-semibold text-xl text-blue-500">₹{amount ? amount : 0}</p>
       </div>
       <button onClick={() => handleCheckout()} className="mt-5 bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition duration-300">Continue & Pay</button>
       <div>

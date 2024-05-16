@@ -24,7 +24,6 @@ export default function AddVisitor() {
   };
 
   const handleAddClick = () => {
-    // Regular expression for mobile number validation
     const mobileRegex = /^\d{10}$/;
 
     // Validation checks

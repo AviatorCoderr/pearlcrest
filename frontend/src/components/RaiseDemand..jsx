@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import { ClipLoader } from 'react-spinners';
 
 export default function RaiseDemand() {
-    const [type, setType] = useState('');
+    const [type, setType] = useState(null);
     const [amount, setAmount] = useState(0);
     const [loading, setLoading] = useState(false);
 
@@ -46,7 +46,6 @@ export default function RaiseDemand() {
             setType('');
             setAmount(0);
         } catch (error) {
-            // Handle error
             Swal.fire({
                 icon: 'error',
                 title: 'Failed to Raise Demand',
@@ -75,6 +74,7 @@ export default function RaiseDemand() {
                         type="number"
                         className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
                         value={amount}
+                        min={0}
                         onChange={(e) => setAmount(parseFloat(e.target.value))}
                     />
                 </div>

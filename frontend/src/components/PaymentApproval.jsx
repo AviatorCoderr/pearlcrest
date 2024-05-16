@@ -127,7 +127,7 @@ export default function PaymentApproval() {
             });
             const transaction = response.data.data.trans[0];
             const receipt = jsPdfGenerator(transaction?._id, formatDate(transaction?.createdAt), flatnumber, transaction?.amount, formatDate(transaction?.date), transaction?.months?.join(", "), transaction?.purpose, transaction?.mode, transaction?.transactionId);
-            axios.post("/api/v1/account/sendrecieptmail", {
+            axios.post("/api/v1/account/sendreceiptmail", {
                 flatnumber, trans_id: transaction._id, receipt
             }, {
                 headers: {
@@ -144,7 +144,7 @@ export default function PaymentApproval() {
             .catch(error => {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Mail not sent',
+                    title: 'Mail not sent but payment confirmed. Flatier can download receipt from his dashboard.',
                     text: error?.response?.data?.message
                 })
             })

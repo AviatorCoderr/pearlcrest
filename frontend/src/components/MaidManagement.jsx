@@ -36,31 +36,27 @@ export default function MaidManagement() {
   const handleAddClick = async () => {
     setLoading(true);
     try {
-      // Validate mobile number format
       const mobilePattern = /^[6-9]\d{9}$/;
       if (!mobilePattern.test(mobile)) {
         throw new Error('Invalid mobile number');
       }
   
-      // Validate Aadhar number format
       const aadharPattern = /^\d{12}$/;
       if (!aadharPattern.test(aadhar)) {
         throw new Error('Invalid Aadhar number');
+      }    
+      
+      if(flat.length===0){
+        throw new Error('Add Flat Number')
       }
-  
-      // Validate flat number format
-      const flatPattern = /^[ABC][123G]0[1-6]$/;
-      if (!flatPattern.test(flat)) {
-        throw new Error('Invalid flat number. Flat number must be like A104, A206, B301, C201.');
-      }
-  
-      await axios.post("/api/v1/maid/add-maid", {
+      axios.post("/api/v1/maid/add-maid", {
         flatnumber: flat,
         name,
         mobile,
         aadhar
       })
       .then(response => {
+        console.log(response)
         Swal.fire({
           icon: 'success',
           title: 'Maid added successfully!',
@@ -75,20 +71,21 @@ export default function MaidManagement() {
         getAllMaids();
       })
       .catch(error => {
+        console.log('Error adding maid:', error);
         Swal.fire({
           icon: 'warning',
           title: 'Oops...',
-          text: error.message || 'Something went wrong!'
+          text: error.response.data.message || 'Something went wrong!'
         });
-        console.log('Error adding maid:', error);
       })
     } catch (error) {
+      console.log('Error adding maid:', error);
       Swal.fire({
         icon: 'warning',
         title: 'Oops...',
-        text: error.message || 'Something went wrong!'
+        text: error.response.data.message || 'Something went wrong!'
       });
-      console.log('Error adding maid:', error);
+      
     } finally {
       setLoading(false);
     }
@@ -139,6 +136,13 @@ export default function MaidManagement() {
     maid.name.toUpperCase().includes(searchQuery.toUpperCase()) ||
     maid.mobile.includes(searchQuery)
   );
+  const isToday = (date) => {
+    const today = new Date();
+    return date.getDate() === today.getDate() &&
+           date.getMonth() === today.getMonth() &&
+           date.getFullYear() === today.getFullYear();
+  };
+  
   return (
     <div className="mx-auto">
       <button onClick={handleAddMaid} className='block w-full max-w-lg m-auto py-2 bg-blue-500 text-white rounded-lg'>Add Maid</button>
@@ -206,7 +210,13 @@ export default function MaidManagement() {
                   <td className="px-4 py-2 border border-gray-300">{maid.name}</td>
                   <td className="px-4 py-2 border border-gray-300">{maid.mobile}</td>
                   <td className="px-4 py-2 border border-gray-300">{maid.aadhar}</td>
-                  <td className="px-4 py-2 border border-gray-300">{((maid?.checkedin)==true)?`${formatDate(maid.checkin)}`:<button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg'>Check In</button>}</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                  {(maid?.checkedin && isToday(new Date(maid.checkin))) ? (
+                    `${formatDate(maid.checkin)}`
+                  ) : (
+                    <button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg'>Check In</button>
+                  )}
+                </td>
                 </tr>
               ))}
             </tbody>

@@ -5,7 +5,8 @@ import {ApiError} from "../utils/ApiError.js"
 
 const addPayDemand = asyncHandler(async(req, res) => {
     const {type, amount} = req.body
-    if(!type || !amount)
+    console.log(type, amount)
+    if(!type || amount===undefined)
         throw new ApiError(400, "one or more fields are empty")
     const response = await PayDemand.create({
         type, 

@@ -12,7 +12,8 @@ const maidSchema = new mongoose.Schema({
     },
     mobile: {
         type: String,
-        trim: true
+        trim: true,
+        unique: true
     },
     aadhar: {
         type: String,

@@ -15,8 +15,8 @@ export default function IncomeStatement() {
                 const response = await axios.post("/api/v1/account/get-income-record", {
                     purpose: purpose,
                     flatnumber: flatnumber,
-                    start_date: start,
-                    end_date: end
+                    start_date: new Date(start),
+                    end_date: new Date(end)
                 }, {    
                     withCredentials: true
                 });
@@ -27,7 +27,7 @@ export default function IncomeStatement() {
             }
         };
         getIncome();
-    }, [flatnumber, purpose]); // Include flatnumber and purpose in the dependency array
+    }, [flatnumber, purpose, start, end]); // Include flatnumber and purpose in the dependency array
 
     // Function to format the date
     const formatDate = (dateString) => {

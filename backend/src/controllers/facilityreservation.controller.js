@@ -346,13 +346,26 @@ const cancelBooking = asyncHandler(async(req, res) => {
 });
 
 const trackdates = asyncHandler(async(req, res) => {
-    const response = await Facility.find()
-    let dates = []
-    response.map((rec, index) => {
-        const bookdate = rec.dates
-        console.log(bookdate)
-        dates = [...dates, ...bookdate]
-    })
-    res.status(200).json(new ApiResponse(200, dates, "dates returned"))
-})
+    const response = await Facility.find();
+    const datesByType = {};
+
+    response.forEach((rec, index) => {
+        const { type, dates } = rec;
+        if (!datesByType[type]) {
+            datesByType[type] = [];
+        }
+        datesByType[type].push(...dates);
+    });
+
+    const groupedDatesArray = Object.keys(datesByType).map(type => {
+        return {
+            type: type,
+            dates: datesByType[type]
+        };
+    });
+
+    res.status(200).json(new ApiResponse(200, groupedDatesArray, "Dates grouped by type returned"));
+});
+
+
 export {addresbyFlat, deleteres, updateres, getres, cancelBooking, getAllBooking, trackdates}

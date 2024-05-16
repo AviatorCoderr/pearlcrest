@@ -57,10 +57,10 @@ export default function Login() {
           alt="Background"
         />
       </div>
-      <div className="w-full md:w-1/2 bg-white flex flex-col p-6 md:p-20 justify-between">
+      <div className="w-full bg-white p-6 md:p-20 justify-between">
         <h3 className="text-xl text-black font-semibold">Pearl Crest</h3>
 
-        <div className="w-full flex flex-col max-w-[500px]">
+        <div className="w-full flex flex-col max-w-[500px] ">
           <div className="flex flex-col w-full mb-5">
             <h3 className="text-3xl font-semibold mb-4">Login</h3>
             <p className="text-base mb-2">Enter Your login details.</p>
@@ -69,7 +69,7 @@ export default function Login() {
             <input
               type="text"
               placeholder="Flat Number"
-              className="w-full text-black py-2 my-2 bg-transparent border-b border-black outline-none focus:outline-none"
+              className="w-fulltext-black py-2 my-2 bg-transparent border-b border-black outline-none focus:outline-none"
               onChange={(e) => setUsername(e.target.value)}
             />
             <div className="relative">

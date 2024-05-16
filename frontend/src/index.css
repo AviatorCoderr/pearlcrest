@@ -174,19 +174,11 @@ input[type=number] {
   border-radius: 0.3rem;
   background-color: #4CAF50; /* Change to green */
 }
-.react-datepicker__day--highlighted,
-.react-datepicker__month-text--highlighted,
-.react-datepicker__quarter-text--highlighted,
-.react-datepicker__year-text--highlighted {
-  background-color: #3dcc4a; /* Example highlighted date color */
-  color: #fff; /* Example highlighted date text color */
-}
 
-/* CSS */
 .selected {
-  background-color: lightgreen !important; /* Change background color for selected dates */
+  background-color: lightgreen !important;
 }
 
 .track-date {
-  background-color: lightcoral !important; /* Change background color for track dates */
+  background-color: lightcoral !important; 
 }

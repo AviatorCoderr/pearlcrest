@@ -32,7 +32,7 @@ export default function VisitorsListDash() {
                     <MdOutlineEmojiPeople className='text-2xl'/>
                     <strong className='text-lg'>Visitors Log</strong>
                 </div>
-                <div className='text-sm'>Today: {new Date().toLocaleDateString()}</div>
+                <div className='text-sm'>Today: {new Date().toLocaleString("en-IN" ,{day: '2-digit', month: '2-digit', year: '2-digit'})}</div>
             </div>
             <div className='px-4 py-3'>
                 {visitors.length > 0 ? (

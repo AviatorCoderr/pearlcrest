@@ -48,7 +48,10 @@ const sendEmail = asyncHandler(async(req, res) => {
         subject: "Payment Successful",
         html: 
         `<h3>From Mr. Manish, The Treasurer on behalf of Pearl Crest Flat Owner's Society.
-        </h3><p>Thank you for trusting the commitee. We have recived your payment. Here is the receipt attached</p>`,
+        </h3><p>Thank you for trusting the commitee. We have received your payment. Here is the receipt attached</p>
+        <p>Warm regards,</p>
+        <p>Pearl Crest Flat Owner's Society</p>
+        <p>Mr. Manish, Treasurer</p>`,
         attachments: [{
           filename: `${flatnumber, trans_id}.pdf`,
           path: file
@@ -67,7 +70,6 @@ const sendEmail = asyncHandler(async(req, res) => {
   }
 })
 const sendFailureEmail = asyncHandler(async(trans) => {
-  console.log("hello")
   const flatid = trans?.flat
   const owner = await Owner.findOne({flat: {$in: flatid}})
   const renter = await Renter.findOne({flat: {$in: flatid}})
@@ -222,7 +224,6 @@ const getAllMaintenanceRecord = asyncHandler(async(req, res) => {
 const getIncomeStatements = asyncHandler(async (req, res) => {
   const { purpose, flatnumber, start_date, end_date } = req.body;
   let query = {};
-
   if (flatnumber && purpose && start_date && end_date) {
     const flat = await Flat.findOne({ flatnumber });
     if (flat) {
@@ -245,11 +246,8 @@ const getIncomeStatements = asyncHandler(async (req, res) => {
 }
 
   let IncomeHeads = [];
-    // Fetch distinct income heads
     IncomeHeads = await Income.distinct('purpose');
-    // Fetch income records based on the query
     const incomeRecords = await Income.find(query).populate('flat');
-    // Extract flat numbers from populated flats
     const incomeStatements = incomeRecords.map(record => {
       const flatnumber = record.flat.flatnumber;
       return { ...record._doc, flatnumber };
@@ -547,7 +545,6 @@ const addUnVerfiedTransaction = asyncHandler(async(req, res) => {
   res.status(200).json(new ApiResponse(201, response, "Transaction unverified added"))
 })
 const Approvepayment = asyncHandler(async (req, res) => {
-  console.log("i am in")
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
