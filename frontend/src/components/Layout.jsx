@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
 export default function Layout() {
-    const [isSmallScreen, setIsSmallScreen] = useState(false);
-
     useEffect(() => {
         function handleResize() {
-            setIsSmallScreen(window.innerWidth < 768); // Adjust the breakpoint as needed
+            setIsSmallScreen(window.innerWidth < 768);
         }
         window.addEventListener('resize', handleResize);
         handleResize(); // Initial check

@@ -131,11 +131,14 @@ const displayFlats = asyncHandler(async (req, res) => {
 })
 //to get current user
 const getCurrentUser = asyncHandler(async(req, res) => {
-    console.log(req.flat)
+    const flatid = req?.flat?._id
+    if(!flatid) throw new ApiError(401, "User not logged in")
+    // console.log(flatid)
+    const flat = await Flat.findById({_id: flatid})
     return res
     .status(200)
     .json(
-        new ApiResponse(200, req.flat, "current user fetched successfully")
+        new ApiResponse(200, flat, "current user fetched successfully")
     )
 })
 // logout user

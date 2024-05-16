@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -10,7 +10,13 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
-
+  useEffect(() => {
+    axios.get("/api/v1/users/get-current-user")
+    .then(response => {
+      localStorage.setItem("user", JSON.stringify(response.data.data))
+      navigate("/db")
+    })
+  }, [])
   const handleLogin = () => {
     setIsLoggingIn(true);
     axios
