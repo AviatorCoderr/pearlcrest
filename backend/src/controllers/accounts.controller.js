@@ -27,10 +27,7 @@ const transporter = nodemailer.createTransport({
 const sendEmail = asyncHandler(async(req, res) => {
   try {
     const {flatnumber, trans_id} = req.body;
-    console.log(flatnumber)
-    console.log(trans_id)
     const file = req?.file?.path
-    console.log(file)
     if(!file)
       throw new ApiError(400, "Receipt is not generated");
     const flat = await Flat.findOne({flatnumber});
@@ -59,14 +56,12 @@ const sendEmail = asyncHandler(async(req, res) => {
     }
     
     const info = await transporter.sendMail(mailOptions)
-    console.log(info)
     return res.status(200).json({
         status: "success",
         info,
         message: "email sent",
     })
   } catch (error) {
-    console.log(error)
   }
 })
 const sendFailureEmail = asyncHandler(async(trans) => {
@@ -76,7 +71,6 @@ const sendFailureEmail = asyncHandler(async(trans) => {
   const owneremail = owner?.email
   const renteremail = renter?.email
   const transactionId = trans?.transactionId
-  console.log(owneremail, renteremail)
   const date = (trans?.createdAt)?.toLocaleString("en-IN", {
       weekday: "long", 
       year: "numeric", 
@@ -108,9 +102,8 @@ const sendFailureEmail = asyncHandler(async(trans) => {
           `
       };
     const info = await transporter.sendMail(mailOptions)
-    console.log(info)
   } catch (error) {
-    console.log(error)
+    throw new ApiError(500, error)
   }
 })
 const generatedQr = asyncHandler(async(req, res) => {
@@ -120,7 +113,7 @@ const generatedQr = asyncHandler(async(req, res) => {
     const qrCodeDataUri = await QRcode.toDataURL(qrcodeUrl)
     res.send({qrCodeDataUri, qrcodeUrl})
   } catch (error) {
-    console.log("error generating qr code");
+    throw new ApiError(500, "error generating qr code")
   }
 })
 
@@ -128,7 +121,6 @@ const generatedQr = asyncHandler(async(req, res) => {
 const getTransaction = asyncHandler(async(req, res) => {
   const flatid = req?.flat._id
   const data = await Transaction.find({flat: flatid})
-  console.log(data)
   res.status(200)
   .json(new ApiResponse(200, {data}, "transaction data fetched"))
 })
@@ -159,11 +151,8 @@ const getTotalIncome = asyncHandler(async (req, res) => {
       }
     }
   ])
-  console.log(totalIncomeBank)
   const cash = (totalIncomeCash[0])?totalIncomeCash[0].totalIncome : 0
   const bank = (totalIncomeBank[0])?totalIncomeBank[0].totalIncome : 0
-  console.log("cash", cash)
-  console.log("bank", bank)
   res.status(200)
   .json(new ApiResponse(200, [cash, bank], "Income total return"))
 })
@@ -202,11 +191,8 @@ const getTotalExpenditure = asyncHandler(async (req, res) => {
 const getCashBalance = asyncHandler(async (req, res) => {
 })
 const getTransaction5 = asyncHandler(async(req, res) => {
-  console.log("hello i am in transaction")
   const flatid = req?.flat._id;
-  console.log("hello i am kush")
   const data = await Transaction.find({ flat: flatid }).limit(5);
-  console.log(data);
   res.status(200).json(new ApiResponse(200, data, "Top 5 transaction data fetched"));
 });
 const getMaintenanceRecord = asyncHandler(async(req, res) => {
@@ -218,68 +204,55 @@ const getMaintenanceRecord = asyncHandler(async(req, res) => {
 })
 const getAllMaintenanceRecord = asyncHandler(async(req, res) => {
   const mainrecord = await Maintenance.find().populate("flat");
-  console.log(mainrecord)
   res.status(200).json(new ApiResponse(200, {mainrecord}, "Data fetched successfully"))
 })
 const getIncomeStatements = asyncHandler(async (req, res) => {
   const { purpose, flatnumber, start_date, end_date } = req.body;
   let query = {};
-  if (flatnumber && purpose && start_date && end_date) {
-    const flat = await Flat.findOne({ flatnumber });
-    if (flat) {
-        query = { flat, purpose, created_At: { $gte: start_date, $lte: end_date } };
-    }
-} else if (flatnumber && purpose) {
-    const flat = await Flat.findOne({ flatnumber });
-    if (flat) {
-        query = { flat, purpose };
-    }
-} else if (flatnumber) {
-    const flat = await Flat.findOne({ flatnumber });
-    if (flat) {
-        query = { flat };
-    }
-} else if (purpose) {
-    query = { purpose };
-} else if (start_date && end_date) {
-    query = { created_At: { $gte: start_date, $lte: end_date } };
-}
+  if (start_date && end_date) {
+    query.createdAt = { $gte: new Date(start_date), $lte: new Date(end_date) };
+  }
+  if (flatnumber) {
+    query.flat = await Flat.findOne({ flatnumber });
+  }
+  if (purpose) {
+    query.purpose = purpose;
+  }
+  const IncomeHeads = await Income.distinct('purpose');
+  const incomeRecords = await Income.find(query).populate('flat');
 
-  let IncomeHeads = [];
-    IncomeHeads = await Income.distinct('purpose');
-    const incomeRecords = await Income.find(query).populate('flat');
-    const incomeStatements = incomeRecords.map(record => {
-      const flatnumber = record.flat.flatnumber;
-      return { ...record._doc, flatnumber };
-    });
-    console.log(incomeStatements)
-
-    res.status(200).json(new ApiResponse(200, { incomeStatements, IncomeHeads }, "Income statements returned"));
+  const incomeStatements = incomeRecords.map(record => ({
+    ...record._doc,
+    flatnumber: record.flat.flatnumber
+  }));
+  res.status(200).json(new ApiResponse(200, { incomeStatements, IncomeHeads }, "Income statements returned"));
 });
+
 const getExpenditureStatements = asyncHandler(async (req, res) => {
-  const { department, executive_name, mode, start_date, end_date } = req.body;
-  const query = {};
-
-  // Adding non-null fields to the query object
-  if (department !== null && department !== undefined) {
-    query.department = department;
+  try {
+    const { department, executive_name, mode, start_date, end_date } = req.body;
+    let query = {};
+    if (department) {
+      query.department = department;
+    }
+    if (executive_name) {
+      query.executive_name = executive_name;
+    }
+    if (mode) {
+      query.mode = mode;
+    }
+    if (start_date && end_date) {
+      query.createdAt = { $gte: new Date(start_date), $lte: new Date(end_date) };
+    }
+    const ExpHeads = await Expenditure.distinct('department');
+    const ExpRecords = await Expenditure.find(query);
+    res.status(200).json(new ApiResponse(200, { ExpRecords, ExpHeads }, "Exp statements returned"));
+  } catch (error) {
+    console.error("Error fetching expenditure statements:", error);
+    throw new ApiError(500, error)
   }
-  if (executive_name !== null && executive_name !== undefined) {
-    query.executive_name = executive_name;
-  }
-  if (mode !== null && mode !== undefined) {
-    query.mode = mode;
-  }
-  if (start_date !== null && start_date !== undefined && end_date !== null && end_date !== undefined) {
-    query.date = { $gte: start_date, $lte: end_date };
-  }
-
-  // Performing the query
-  const ExpHeads = await Expenditure.distinct('department');
-  const ExpRecords = await Expenditure.find(query);
-    
-  res.status(200).json(new ApiResponse(200, { ExpRecords, ExpHeads }, "Exp statements returned"));
 });
+
 const incomeexpaccount = asyncHandler(async(req, res) => {
   const recordincome = await Income.aggregate([
     {
@@ -307,8 +280,6 @@ const cashbook = asyncHandler(async(req, res) => {
     const flatnumber = record.flat.flatnumber;
     return { ...record._doc, flatnumber };
   });
-  console.log(cashincome)
-  console.log(cashexpense)
   res.status(200).json(new ApiResponse(200, {cashincomeState, cashexpense}, "cashbook data received"))
 })
 const getUnTrans = asyncHandler(async(req, res) => {
@@ -352,7 +323,6 @@ const addTransaction = asyncHandler(async (req, res) => {
     if(purpose==="MAINTENANCE"){
       const maintenanceRecord = await Maintenance.findOne(flatid);
       const monthsPaid = maintenanceRecord.months
-      console.log(monthsPaid)
       months.forEach(newmonth => {
         monthsPaid.push(newmonth)
       });
@@ -382,9 +352,7 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
     const { flatnumber, mode, purpose, amount, months, transactionId, date } = req.body;
     if(!mode || !purpose || !amount || !months) 
       throw new ApiError(400, "One or More fields are missing")
-    console.log(flatnumber)
     const flat = await Flat.findOne({ flatnumber });
-    console.log(flat)
     if(!flat)
       throw new ApiError(404, "Invalid Flatnumber/ Flat not exists")
     const flatid = flat._id;
@@ -507,9 +475,7 @@ const addIncomeByAdmin = asyncHandler(async (req, res) => {
 const addExpenditure = asyncHandler(async(req, res) => {
   try {
     const { mode, amount, executive_name, department, partyname, partycontact, description, date } = req.body;
-    console.log("hello", date)
     const newdate = (date!=null) ? date: (new Date())
-    console.log(newdate)
     const expense = await Expenditure.create(
       {
         mode,
@@ -601,7 +567,6 @@ const Approvepayment = asyncHandler(async (req, res) => {
         );
       }
     }
-    console.log(untransid)
     await UnTransaction.deleteOne({_id: untransid})
     await session.commitTransaction();
     res.status(201).json(
@@ -620,7 +585,6 @@ const denyPayment = asyncHandler(async(req, res) => {
   session.startTransaction()
   try {
     const {untransid} = req.body
-    console.log(untransid)
     const trans = await UnTransaction.findByIdAndDelete({_id: untransid}, {session: session})
     await sendFailureEmail(trans)
     await session.commitTransaction()

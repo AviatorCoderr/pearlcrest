@@ -10,6 +10,8 @@ import { IoMdMenu } from 'react-icons/io';
 import { HiOutlineLogout } from "react-icons/hi";
 import classNames from 'classnames';
 import { useLocation } from 'react-router-dom';
+import { MdAccountCircle } from 'react-icons/md';
+
 
 const linkClasses = 'flex items-center gap-6 font-light p-2.5 hover:bg-neutral-700 hover:no-underline active:bg-neutral rounded-sm text-base';
 
@@ -82,7 +84,7 @@ export default function Header() {
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute left-0 z-10 mt-2.5 w-full opacity-100 bg-black">
+                <Popover.Panel className="absolute left-0 z-10 mt-2.5 w-full opacity-100 bg-black h-screen overflow-y-auto">
                   <div className='whitespace-pre flex-1 py-[1rem] text-[0.9rem] flex flex-col gap-0.5'>
                     {sidebarData.map(ele => (
                       <Sidebarlink key={ele.key} ele={ele} closeNavbar={closeNavbar} />
@@ -110,12 +112,16 @@ export default function Header() {
         </div>
       </div>
       <div className='ml-auto flex items-center gap-2 mr-2'>
-        <div className="mr-4 text-gray-600">{dayOfWeek} {date}, {time}</div>
+        <div className="mr-4 text-gray-600">
+          <div className="font-semibold">{dayOfWeek}, {date}</div>
+          <div className="text-sm">{time}</div>
+        </div>
         <Menu as="div" className="relative">
           <div className='inline-flex'>
-            <Menu.Button className="ml-2 inline-flex rounded-full bg-grey-200 focus:outline-none focus:ring-2 focus:ring-neutral-400">
+            <Menu.Button className="ml-2 inline-flex rounded-full bg-grey-200 focus:outline-none">
               <span className='sr-only'>Open user menu</span>
-              <div className="h-10 w-10 rounded-full bg-black bg-cover bg-no-repeat bg-center" style={{ backgroundImage: '' }}>
+              <div className="h-10 w-10 rounded-full bg-full bg-center">
+              <MdAccountCircle className="h-full w-full" />
               </div>
             </Menu.Button>
           </div>

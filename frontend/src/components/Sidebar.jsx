@@ -4,11 +4,12 @@ import { admin_navi } from "../admin_navi";
 import { guard_det } from "../guard_det";
 import { exe_det } from "../exe_det";
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { HiOutlineLogout } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { IoIosArrowBack } from "react-icons/io";
+import axios from 'axios'
 const linkclasses = 'flex items-center gap-6 font-light p-2.5 hover:bg-neutral-700 hover:no-underline active:bg-neutral rounded-sm text-base';
 
 function Sidebar() {
@@ -28,14 +29,14 @@ function Sidebar() {
         },
     };
     const [isOpen, setIsOpen] = useState(true);
-
+    const navigate = useNavigate()
     let sidebarData = "";
 
-    if (user.flatnumber === "PCS") {
+    if (user?.flatnumber === "PCS") {
         sidebarData = admin_navi;
-    } else if (user.position === "executive") {
+    } else if (user?.position === "executive") {
         sidebarData = exe_det;
-    } else if (user.flatnumber === "GUARD") {
+    } else if (user?.flatnumber === "GUARD") {
         sidebarData = guard_det;
     }
     else
@@ -48,7 +49,7 @@ function Sidebar() {
         .then(response => {
           console.log("Logout success:", response.data);
           localStorage.removeItem("user");
-          navigate("/log");
+          navigate("/");
         })
         .catch(error => {
           console.error("Logout error:", error.message);
@@ -70,7 +71,7 @@ function Sidebar() {
                     {sidebarData.map(ele => (
                         <Sidebarlink key={ele.key} ele={ele}/>
                     ))}
-                    <div onClick={() => handleLogout} className={classNames('text-red-500 mt-[2rem] cursor-pointer border-t border-neutral-700', linkclasses)}>
+                    <div onClick={handleLogout} className={classNames('text-red-500 mt-[2rem] cursor-pointer border-t border-neutral-700', linkclasses)}>
                         <span className="text-xl">
                             <HiOutlineLogout />
                         </span>

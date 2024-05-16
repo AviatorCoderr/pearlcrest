@@ -27,7 +27,7 @@ export default function IncomeStatement() {
             }
         };
         getIncome();
-    }, [flatnumber, purpose, start, end]); // Include flatnumber and purpose in the dependency array
+    }, [flatnumber, purpose, start, end]);
 
     // Function to format the date
     const formatDate = (dateString) => {
