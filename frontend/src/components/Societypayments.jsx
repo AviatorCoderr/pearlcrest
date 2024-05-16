@@ -79,13 +79,20 @@ const Societypayments = () => {
 
   const getAllMonthsOfYear = () => {
     const months = [];
-    for (let i = 0; i < 12; i++) {
-      const currentDate = new Date(2024, i);
+    const currentYear = new Date().getFullYear(); // Get the current year
+    const nextYear = currentYear + 1; // Get the next year
+  
+    // Loop from April of the current year to April of the next year
+    for (let i = 3; i <15; i++) { // April is month index 3
+      const currentMonth = i % 12; // Ensure month index wraps around (e.g., 12 % 12 = 0 for December)
+      const year = currentMonth < 3 ? nextYear : currentYear; // If current month is January, February, or March, use next year
+      const currentDate = new Date(year, currentMonth);
       const monthYearString = getMonthYearString(currentDate);
       months.push(monthYearString);
     }
     return months;
   };
+  
 
   const months = getAllMonthsOfYear();
 

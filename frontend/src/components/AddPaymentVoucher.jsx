@@ -31,7 +31,7 @@ export default function AddPaymentVoucher() {
   const user = JSON.parse(localStorage.getItem("user"))
   const handleSubmit = async () => {
     // Validation checks
-    if (!partyname || !partycontact || !department || !description || !mode || !amount) {
+    if (!department || !description || !mode || !amount) {
       Swal.fire({
         title: 'Validation Error',
         text: 'Please fill in all fields',
