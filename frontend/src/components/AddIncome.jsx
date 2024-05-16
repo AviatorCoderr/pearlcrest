@@ -264,7 +264,7 @@ export default function AddIncome() {
 
   const getAllMonthsOfYear = () => {
     const months = [];
-    for (let i = 0; i < 12; i++) {
+    for (let i = 3; i < 15; i++) {
       const currentDate = new Date(2024, i);
       const monthYearString = getMonthYearString(currentDate);
       months.push(monthYearString);
