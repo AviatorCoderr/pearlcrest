@@ -49,7 +49,7 @@ const sendEmail = asyncHandler(async(req, res) => {
         subject: "Payment Successful",
         html: 
         `<h3>From Mr. Manish, The Treasurer on behalf of Pearl Crest Flat Owner's Society.
-        </h3><p>Thank you for trusting the committee. We have received your payment. Here is the receipt attached</p>
+        </h3><p>Thank you for trusting the committee flat ${flatnumber}. We have received your payment. Here is the receipt attached</p>
         <p>Warm regards,</p>
         <p>Pearl Crest Flat Owner's Society</p>
         <p>Mr. Manish, Treasurer</p>`,
