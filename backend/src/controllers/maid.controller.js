@@ -120,13 +120,12 @@ const addMaidbyloop = asyncHandler(async(req, res) => {
     const maiddet = req.body
     try {
         for(const maid of maiddet){
-            const {name, mobile, aadhar} = req.body
-            const maid = await Maid.create({
+            const {name, mobile} = maid;
+            const maidcreated = await Maid.create({
                 name,
-                mobile, 
-                aadhar
+                mobile
             })
-            if(!maid) throw new ApiError(500, "Something went wrong")
+            if(!maidcreated) throw new ApiError(500, "Something went wrong")
         }
         return res.status(200).json(new ApiResponse(200, "all data added"))
     } catch (error) {
