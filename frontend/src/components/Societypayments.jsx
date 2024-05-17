@@ -15,7 +15,7 @@ const Societypayments = () => {
   const [checkout, setCheckout] = useState(false);
   const [transactionId, setTransactionId] = useState(''); // Define transactionId state
   const [loading, setLoading] = useState(false); // Define loading state
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Define selectedYear state
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); 
 
   useEffect(() => {
     const getMonthsPaid = async () => {
@@ -179,7 +179,7 @@ const Societypayments = () => {
         }
         {purpose === "MAINTENANCE" &&
           <>
-            <select onChange={handleYearChange} className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500">
+            <select onChange={handleYearChange} defaultValue={2024} className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500">
               {years.map((year, index) => (
                 <option key={index} value={year}>{year}</option>
               ))}
@@ -228,6 +228,8 @@ const Societypayments = () => {
               <p className='text-lg text-center font-semibold'>Click on the QR for UPI Payments</p>
               <p className='text-lg text-center font-semibold'>OR</p>
               <p className='text-lg text-center font-semibold'>Transfer the amount through any payment mode and share the transaction ID</p>
+              <p className='text-lg text-center font-semibold'>IFSC CODE - PUNB0093900</p>
+              <p className='text-lg text-center font-semibold'>ACCOUNT NUMBER - 0939000100236216</p>
             </div>
             <div className="mt-4 flex justify-center items-center space-x-4">
               <p>Supported for now only on</p>
