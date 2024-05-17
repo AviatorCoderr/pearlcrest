@@ -12,6 +12,32 @@ function Footer() {
     event.preventDefault();
     setSubmitting(true); 
 
+    // Basic validation
+    if (!flatNumber || !name || !review) {
+      // Display validation errors next to each input field
+      if (!flatNumber) {
+        Swal.fire({
+          icon: "error",
+          title: "Validation Error",
+          text: "Flat Number is required",
+        });
+      } else if (!name) {
+        Swal.fire({
+          icon: "error",
+          title: "Validation Error",
+          text: "Name is required",
+        });
+      } else if (!review) {
+        Swal.fire({
+          icon: "error",
+          title: "Validation Error",
+          text: "Review is required",
+        });
+      }
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const response = await axios.post("/api/v1/review/add-review", {
         flatnumber: flatNumber,
