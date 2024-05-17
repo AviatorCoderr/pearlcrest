@@ -116,4 +116,22 @@ const deleteMaidbyFlat = asyncHandler(async(req, res) => {
     await Maid.updateOne({_id: maidid}, {$set: {flat: newflatarray}})
     return res.status(200).json(new ApiResponse(200, "maid removed"))
 })
-export {addMaidByFlat, addMaid, getAllMaid, checkin, checkout, getAllMaidByFlat, deleteMaidbyFlat}
+const addMaidbyloop = asyncHandler(async(req, res) => {
+    const maiddet = req.body
+    try {
+        for(const maid of maiddet){
+            const {name, mobile, aadhar} = req.body
+            const maid = await Maid.create({
+                name,
+                mobile, 
+                aadhar
+            })
+            if(!maid) throw new ApiError(500, "Something went wrong")
+        }
+        return res.status(200).json(new ApiResponse(200, "all data added"))
+    } catch (error) {
+        console.log(error)
+        throw new ApiError(500, error)
+    }
+})
+export {addMaidByFlat, addMaid, getAllMaid, checkin, checkout, getAllMaidByFlat, deleteMaidbyFlat, addMaidbyloop}

@@ -196,9 +196,9 @@ export default function UserProfile() {
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
   };
-  const filteredMaidList = maidlist.filter(maid =>
-    maid.name.toUpperCase().includes(searchQuery.toUpperCase()) ||
-    maid.mobile.includes(searchQuery)
+  const filteredMaidList = maidlist?.filter(maid =>
+    maid?.name?.toUpperCase().includes(searchQuery?.toUpperCase()) ||
+    maid?.mobile?.includes(searchQuery)
   );
   const handleAdd = async(_id) => {
     try {

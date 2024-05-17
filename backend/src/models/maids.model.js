@@ -17,8 +17,7 @@ const maidSchema = new mongoose.Schema({
     },
     aadhar: {
         type: String,
-        trim: true,
-        unique: true
+        trim: true
     },
     checkin: [{
         type: Date
