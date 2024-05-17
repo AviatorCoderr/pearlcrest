@@ -36,11 +36,12 @@ const getVehiclebyNumber = asyncHandler(async (req, res) => {
         const flat = await Flat.findOne({_id: flatid})
         const flatnumber = flat?.flatnumber
         console.log(flat)
-        if(!vehicle)
-        throw new ApiError(501, "not found")
-        res.status(200).json(new ApiResponse(200, {vehicle, owner, renter, flatnumber}, "Vehicle found"))
+        if(!vehicle){
+            throw new ApiError(501, "not found")
+        }
+        return res.status(200).json(new ApiResponse(200, {vehicle, owner, renter, flatnumber}, "Vehicle found"))
     } catch (error) {
-        console.log(error.message)
+        throw new ApiError(500, "not found")
     }
 })
 const updateVehicles = asyncHandler(async (req, res) => {
