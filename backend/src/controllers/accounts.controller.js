@@ -518,7 +518,8 @@ const addUnVerfiedTransaction = asyncHandler(async(req, res) => {
     amount,
     mode: "BANK",
     months,
-    transactionId
+    transactionId,
+    date: new Date()
   })
   res.status(200).json(new ApiResponse(201, response, "Transaction unverified added"))
 })

@@ -1,9 +1,11 @@
-import React from 'react'
-import axios from 'axios'
-import { useState, useEffect } from 'react'
-import ExcelJS from 'exceljs'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import ExcelJS from 'exceljs';
+
 export default function MaintenanceRecord() {
-    const [record, setRecord] = useState([])
+    const [record, setRecord] = useState([]);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
     useEffect(() => {
         const getRecord = async () => {
             try {
@@ -16,35 +18,37 @@ export default function MaintenanceRecord() {
             }
         };
         getRecord();
-        console.log(record)
     }, []);
 
-    // Function to format the date
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleString(); // You can use any other date formatting method here
-    };
     const getMonthYearString = (date) => {
         return new Intl.DateTimeFormat('en-US', { month: 'long', year: '2-digit' }).format(date);
-      };
-    
-      const getAllMonthsOfYear = () => {
+    };
+
+    const getAllMonthsOfYear = (year) => {
         const months = [];
-        for (let i = 3; i < 15; i++) {
-          const currentDate = new Date(2024, i);
-          const monthYearString = getMonthYearString(currentDate);
-          months.push(monthYearString);
+        for (let i = 0; i < 12; i++) {
+            const currentDate = new Date(year, i);
+            const monthYearString = getMonthYearString(currentDate);
+            months.push(monthYearString);
         }
         return months;
-      };
-    
-      const months = getAllMonthsOfYear();
+    };
 
-      const handleExportToExcel = async () => {
+    const handleYearChange = (event) => {
+        setSelectedYear(parseInt(event.target.value));
+    };
+
+    const years = [];
+    for (let i = -4; i <= 1; i++) {
+        years.push(new Date().getFullYear() + i);
+    }
+
+    const months = getAllMonthsOfYear(selectedYear);
+
+    const handleExportToExcel = async () => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Maintenance Records');
         
-        // Add headers with styling
         const headerRow = worksheet.addRow(['Flat Number', ...months]);
         headerRow.eachCell((cell) => {
             cell.font = { bold: true };
@@ -56,7 +60,6 @@ export default function MaintenanceRecord() {
             };
         });
     
-        // Add data with styling
         record.forEach((rec) => {
             const rowData = [rec.flat.flatnumber];
             months.forEach((month) => {
@@ -81,7 +84,6 @@ export default function MaintenanceRecord() {
             });
         });
     
-        // Auto-size columns
         worksheet.columns.forEach((column) => {
             let maxWidth = 0;
             column.eachCell({ includeEmpty: true }, (cell) => {
@@ -91,22 +93,28 @@ export default function MaintenanceRecord() {
             column.width = maxWidth < 20 ? 20 : maxWidth;
         });
     
-        // Generate blob for file
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const url = window.URL.createObjectURL(blob);
     
-        // Create download link
         const a = document.createElement('a');
         a.href = url;
         a.download = 'maintenance_records.xlsx';
         a.click();
         window.URL.revokeObjectURL(url);
     };
-    
+
     return (
         <div className='m-5'>
             <h2 className="text-3xl font-semibold mb-8">Maintenance Records</h2>
+            <div className="mb-4">
+                <label htmlFor="year-select" className="mr-2">Select Year:</label>
+                <select id="year-select" value={selectedYear} onChange={handleYearChange}>
+                    {years.map((year) => (
+                        <option key={year} value={year}>{year}</option>
+                    ))}
+                </select>
+            </div>
             <button className="p-2 bg-blue-500 text-white font-medium rounded-lg" onClick={handleExportToExcel}>Download Excel</button>
             <div className='overflow-auto'>
             <table className='w-full overflow-scroll text-gray-700 text-center shadow-lg bg-white divide-y divide-gray-200 rounded-lg mt-5'>
@@ -121,10 +129,10 @@ export default function MaintenanceRecord() {
                 <tbody>
                         {record?.map((rec, index) => {
                             return (
-                            <tr>
-                                <td className="border border-zinc-500" key={index}>{rec.flat.flatnumber}</td>
-                                {months.map((month, index) => {
-                                    return <td className='border border-zinc-500 whitespace-nowrap p-3' key={index}>{rec.months.includes(month)? "PAID": "NOT PAID"}</td>
+                            <tr key={index}>
+                                <td className="border border-zinc-500">{rec.flat.flatnumber}</td>
+                                {months.map((month, idx) => {
+                                    return <td className='border border-zinc-500 whitespace-nowrap p-3' key={idx}>{rec.months.includes(month) ? "PAID" : "NOT PAID"}</td>
                                  })}
                             </tr>
                             )

@@ -9,12 +9,13 @@ const Societypayments = () => {
   const [monthsPaid, setMonthsPaid] = useState([]);
   const [amountper, setAmountper] = useState(0.0);
   const [paydemand, setpaydemand] = useState([]);
-  const [amount, setAmount] = useState(0.0)
+  const [amount, setAmount] = useState(0.0);
   const [qrCodeDataUri, setQrCodeDataUri] = useState('');
   const [qrlink, setQrLink] = useState(null);
   const [checkout, setCheckout] = useState(false);
   const [transactionId, setTransactionId] = useState(''); // Define transactionId state
   const [loading, setLoading] = useState(false); // Define loading state
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Define selectedYear state
 
   useEffect(() => {
     const getMonthsPaid = async () => {
@@ -29,7 +30,7 @@ const Societypayments = () => {
     const getDemand = async () => {
       try {
         const response = await axios.get("/api/v1/demand/getpaydemand")
-        const filtered = (response.data.data.response.filter((ele) => ele.type!=="FACILITY RESERVATION"))
+        const filtered = (response.data.data.response.filter((ele) => ele.type !== "FACILITY RESERVATION"))
         setpaydemand(filtered)
       } catch (error) {
         console.error(error.message)
@@ -51,13 +52,13 @@ const Societypayments = () => {
     }
     setAmount(newAmount);
   }, [selectedMonths, purpose, paydemand]);
-  
+
 
   const handlePurposeChange = (e) => {
     const selectedPurpose = e.target.value;
     setPurpose(selectedPurpose);
-    setCheckout(false)
-    setSelectedMonths([])
+    setCheckout(false);
+    setSelectedMonths([]);
   };
 
   const handleMonthToggle = (month) => {
@@ -67,8 +68,8 @@ const Societypayments = () => {
     } else {
       setSelectedMonths(selectedMonths.filter((m) => m !== month));
     }
-    if(checkout===true)
-      setCheckout(!checkout)
+    if (checkout === true)
+      setCheckout(!checkout);
   };
 
   const isMonthSelected = (month) => selectedMonths.includes(month);
@@ -77,41 +78,43 @@ const Societypayments = () => {
     return new Intl.DateTimeFormat('en-US', { month: 'long', year: '2-digit' }).format(date);
   };
 
-  const getAllMonthsOfYear = () => {
+  const getAllMonthsOfYear = (year) => {
     const months = [];
-    const currentYear = new Date().getFullYear(); // Get the current year
-    const nextYear = currentYear + 1; // Get the next year
-  
-    // Loop from April of the current year to April of the next year
-    for (let i = 3; i <15; i++) { // April is month index 3
-      const currentMonth = i % 12; // Ensure month index wraps around (e.g., 12 % 12 = 0 for December)
-      const year = currentMonth < 3 ? nextYear : currentYear; // If current month is January, February, or March, use next year
-      const currentDate = new Date(year, currentMonth);
+    const nextYear = year + 1;
+
+    for (let i = 3; i < 15; i++) { 
+      const currentMonth = i % 12; 
+      const currentDate = new Date(currentMonth < 3 ? nextYear : year, currentMonth);
       const monthYearString = getMonthYearString(currentDate);
       months.push(monthYearString);
     }
     return months;
   };
-  
 
-  const months = getAllMonthsOfYear();
+  const handleYearChange = (e) => {
+    setSelectedYear(parseInt(e.target.value));
+    setSelectedMonths([]);
+  };
+  const currentyear=  new Date().getFullYear()
+  const years = [currentyear-4, currentyear-3, currentyear-2, currentyear-1, currentyear, currentyear + 1];
+  const months = getAllMonthsOfYear(selectedYear);
 
   const handleCheckout = async () => {
-    if(purpose==="MAINTENANCE" && selectedMonths.length===0){
+    if (purpose === "MAINTENANCE" && selectedMonths.length === 0) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
         text: 'Please select months',
-      })
+      });
     }
-    else if(!amount || !purpose){
+    else if (!amount || !purpose) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
         text: 'Some fields are empty',
-      })
+      });
     }
-    else{
+    else {
       const response = await axios.post("/api/v1/account/generate-qr", { amount });
       setQrCodeDataUri(response.data.qrCodeDataUri);
       setQrLink(response.data.qrcodeUrl);
@@ -128,13 +131,12 @@ const Societypayments = () => {
       });
       return;
     }
-    setLoading(true); 
+    setLoading(true);
     try {
       const response = await axios.post("/api/v1/account/add-untrans", {
         purpose, amount, months: selectedMonths, transactionId
       });
       // Handle success
-      // For example, you can show a success message using Swal.fire()
       Swal.fire({
         icon: 'success',
         title: 'Payment Confirmed',
@@ -150,10 +152,9 @@ const Societypayments = () => {
         text: error.response.data.message || 'An error occurred while confirming payment.'
       });
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
-  
 
   return (
     <div className="container mx-auto px-4 py-8 bg-gray-100 rounded-lg shadow-xl">
@@ -165,33 +166,38 @@ const Societypayments = () => {
             <option key={index} value={ele.type}>{ele.type}</option>
           ))}
         </select>
-        {(amountper===0.0) ? 
-          <input 
-          className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
-          placeholder='Enter Amount you wish to contribute'
-          type='number'
-          min={0}
-          onChange={(e) => setAmount(parseFloat(e.target.value))}>
+        {(amountper === 0.0) ?
+          <input
+            className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+            placeholder='Enter Amount you wish to contribute'
+            type='number'
+            min={0}
+            onChange={(e) => setAmount(parseFloat(e.target.value))}>
           </input>
           :
           <></>
         }
-        {purpose === "MAINTENANCE" ?
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {months.map((month, index) => (
-              <label key={index} className={`cursor-pointer p-2 flex gap-2 ${(monthsPaid.includes(month)) ? "bg-green-500" : "bg-red-500"} rounded-lg shadow-sm`}>
-                <input
-                  type="checkbox"
-                  checked={isMonthSelected(month)}
-                  onChange={() => handleMonthToggle(month)}
-                  disabled={monthsPaid.includes(month)}
-                />
-                {month}
-              </label>
-            ))}
-          </div>
-          :
-          <></>
+        {purpose === "MAINTENANCE" &&
+          <>
+            <select onChange={handleYearChange} className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500">
+              {years.map((year, index) => (
+                <option key={index} value={year}>{year}</option>
+              ))}
+            </select>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {months.map((month, index) => (
+                <label key={index} className={`cursor-pointer p-2 flex gap-2 ${(monthsPaid.includes(month)) ? "bg-green-500" : "bg-red-500"} rounded-lg shadow-sm`}>
+                  <input
+                    type="checkbox"
+                    checked={isMonthSelected(month)}
+                    onChange={() => handleMonthToggle(month)}
+                    disabled={monthsPaid.includes(month)}
+                  />
+                  {month}
+                </label>
+              ))}
+            </div>
+          </>
         }
       </div>
       <div className="m-3 flex justify-between items-center">
@@ -230,7 +236,7 @@ const Societypayments = () => {
             <button
               className="mt-8 w-full py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
               onClick={() => handleConfirm()}
-              disabled={loading} 
+              disabled={loading}
             >
               {loading ? <CircleLoader color="#ffffff" loading={loading} size={20} /> : 'Confirm Booking'} {/* Show CircleLoader while loading */}
             </button>

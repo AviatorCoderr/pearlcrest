@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import jsPDF from 'jspdf';
 import { ClipLoader } from 'react-spinners';
 import { useNavigate } from 'react-router-dom';
+
 export default function AddIncome() {
   const [mode, setMode] = useState('');
   const [purpose, setPurpose] = useState('');
@@ -15,11 +16,14 @@ export default function AddIncome() {
   const [loading, setLoading] = useState(false);
   const [showTransactionId, setShowTransactionId] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const navigate = useNavigate()
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const navigate = useNavigate();
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
-    if(user!=="PCS") navigate("/db/unauth")
-  })
+    if (user !== "PCS") navigate("/db/unauth");
+  });
+
   useEffect(() => {
     const getDemand = async () => {
       try {
@@ -179,7 +183,7 @@ export default function AddIncome() {
 
         if (!showTransactionId) {
           response = await axios.post('/api/v1/account/add-admin-income', {
-            date: selectedDate, // Use selected date
+            date: selectedDate,
             mode,
             amount,
             purpose,
@@ -188,7 +192,7 @@ export default function AddIncome() {
           });
         } else if (showTransactionId) {
           response = await axios.post('/api/v1/account/add-admin-transaction', {
-            date: selectedDate, // Use selected date
+            date: selectedDate,
             mode,
             amount,
             purpose,
@@ -225,7 +229,7 @@ export default function AddIncome() {
               title: 'Mail not sent but data added'
             })
           })
-          }
+        }
 
         Swal.fire({
           title: 'Income Added',
@@ -264,8 +268,8 @@ export default function AddIncome() {
 
   const getAllMonthsOfYear = () => {
     const months = [];
-    for (let i = 3; i < 15; i++) {
-      const currentDate = new Date(2024, i);
+    for (let i = 0; i < 12; i++) {
+      const currentDate = new Date(selectedYear, i);
       const monthYearString = getMonthYearString(currentDate);
       months.push(monthYearString);
     }
@@ -273,6 +277,7 @@ export default function AddIncome() {
   };
 
   const mon = getAllMonthsOfYear();
+  const years = [2020, 2021, 2022, 2023, 2024, 2025];
 
   return (
     <div className='m-5'>
@@ -312,7 +317,7 @@ export default function AddIncome() {
           <option value="BANK">Bank</option>
         </select>
 
-        {purpose!=="MAINTENANCE" && (
+        {purpose !== "MAINTENANCE" && (
           <input
             className='p-2 rounded-sm shadow-lg border border-black'
             type='number'
@@ -332,19 +337,32 @@ export default function AddIncome() {
 
         {purpose === "MAINTENANCE" && (
           <>
+            <p className='font-semibold'>Select Year:</p>
+            <select
+              className='p-2 rounded-sm shadow-lg border border-black'
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+            >
+              {years.map((year) => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+
             <p className='font-semibold'>Select Months:</p>
-            {mon.map((month) => (
-              <div key={month} className='flex items-center'>
-                <input
-                  type='checkbox'
-                  id={month}
-                  value={month}
-                  onChange={handleCheckboxChange}
-                  checked={months.includes(month)}
-                />
-                <label htmlFor={month} className='ml-2'>{month}</label>
-              </div>
-            ))}
+            <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
+              {mon.map((month) => (
+                  <label htmlFor={month} className='cursor-pointer p-2 flex gap-2 bg-red-500 rounded-lg shadow-sm'>
+                  <input
+                    type='checkbox'
+                    id={month}
+                    value={month}
+                    onChange={handleCheckboxChange}
+                    checked={months.includes(month)}
+                  />
+                  {month}
+                  </label>
+              ))}
+            </div>
           </>
         )}
 
