@@ -51,7 +51,7 @@ export default function UserProfile() {
   const [maidlist, setMaidlist] = useState([])
   const [vehicleEntries, setVehicleEntries] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(true); // State for loading
+  const [loading, setLoading] = useState(true); 
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [aadhar, setAadhar] = useState('');
@@ -88,7 +88,7 @@ export default function UserProfile() {
         setMaidlist(maidResponse.data.data.Maidlist)
         setVehicleEditMode(new Array(vehicleData.length).fill(false))
         setPet(petResponse.data.data);
-        setLoading(false); // Data fetched, loading state to false
+        setLoading(false); 
       } catch (error) {
         console.log(error);
       }
@@ -204,22 +204,32 @@ export default function UserProfile() {
     try {
       await axios.post("/api/v1/maid/add-maid-by-flat", { _id })
       .then(response => {
-        console.log(response)
+        Swal.fire({
+          icon: 'success',
+          title: "Maid added successfully",
+          timer: 2000
+        })
+        setTimeout(() => {
+          window.location.reload()
+        }, 2000)
       })
     } catch (error) {
-      console.log('Error adding maid:', error);
+      Swal.fire({
+        icon: 'warning',
+        title: 'Oops, something went wrong',
+        text: error.response.data.message || 'Something went wrong!'
+      });
     }
   }
   const handleAddClick = async () => {
     setLoading(true);
     try {
-      // Validate mobile number format
+    
       const mobilePattern = /^[6-9]\d{9}$/;
       if (!mobilePattern.test(mobile)) {
         throw new Error('Invalid mobile number');
       }
   
-      // Validate Aadhar number format
       const aadharPattern = /^\d{12}$/;
       if (!aadharPattern.test(aadhar)) {
         throw new Error('Invalid Aadhar number');
@@ -272,7 +282,7 @@ export default function UserProfile() {
   };
   return (
     <div className='m-5'>
-      {loading ? ( // Render loader if loading is true
+      {loading ? ( 
         <div className="flex items-center justify-center h-screen">
           <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
         </div>
@@ -418,8 +428,7 @@ export default function UserProfile() {
                   <td className="px-4 py-2 border border-gray-300">{maid.name}</td>
                   <td className="px-4 py-2 border border-gray-300">{maid.mobile}</td>
                   <td className="px-4 py-2 border border-gray-300">{maid.aadhar}</td> 
-                  <td>
-                  {/* Conditional Rendering */}
+                  <td className="px-4 py-2 border border-gray-300">
                   {maid.flat.some(flat => flat._id === flatid) ? (
                     "Added"
                   ) : (

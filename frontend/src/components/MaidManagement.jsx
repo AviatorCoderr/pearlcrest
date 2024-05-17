@@ -3,12 +3,15 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { RingLoader } from 'react-spinners';
 import { useNavigate } from 'react-router-dom';
+
 export default function MaidManagement() {
-  const navigate = useNavigate()
-    useEffect(() => {
-        const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
-        if(user!=="GUARD") navigate("/db/unauth")
-    })
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
+    if (user !== "GUARD") navigate("/db/unauth");
+  }, [navigate]);
+
   const [maidList, setMaidList] = useState([]);
   const [addClick, setAddClick] = useState(false);
   const [flat, setFlat] = useState([]);
@@ -18,6 +21,7 @@ export default function MaidManagement() {
   const [flatelement, setFlatelement] = useState('');
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     getAllMaids();
@@ -40,63 +44,52 @@ export default function MaidManagement() {
   };
 
   const handleAddClick = async () => {
-    setLoading(true);
+    setIsSubmitting(true);
     try {
       const mobilePattern = /^[6-9]\d{9}$/;
       if (!mobilePattern.test(mobile)) {
         throw new Error('Invalid mobile number');
       }
-  
+
       const aadharPattern = /^\d{12}$/;
       if (!aadharPattern.test(aadhar)) {
         throw new Error('Invalid Aadhar number');
-      }    
-      
-      if(flat.length===0){
-        throw new Error('Add Flat Number')
       }
-      axios.post("/api/v1/maid/add-maid", {
+
+      if (flat.length === 0) {
+        throw new Error('Add Flat Number');
+      }
+
+      await axios.post("/api/v1/maid/add-maid", {
         flatnumber: flat,
         name,
         mobile,
         aadhar
-      })
-      .then(response => {
-        console.log(response)
-        Swal.fire({
-          icon: 'success',
-          title: 'Maid added successfully!',
-          showConfirmButton: false,
-          timer: 1500
-        });
-        setFlat([]);
-        setName('');
-        setMobile('');
-        setAadhar('');
-        setAddClick(false);
-        getAllMaids();
-      })
-      .catch(error => {
-        console.log('Error adding maid:', error);
-        Swal.fire({
-          icon: 'warning',
-          title: 'Oops...',
-          text: error.response.data.message || 'Something went wrong!'
-        });
-      })
+      });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Maid added successfully!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+      setFlat([]);
+      setName('');
+      setMobile('');
+      setAadhar('');
+      setAddClick(false);
+      getAllMaids();
     } catch (error) {
       console.log('Error adding maid:', error);
       Swal.fire({
         icon: 'warning',
         title: 'Oops...',
-        text: error.response.data.message || 'Something went wrong!'
+        text: error.response?.data?.message || 'Something went wrong!'
       });
-      
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
-  
 
   const handleAddFlat = () => {
     setFlat([...flat, flatelement.toUpperCase()]);
@@ -133,6 +126,7 @@ export default function MaidManagement() {
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
   };
+
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
     return new Date(dateString).toLocaleString(undefined, options);
@@ -142,13 +136,14 @@ export default function MaidManagement() {
     maid.name.toUpperCase().includes(searchQuery.toUpperCase()) ||
     maid.mobile.includes(searchQuery)
   );
+
   const isToday = (date) => {
     const today = new Date();
     return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear();
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear();
   };
-  
+
   return (
     <div className="mx-auto">
       <button onClick={handleAddMaid} className='block w-full max-w-lg m-auto py-2 bg-blue-500 text-white rounded-lg'>Add Maid</button>
@@ -161,8 +156,9 @@ export default function MaidManagement() {
               value={flatelement}
               onChange={(e) => setFlatelement(e.target.value)}
               className="w-full border-b-2 p-1 border-black rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+              disabled={isSubmitting}
             />
-            <button onClick={handleAddFlat} className="p-2 bg-blue-500 rounded-lg px-5 text-white">Add</button>
+            <button onClick={handleAddFlat} className="p-2 bg-blue-500 rounded-lg px-5 text-white" disabled={isSubmitting}>Add</button>
           </div>
           <p className='my-2'>{flat.map((ele, index) => {
             return <span className="bg-neutral-300 p-1 mx-2 px-4 rounded-lg" key={index}>{ele} <button onClick={() => handleDeleteFlat(ele)} className='text-neutral-600 text-bold'>X</button></span>;
@@ -172,20 +168,23 @@ export default function MaidManagement() {
             type="text"
             onChange={(e) => setName(e.target.value)}
             className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+            disabled={isSubmitting}
           />
           <input
             placeholder="Mobile"
             type="text"
             onChange={(e) => setMobile(e.target.value)}
             className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+            disabled={isSubmitting}
           />
           <input
             placeholder="Aadhar"
             type="text"
             onChange={(e) => setAadhar(e.target.value)}
             className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+            disabled={isSubmitting}
           />
-          <button onClick={handleAddClick} className="p-2 px-10 mt-4 bg-blue-500 text-white rounded-lg">Submit</button>
+          <button onClick={handleAddClick} className="p-2 px-10 mt-4 bg-blue-500 text-white rounded-lg" disabled={isSubmitting}>Submit</button>
         </div>
       )}
       <div className="mt-4">
@@ -217,12 +216,12 @@ export default function MaidManagement() {
                   <td className="px-4 py-2 border border-gray-300">{maid.mobile}</td>
                   <td className="px-4 py-2 border border-gray-300">{maid.aadhar}</td>
                   <td className="px-4 py-2 border border-gray-300">
-                  {(maid?.checkedin && isToday(new Date(maid.checkin[maid.checkin.length-1]))) ? (
-                    `${formatDate(maid.checkin[maid.checkin.length-1])}`
-                  ) : (
-                    <button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg'>Check In</button>
-                  )}
-                </td>
+                    {(maid?.checkedin && isToday(new Date(maid.checkin[maid.checkin.length - 1]))) ? (
+                      `${formatDate(maid.checkin[maid.checkin.length - 1])}`
+                    ) : (
+                      <button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg' disabled={loading}>Check In</button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

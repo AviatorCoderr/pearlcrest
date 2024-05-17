@@ -22,7 +22,7 @@ const addMaidByFlat = asyncHandler(async (req, res) => {
     const newFlatWorking = [...flatWorking, flatId];
 
     await Maid.findByIdAndUpdate(_id, { flat: newFlatWorking });
-    res.status(200).json(new ApiResponse(200, null, "Maid added to flat"));
+    return res.status(200).json(new ApiResponse(200, null, "Maid added to flat"));
 });
 const addMaid = asyncHandler(async (req, res) => {
     const { flatnumber, name, mobile, aadhar } = req.body;
@@ -45,7 +45,7 @@ const addMaid = asyncHandler(async (req, res) => {
         aadhar
     });
 
-    res.status(200).json(new ApiResponse(200, { response }, "Maid added"));
+    return res.status(200).json(new ApiResponse(200, { response }, "Maid added"));
 });
 const getAllMaid = asyncHandler(async (req, res) => {
     try {
@@ -104,4 +104,16 @@ const checkout = asyncHandler(async(req, res) => {
     const response = await Maid.updateOne({_id}, {$set: {checkout: isoTime}});
     res.status(200).json(new ApiResponse(200, {response}, "Check out time updated"));
 });
-export {addMaidByFlat, addMaid, getAllMaid, checkin, checkout, getAllMaidByFlat}
+const deleteMaidbyFlat = asyncHandler(async(req, res) => {
+    const {maidid, flatid} = req.body
+    console.log(maidid, flatid)
+    const exisitingmaid = await Maid.findById({_id: maidid})
+    if(!exisitingmaid) throw new ApiError(404, "Maid not found")
+    const flatarray = exisitingmaid.flat
+    const newflatarray = flatarray.filter((ele) => ele===flatid)
+    console.log(flatarray)
+    console.log(newflatarray)
+    await Maid.updateOne({_id: maidid}, {$set: {flat: newflatarray}})
+    return res.status(200).json(new ApiResponse(200, "maid removed"))
+})
+export {addMaidByFlat, addMaid, getAllMaid, checkin, checkout, getAllMaidByFlat, deleteMaidbyFlat}
