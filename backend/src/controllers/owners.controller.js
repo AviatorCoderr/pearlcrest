@@ -76,6 +76,7 @@ const addOwnerbyadmin = asyncHandler(async (req, res) => {
     if (!owner) {
         throw new ApiError();
     }
+    return res.status(200).json(new ApiResponse(200, "Added Owner"))
 });
 
 //update owner details by admin
