@@ -34,13 +34,14 @@ export default function VisitorsListDash() {
                 </div>
                 <div className='text-sm'>Today: {new Date().toLocaleString("en-IN" ,{day: '2-digit', month: '2-digit', year: '2-digit'})}</div>
             </div>
-            <div className='px-4 py-3'>
+            <div className='px-4 py-3 overflow-auto'>
                 {visitors.length > 0 ? (
                     <table className='w-full text-gray-700'>
                         <thead className='bg-gray-200'>
                             <tr>
                                 <th className='px-4 py-2 border border-gray-300'>Name</th>
                                 <th className='px-4 py-2 border border-gray-300'>Mobile</th>
+                                <th className='px-4 py-2 border border-gray-300'>Purpose</th>
                                 <th className='px-4 py-2 border border-gray-300'>Check In</th>
                             </tr>
                         </thead>
@@ -49,6 +50,7 @@ export default function VisitorsListDash() {
                                 <tr key={visitor._id} className='hover:bg-gray-100 transition-all'>
                                     <td className='px-4 py-2 border border-gray-300'>{visitor.name}</td>
                                     <td className='px-4 py-2 border border-gray-300'>{visitor.mobile}</td>
+                                    <td className='px-4 py-2 border border-gray-300'>{visitor.purpose}</td>
                                     <td className='px-4 py-2 border border-gray-300'>{formatDateTime(visitor.checkin)}</td>
                                 </tr>
                             ))}

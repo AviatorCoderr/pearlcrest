@@ -32,7 +32,7 @@ export default function VisitorLog() {
                 </div>
                 <div className='text-sm'>Today: {new Date().toLocaleDateString()}</div>
             </div>
-            <div className='px-4 py-3'>
+            <div className='px-4 py-3 overflow-auto'>
                 {visitor.length > 0 ? (
                     <table className='w-full text-gray-700'>
                         <thead className='bg-gray-200'>
