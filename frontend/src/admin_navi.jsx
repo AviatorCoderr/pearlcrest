@@ -16,12 +16,6 @@ export const admin_navi = [
         icon: MdCheck
     },
     {
-        key: 'reg',
-        label: 'Register Owner',
-        path: '/db/regown',
-        icon: MdCheck
-    },
-    {
         key: 'add-income',
         label: 'Add Income',
         path: '/db/addincome',
