@@ -362,12 +362,15 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
   session.startTransaction();
   try {
     const { flatnumber, mode, purpose, amount, months, transactionId, date } = req.body;
-    if(!mode || !purpose || !amount || !months) 
-      throw new ApiError(400, "One or More fields are missing")
+    if (!mode || !purpose || !amount || !months)
+      throw new ApiError(400, "One or more fields are missing");
+
     const flat = await Flat.findOne({ flatnumber });
-    if(!flat)
-      throw new ApiError(404, "Invalid Flatnumber/ Flat not exists")
+    if (!flat)
+      throw new ApiError(404, "Invalid Flat number / Flat does not exist");
+
     const flatid = flat._id;
+
     const trans = await Transaction.create(
       [{
         flat: flatid,
@@ -381,6 +384,7 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
       }],
       { session: session }
     );
+
     const incomerecord = await Income.create(
       [{
         flat: flatid,
@@ -392,11 +396,12 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
       }],
       { session: session }
     );
+
     if (purpose === "MAINTENANCE") {
       const maintenanceRecord = await Maintenance.findOne({ flat: flatid });
-      let maintenance;
+
       if (!maintenanceRecord) {
-        maintenance = await Maintenance.create(
+        await Maintenance.create(
           [{
             flat: flatid,
             months
@@ -404,16 +409,22 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
           { session: session }
         );
       } else {
-        const monthsPaid = [...maintenanceRecord.months, ...months];
-        maintenance = await Maintenance.updateOne(
+        const existingMonths = new Set(maintenanceRecord.months);
+        const duplicateMonths = months.filter(month => existingMonths.has(month));
+
+        if (duplicateMonths.length > 0) {
+          throw new ApiError(400, `The following months are already present: ${duplicateMonths.join(', ')}`);
+        }
+
+        const updatedMonths = [...maintenanceRecord.months, ...months];
+        await Maintenance.updateOne(
           { flat: flatid },
-          {
-            $set: { months: monthsPaid }
-          },
+          { $set: { months: updatedMonths } },
           { session: session }
         );
       }
     }
+
     await session.commitTransaction();
     res.status(201).json(
       new ApiResponse(200, { trans, incomerecord }, "Transaction and income added successfully")
@@ -421,11 +432,12 @@ const addTransactionByAdmin = asyncHandler(async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     console.error(error);
-    throw new ApiError(error.statusCode, error.message)
+    throw new ApiError(error.statusCode, error.message);
   } finally {
     session.endSession();
   }
 });
+
 const addIncomeByAdmin = asyncHandler(async (req, res) => {
   const { mode, purpose, amount, date } = req.body;
   const flatnumber = "PCS";
