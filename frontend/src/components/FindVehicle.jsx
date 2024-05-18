@@ -64,8 +64,14 @@ function FindVehicle() {
           <p><span className="font-semibold">Registration Number:</span> {vehicleData.vehicle.reg_no}</p>
           <p><span className="font-semibold">Type:</span> {vehicleData.vehicle.type}</p>
           <p><span className="font-semibold">Model:</span> {vehicleData.vehicle.model}</p>
-          <p><span className="font-semibold">Owner's Number:</span> {`${vehicleData.owner?.mobile}, ${vehicleData.owner?.spouse_mobile}`}</p>
-          <p><span className="font-semibold">Renter's Number:</span> {`${vehicleData.renter?.mobile}, ${vehicleData.renter?.spouse_mobile}`}</p>
+          <p><span className="font-semibold">Owner's Number:</span> 
+            <a href={`tel:${vehicleData.owner?.mobile}`}>{vehicleData.owner?.mobile}</a>, 
+            <a href={`tel:${vehicleData.owner?.spouse_mobile}`}>{vehicleData.owner?.spouse_mobile}</a>
+          </p>
+          <p><span className="font-semibold">Renter's Number:</span> 
+            <a href={`tel:${vehicleData.renter?.mobile}`}>{vehicleData.renter?.mobile}</a>, 
+            <a href={`tel:${vehicleData.renter?.spouse_mobile}`}>{vehicleData.renter?.spouse_mobile}</a>
+          </p>
         </div>
       )}
     </div>
