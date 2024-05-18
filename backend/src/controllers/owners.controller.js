@@ -37,6 +37,46 @@ const addOwner = asyncHandler(async (req, res) => {
         }
     }
 })
+const addOwnerbyadmin = asyncHandler(async (req, res) => {
+    const { name, mobile, aadhar, email, spouse_name, spouse_mobile, flatnumber } = req.body;
+
+    if (!flatnumber) {
+        throw new ApiError(401, "Flat number is required");
+    }
+
+    // Find the flat based on the provided flat number
+    const flat = await Flat.findOne({ flatnumber });
+
+    if (!flat) {
+        throw new ApiError(404, "Flat not found");
+    }
+
+    const existingOwner = await Owner.findOne({ mobile: { $eq: mobile } });
+    if (existingOwner) {
+        throw new ApiError(409, "Owner already exists");
+    }
+
+    // Check if any owner already has the provided flat ID
+    const flattaken = await Owner.findOne({ flat: flat._id });
+    if (flattaken) {
+        throw new ApiError(409, "Flat is already associated with another owner");
+    }
+
+    const owner = await Owner.create({
+        name,
+        mobile,
+        aadhar,
+        email,
+        spouse_name,
+        spouse_mobile,
+        flat: flat._id // Use the flat's ID
+    });
+    
+    if (!owner) {
+        throw new ApiError();
+    }
+});
+
 //update owner details by admin
 const updateAdminOwner = asyncHandler(async (req, res) => {
     const { name, mobile, aadhar, email, spouse_name, spouse_mobile} = req.body
@@ -93,4 +133,4 @@ const getAllOwner = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, owners, "owners data recieved"))
 })
 
-export {addOwner, updateOwner, updateAdminOwner, getOwner, getAllOwner}
+export {addOwner, updateOwner, updateAdminOwner, getOwner, getAllOwner, addOwnerbyadmin}
