@@ -1,6 +1,6 @@
 import {Router} from "express"
 const router = Router();
-import { Approvepayment, addExpenditure, addIncomeByAdmin, addTransaction, addTransactionByAdmin, addUnVerfiedTransaction, cashbook, denyPayment, generatedQr, getAllMaintenanceRecord, getExpenditureStatements, getIncomeStatements, getMaintenanceRecord, getTotalExpenditure, getTotalIncome, getTransaction, getTransaction5, getUnTrans, incomeexpaccount, sendEmail, updateMainbyloop } from "../controllers/accounts.controller.js";
+import { Approvepayment, addExpenditure, addIncomeByAdmin, addTransaction, addTransactionByAdmin, addUnVerfiedTransaction, cashbook, denyPayment, generatedQr, getAllMaintenanceRecord, getExpenditureStatements, getIncomeStatements, getMaintenanceRecord, getMaintenanceRecordByFlat, getTotalExpenditure, getTotalIncome, getTransaction, getTransaction5, getUnTrans, incomeexpaccount, sendEmail, updateMainbyloop } from "../controllers/accounts.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js"
 import { upload } from "../middlewares/multer.middleware.js"
 router.route("/add-transaction").post(verifyJWT, addTransaction)
@@ -22,6 +22,7 @@ router.route("/generate-qr").post(verifyJWT, generatedQr)
 router.route("/add-untrans").post(verifyJWT, addUnVerfiedTransaction)
 router.route("/get-untrans").get(verifyJWT, getUnTrans)
 router.route("/approve").post(verifyJWT, Approvepayment)
-router.route("/deny").post(verifyJWT, denyPayment)
+router.route("/deny").  post(verifyJWT, denyPayment)
 router.route("/updatemaintenance").post(updateMainbyloop)
+router.route("/getmaint").post(verifyJWT, getMaintenanceRecordByFlat)
 export default router

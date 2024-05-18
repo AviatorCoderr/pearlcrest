@@ -218,6 +218,17 @@ const getAllMaintenanceRecord = asyncHandler(async(req, res) => {
   const mainrecord = await Maintenance.find().populate("flat");
   res.status(200).json(new ApiResponse(200, {mainrecord}, "Data fetched successfully"))
 })
+const getMaintenanceRecordByFlat = asyncHandler(async(req, res) => {
+  const { flatnumber } = req.body;
+  console.log(flatnumber)
+  const flat = await Flat.findOne({ flatnumber });
+  if (!flat) {
+    return res.status(404).json(new ApiResponse(404, {}, "Flat not found"));
+  }
+  const mainrecord = await Maintenance.findOne({ flat: flat._id });
+  res.status(200).json(new ApiResponse(200, mainrecord?.months, "Data fetched successfully"));
+});
+
 const getIncomeStatements = asyncHandler(async (req, res) => {
   const { purpose, flatnumber, start_date, end_date } = req.body;
   let query = {};
@@ -651,4 +662,4 @@ const updateMainbyloop = asyncHandler(async(req, res) => {
 export { addTransaction, addTransactionByAdmin, addIncomeByAdmin, 
   addExpenditure, getTransaction, getTotalIncome, getTotalExpenditure,
 getCashBalance, getTransaction5, getMaintenanceRecord, getIncomeStatements, getAllMaintenanceRecord, getExpenditureStatements, incomeexpaccount, cashbook, sendEmail
-, generatedQr, addUnVerfiedTransaction, getUnTrans, Approvepayment, denyPayment, updateMainbyloop};
+, generatedQr, addUnVerfiedTransaction, getUnTrans, Approvepayment, denyPayment, updateMainbyloop, getMaintenanceRecordByFlat};

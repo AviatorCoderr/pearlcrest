@@ -278,7 +278,22 @@ export default function AddIncome() {
 
   const mon = getAllMonthsOfYear();
   const years = [2020, 2021, 2022, 2023, 2024, 2025];
-
+  const [monthsPaid, setMonthsPaid] = useState([])
+  const fetchMaintenanceByFlat = () => {
+    axios.post("/api/v1/account/getmaint", {
+      flatnumber: flatNumber
+    })
+    .then(response => {
+      setMonthsPaid(response.data.data)
+    })
+    .catch(error => {
+      console.log(error)
+      Swal.fire({
+        icon: 'error',
+        title: "Error fetching records"
+      })
+    })
+  }
   return (
     <div className='m-5'>
       <strong className='text-xl m-5 font-semibold'>Add Income</strong>
@@ -337,6 +352,7 @@ export default function AddIncome() {
 
         {purpose === "MAINTENANCE" && (
           <>
+            <button className="p-2 rounded-lg bg-green-500 text-white font-bold" onClick={fetchMaintenanceByFlat}>Fetch Records</button>
             <p className='font-semibold'>Select Year:</p>
             <select
               className='p-2 rounded-sm shadow-lg border border-black'
@@ -351,13 +367,14 @@ export default function AddIncome() {
             <p className='font-semibold'>Select Months:</p>
             <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
               {mon.map((month) => (
-                  <label htmlFor={month} className='cursor-pointer p-2 flex gap-2 bg-red-500 rounded-lg shadow-sm'>
+                  <label htmlFor={month} className={`cursor-pointer p-2 flex gap-2 ${(monthsPaid.includes(month)) ? "bg-green-500" : "bg-red-500"} rounded-lg shadow-sm`}>
                   <input
                     type='checkbox'
                     id={month}
                     value={month}
                     onChange={handleCheckboxChange}
                     checked={months.includes(month)}
+                    disabled={monthsPaid.includes(month)}
                   />
                   {month}
                   </label>
