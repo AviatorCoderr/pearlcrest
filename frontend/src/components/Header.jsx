@@ -55,7 +55,7 @@ export default function Header() {
     sidebarData = admin_navi;
   } else if (user.position === "executive") {
     sidebarData = exe_det;
-  } else if (user.flatnumber === "ABC") {
+  } else if (user.flatnumber === "GUARD") {
     sidebarData = guard_det;
   }
   else {
