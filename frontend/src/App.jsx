@@ -32,8 +32,7 @@ import BookingDetails from "./components/BookingDetails";
 import PaymentApproval from "./components/PaymentApproval";
 import MemberCouncil from "./components/MemberCouncil";
 import Unauthorised from "./components/Unauthorised"
-import RegisterFlat from "./components/RegisterFlat"
-import RegisterOwner from "./components/RegisterOwner"
+import RegistrationPage from "./components/RegistrationPage";
 function App() {
   return (
     <div>
@@ -75,8 +74,7 @@ function App() {
             <Route path="hall-booking" element={<HallBooking />} />
             <Route path="booking-details" element={<BookingDetails />} />
             <Route path="payment-approval" element={<PaymentApproval />} />
-            <Route path="reg" element={<RegisterFlat />} />
-            <Route path="regown" element={<RegisterOwner/>} />
+            <Route path="reg" element={<RegistrationPage />} />
           </Route>
         </Routes>
       </Router>
