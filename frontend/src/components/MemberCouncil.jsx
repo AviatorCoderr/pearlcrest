@@ -27,8 +27,8 @@ const MemberCouncil = () => {
     { id: 6, position: 'Executive Member', name: 'Mr. Manoj Kumar Singh', flat: 'B204', contact: '9431328432', url: '/static/images/manoj-min.jpg' },
     { id: 7, position: 'Executive Member', name: 'Mr. Sunil Kumar Singh', flat: 'CG3', contact: '9781077819', url: '/static/images/sunil-min.jpg' },
     { id: 8, position: 'Executive Member', name: 'Mrs. Indu Prasad', flat: 'CG1', contact: '9431924288', url: '/static/images/indu-min.jpg' },
-    { id: 9, position: 'Executive Member', name: 'Mrs. Poonam Nischal', flat: 'C208', contact: '8809360519', url: '/static/images/poonam-min.jpg' },
-    { id: 10, position: 'Executive Member', name: 'Mr. Lalit Kishore', flat: 'C306', contact: '8877327018', url: '/static/images/lalit-min.jpg' },
+    { id: 9, position: 'Executive Member', name: 'Mrs. Punam Nischal', flat: 'C208', contact: '8809360519', url: '/static/images/poonam-min.jpg' },
+    { id: 10, position: 'Executive Member', name: 'Mr. Lalit Kishor', flat: 'C306', contact: '8877327018', url: '/static/images/lalit-min.jpg' },
     { id: 11, position: 'Executive Member', name: 'Mr. Ranjan Kumar', flat: 'D-block', contact: '9334902514', url: '/static/images/ranjan-min.jpg' }
   ];
 
