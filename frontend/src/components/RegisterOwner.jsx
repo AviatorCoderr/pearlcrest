@@ -14,7 +14,7 @@ const OwnerRegistrationForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/api/v1/owners/add', {
+            const response = await axios.post('/api/v1/owners/addbyadmin', {
                 name,
                 mobile,
                 aadhar,
