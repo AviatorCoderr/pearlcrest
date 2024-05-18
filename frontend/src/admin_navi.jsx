@@ -18,7 +18,7 @@ export const admin_navi = [
     {
         key: 'reg',
         label: 'Register Owner',
-        path: '/db/reg',
+        path: '/db/regown',
         icon: MdCheck
     },
     {
