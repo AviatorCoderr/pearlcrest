@@ -51,6 +51,41 @@ const registerFlat = asyncHandler(async (req, res) => {
         return res.status(error.status || 500).json(new ApiResponse(error.status || 500, error.message || "Internal Server Error"));
     }
 });
+const registerFlatbyAdmin = asyncHandler(async (req, res) => {
+    try {
+        const { flatnumber, currentstay, password, position } = req.body;
+        console.log(flatnumber)
+        // Validate all required fields
+        if (![flatnumber, currentstay, password, position].every(field => field && field.trim() !== "")) {
+            throw new ApiError(401, "All fields are required");
+        }
+
+        // Check if the flat already exists
+        const existingFlat = await Flat.findOne({ flatnumber });
+        if (existingFlat) {
+            throw new ApiError(409, "Flat already exists");
+        }
+
+        // Create the new flat
+        const createdFlat = await Flat.create({
+            flatnumber: flatnumber.toUpperCase(),
+            password,
+            currentstay,
+            position
+        });
+
+        // Check if flat creation was successful
+        if (!createdFlat) {
+            throw new ApiError(500, "Something went wrong while registering flat");
+        }
+
+        // Respond with success
+        return res.status(200).json(new ApiResponse(200, "Flat registered successfully"));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.status || 500).json(new ApiResponse(error.status || 500, error.message || "Internal Server Error"));
+    }
+});
 
 // for admin to reset password with a click if owner changes
 const adminresetpassword = asyncHandler(async(req, res) => {
@@ -236,4 +271,4 @@ const changepassword = asyncHandler(async(req, res) => {
         })
     }
 })
-export {registerFlat, adminresetpassword, loginFlat, displayFlats, getCurrentUser, logoutUser, sendOtpVerificationEmail, changepassword}
+export {registerFlat, adminresetpassword, loginFlat, displayFlats, getCurrentUser, registerFlatbyAdmin, logoutUser, sendOtpVerificationEmail, changepassword}

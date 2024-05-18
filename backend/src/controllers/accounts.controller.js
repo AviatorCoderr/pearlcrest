@@ -609,8 +609,34 @@ const denyPayment = asyncHandler(async(req, res) => {
     await session.endSession()
   }
 })
+const updateMainbyloop = asyncHandler(async(req, res) => {
+  const maindet = req.body
+  for(const maint of maindet){
+    const {flatnumber, months} = maint
+    console.log(flatnumber)
+    if(!flatnumber || !months) throw new ApiError(500, "data missing")
+    const flat = await Flat.findOne({flatnumber})
+    console.log(flat)
+    if(!flat) throw new ApiError(404, "Flat not exists")
+    const flatid = flat._id
+    const exisiting = await Maintenance.findOne({flat: flatid})
+    console.log(flatid)
+    if(exisiting){
+      const array = exisiting.months
+      const newarray = [...array, ...months]
+      await Maintenance.updateOne({flat: flatid}, {$set: {months: newarray}})
+    }
+    else{
+      await Maintenance.create({
+        flat: flatid,
+        months
+      })
+    }
+  }
+  return res.status(200).json(new ApiResponse(200, "All maintenance updated"))
+})
 // exports
 export { addTransaction, addTransactionByAdmin, addIncomeByAdmin, 
   addExpenditure, getTransaction, getTotalIncome, getTotalExpenditure,
 getCashBalance, getTransaction5, getMaintenanceRecord, getIncomeStatements, getAllMaintenanceRecord, getExpenditureStatements, incomeexpaccount, cashbook, sendEmail
-, generatedQr, addUnVerfiedTransaction, getUnTrans, Approvepayment, denyPayment};
+, generatedQr, addUnVerfiedTransaction, getUnTrans, Approvepayment, denyPayment, updateMainbyloop};

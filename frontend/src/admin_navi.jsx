@@ -10,6 +10,12 @@ export const admin_navi = [
         icon: RiDashboardLine
     },
     {
+        key: 'reg',
+        label: 'Register Flat',
+        path: '/db/reg',
+        icon: MdCheck
+    },
+    {
         key: 'add-income',
         label: 'Add Income',
         path: '/db/addincome',

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { RingLoader } from 'react-spinners';
+import { RingLoader, ClipLoader } from 'react-spinners';
 import { useNavigate } from 'react-router-dom';
 
 export default function MaidManagement() {
@@ -22,6 +22,7 @@ export default function MaidManagement() {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [checkInLoading, setCheckInLoading] = useState({});
 
   useEffect(() => {
     getAllMaids();
@@ -102,7 +103,7 @@ export default function MaidManagement() {
   };
 
   const handleCheckIn = async (_id) => {
-    setLoading(true);
+    setCheckInLoading(prevState => ({ ...prevState, [_id]: true }));
     try {
       await axios.post("/api/v1/maid/checkin", { _id });
       Swal.fire({
@@ -119,7 +120,7 @@ export default function MaidManagement() {
         text: 'Something went wrong!',
       });
     } finally {
-      setLoading(false);
+      setCheckInLoading(prevState => ({ ...prevState, [_id]: false }));
     }
   };
 
@@ -184,7 +185,9 @@ export default function MaidManagement() {
             className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
             disabled={isSubmitting}
           />
-          <button onClick={handleAddClick} className="p-2 px-10 mt-4 bg-blue-500 text-white rounded-lg" disabled={isSubmitting}>Submit</button>
+          <button onClick={handleAddClick} className="p-2 px-10 mt-4 bg-blue-500 text-white rounded-lg" disabled={isSubmitting}>
+            {isSubmitting ? <ClipLoader size={20} color={"#fff"} /> : "Submit"}
+          </button>
         </div>
       )}
       <div className="mt-4">
@@ -219,7 +222,9 @@ export default function MaidManagement() {
                     {(maid?.checkedin && isToday(new Date(maid.checkin[maid.checkin.length - 1]))) ? (
                       `${formatDate(maid.checkin[maid.checkin.length - 1])}`
                     ) : (
-                      <button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg' disabled={loading}>Check In</button>
+                      <button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg' disabled={checkInLoading[maid._id]}>
+                        {checkInLoading[maid._id] ? <ClipLoader size={20} color={"#fff"} /> : "Check In"}
+                      </button>
                     )}
                   </td>
                 </tr>

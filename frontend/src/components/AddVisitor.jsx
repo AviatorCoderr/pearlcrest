@@ -2,18 +2,23 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import ClipLoader from "react-spinners/ClipLoader";
+
 export default function AddVisitor() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"))?.flatnumber;
-    if(user!=="PCS" && user!=="GUARD") navigate("/db/unauth")
-  })
+    if(user!=="PCS" && user!=="GUARD") navigate("/db/unauth");
+  });
+
   const [visitorlist, setVisitorlist] = useState([]);
   const [addClick, setAddClick] = useState(false);
   const [flat, setFlat] = useState('');
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [purpose, setPurpose] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getAllVisitors = async () => {
@@ -21,7 +26,6 @@ export default function AddVisitor() {
       setVisitorlist(response.data.data.visitorData);
     };
     getAllVisitors();
-    console.log(visitorlist)
   }, []);
 
   const handleAddVisitor = () => {
@@ -52,6 +56,8 @@ export default function AddVisitor() {
       return;
     }
 
+    setLoading(true);
+
     axios.post("/api/v1/visitor/add-visitor", {
       flatnumber: flat,
       name,
@@ -70,8 +76,9 @@ export default function AddVisitor() {
         setMobile('');
         setPurpose('');
         setAddClick(false);
+        setLoading(false);
         window.location.reload();
-      })
+      });
     })
     .catch(error => {
       Swal.fire({
@@ -81,6 +88,7 @@ export default function AddVisitor() {
         confirmButtonText: 'OK',
       });
       console.error('Add visitor error:', error);
+      setLoading(false);
     });
   };
 
@@ -122,13 +130,20 @@ export default function AddVisitor() {
             <option value="grocery_shop">Grocery Shop</option>
             <option value="milkman">Milkman</option>
           </select>
-          <button onClick={handleAddClick} className="p-2 px-10 mt-4 bg-blue-500 text-white rounded-lg">Submit</button>
+          <button 
+            onClick={handleAddClick} 
+            className="p-2 px-10 mt-4 bg-blue-500 text-white rounded-lg" 
+            disabled={loading}
+          >
+            {loading ? <ClipLoader size={20} color={"#fff"} /> : "Submit"}
+          </button>
         </div>
       )}
+      <div className='overflow-auto'>
       <table className='w-full text-gray-700 text-center table-auto shadow-lg bg-white divide-y divide-gray-200 rounded-lg overflow-hidden mt-5'>
         <thead className='bg-gray-200 text-gray-800 uppercase'>
           <tr>
-          <th className="px-6 py-3 text-center text-sm font-semibold">Flat</th>
+            <th className="px-6 py-3 text-center text-sm font-semibold">Flat</th>
             <th className="px-6 py-3 text-center text-sm font-semibold">Name</th>
             <th className="px-6 py-3 text-center text-sm font-semibold">Mobile</th>
             <th className="px-6 py-3 text-center text-sm font-semibold">Purpose</th>
@@ -145,6 +160,7 @@ export default function AddVisitor() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

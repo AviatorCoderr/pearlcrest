@@ -55,7 +55,7 @@ export default function MaidLog() {
             <div className='bg-blue-500 text-white py-3 px-4'>
                 <strong className='text-lg'>Maid Log</strong>
             </div>
-            <div className='px-4 py-3'>
+            <div className='px-4 py-3 overflow-auto'>
                 <table className='w-full text-gray-700 border-collapse border border-gray-300'>
                     <thead className='bg-gray-200'>
                         <tr>
