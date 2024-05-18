@@ -4,7 +4,7 @@ import Navbar from './Navbar';
 const MemberCard = ({ member }) => {
   return (
     <div className="bg-gray-900 rounded-lg shadow-md overflow-hidden transform transition hover:scale-105 duration-300 max-w-xs mx-auto flex flex-col justify-center text-center">
-      <img className="w-full h-48 object-cover rounded-t-lg" src={member.url} alt={member.name} />
+      <img className="w-full h-full object-cover rounded-t-lg" src={member.url} alt={member.name} />
       <div className="px-6 py-4">
         <h3 className="text-xl font-bold text-white mt-4">{member.name}</h3>
         <p className="text-gray-300 text-sm mt-2">
