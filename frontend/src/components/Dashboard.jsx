@@ -37,7 +37,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col overflow-visible md:grid md:grid-cols-1 gap-4 md:w-full h-full">
-      <DashboardStatsGrid />
+      <Dashboardstatsgrid />
       <div className="flex flex-col md:flex-row gap-4 w-full">
         <VisitorsListDash className="m-auto md:flex-1" />
       </div>
