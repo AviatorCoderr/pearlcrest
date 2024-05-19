@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { requestPermission, getToken, onMessageListener } from '../firebase'; // Ensure correct path to firebase.js
-import Dashboardstatsgrid from './DashboardStatsGrid';
+import Dashboardstatsgrid from './Dashboardstatsgrid';
 import VisitorsListDash from './Vistorslistdash';
 import RecentTransaction from './RecentTransaction';
 import MaidLog from './MaidLogs';
