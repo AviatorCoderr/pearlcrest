@@ -120,9 +120,7 @@ const checkin = asyncHandler(async (req, res) => {
     const response = await Maid.updateOne({ _id }, { $set: { checkin: newarray } });
     
     res.status(200).json(new ApiResponse(200, { response }, "Check in time added"));
-  });
-  
-
+});
 const checkout = asyncHandler(async(req, res) => {
     const {_id} = req.body;
     const currentTime = new Date();
