@@ -23,12 +23,11 @@ const addVisitor = asyncHandler(async (req, res) => {
       checkin 
     });
     const showtime = checkin.toLocaleString()
-    // Send push notification to all device tokens in the flat
     if (flat.deviceToken && flat.deviceToken.length > 0) {
       const title = "You have got a new Visitor";
       const body = `Visitor ${name} has checked in for ${purpose} at ${showtime}}`;
       for (const token of flat.deviceToken) {
-        await sendPushNotificationToDevice(token, { title, body });
+        await sendPushNotificationToDevice(token, title, body );
       }
     }
 
