@@ -1,7 +1,5 @@
 import { Flat } from '../models/flats.model.js';
 
-import { Flat } from '../models/flats.model.js';
-
 export const storeDeviceToken = async (req, res) => {
   const { token } = req.body;
   const flatid = req?.flat?._id;
