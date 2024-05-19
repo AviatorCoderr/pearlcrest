@@ -3,7 +3,6 @@ import { Visitor } from "../models/visitors.model.js";
 import { Flat } from "../models/flats.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { sendPushNotificationToDevice } from "../pushnotification.js";
-import { checkin } from "./maid.controller.js";
 
 // Visitor to be added by security guard
 const addVisitor = asyncHandler(async (req, res) => {
@@ -15,20 +14,22 @@ const addVisitor = asyncHandler(async (req, res) => {
     }
     const flatid = flat._id;
     console.log(flatid);
-    const datetime = new Date();
+    const checkin = new Date(); 
     const visitor = await Visitor.create({
       flat: flatid,
       name,
       mobile,
       purpose,
-      checkin: datetime
+      checkin 
     });
 
-    // Send push notification to the flat
-    if (flat?.deviceToken) {
+    // Send push notification to all device tokens in the flat
+    if (flat.deviceToken && flat.deviceToken.length > 0) {
       const title = "You have got a new Visitor";
-      const body = `Visitor ${name} has checked in for ${purpose} at ${checkin}`;
-      await sendPushNotificationToDevice(flat.deviceToken, title, body);
+      const body = `Visitor ${name} has checked in for ${purpose} at ${checkin.toLocaleString()}`;
+      for (const token of flat.deviceToken) {
+        await sendPushNotificationToDevice(token, { title, body });
+      }
     }
 
     res.status(201).json(new ApiResponse(201, { visitor }, "Visitor created"));
@@ -36,6 +37,7 @@ const addVisitor = asyncHandler(async (req, res) => {
     res.status(400).json(new ApiResponse(400, null, error.message));
   }
 });
+
 
 const messageToAll = asyncHandler(async (req, res) => {
   const { flatnumber, name, mobile, numofpeople, purpose } = req.body;
