@@ -25,7 +25,7 @@ const addVisitor = asyncHandler(async (req, res) => {
     });
 
     // Send push notification to the flat
-    if (flat.deviceToken) {
+    if (flat?.deviceToken) {
       const title = "You have got a new Visitor";
       const body = `Visitor ${name} has checked in for ${purpose} at ${checkin}`;
       await sendPushNotificationToDevice(flat.deviceToken, title, body);
