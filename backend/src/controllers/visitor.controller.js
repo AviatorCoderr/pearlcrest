@@ -48,8 +48,12 @@ const getVisitor = asyncHandler(async (req, res) => {
   try {
     const flatid = req?.flat._id;
     console.log(flatid);
+    const today = new Date();
+    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
+    const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 0, 0, 0);
     const visitors = await Visitor.find({
       flat: flatid,
+      checkin: { $gte: startOfToday, $lt: endOfToday }
     });
     res.status(200).json(new ApiResponse(200, { visitors }, "All visitors data returned"));
   } catch (error) {

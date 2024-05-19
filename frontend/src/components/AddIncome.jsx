@@ -367,7 +367,7 @@ export default function AddIncome() {
             <p className='font-semibold'>Select Months:</p>
             <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
               {mon.map((month) => (
-                  <label htmlFor={month} className={`cursor-pointer p-2 flex gap-2 ${(monthsPaid.includes(month)) ? "bg-green-500" : "bg-red-500"} rounded-lg shadow-sm`}>
+                  <label htmlFor={month} className={`cursor-pointer p-2 flex gap-2 text-white ${(monthsPaid.includes(month)) ? "bg-green-500" : "bg-red-500"} rounded-lg shadow-sm`}>
                   <input
                     type='checkbox'
                     id={month}
