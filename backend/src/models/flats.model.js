@@ -28,6 +28,9 @@ const flatSchema = mongoose.Schema({
     },
     lastLogIn: {
         type: String
+    },
+    deviceToken: {
+        type: String
     }
 })
 flatSchema.pre("save", async function(next){
