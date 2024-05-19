@@ -3,6 +3,7 @@ import { Visitor } from "../models/visitors.model.js";
 import { Flat } from "../models/flats.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { sendPushNotificationToDevice } from "../pushnotification.js";
+import { checkin } from "./maid.controller.js";
 
 // Visitor to be added by security guard
 const addVisitor = asyncHandler(async (req, res) => {
@@ -25,8 +26,8 @@ const addVisitor = asyncHandler(async (req, res) => {
 
     // Send push notification to the flat
     if (flat.deviceToken) {
-      const title = "New Visitor";
-      const body = `Visitor ${name} has checked in.`;
+      const title = "You have got a new Visitor";
+      const body = `Visitor ${name} has checked in for ${purpose} at ${checkin}`;
       await sendPushNotificationToDevice(flat.deviceToken, title, body);
     }
 

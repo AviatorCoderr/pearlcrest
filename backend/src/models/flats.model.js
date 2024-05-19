@@ -29,9 +29,9 @@ const flatSchema = mongoose.Schema({
     lastLogIn: {
         type: String
     },
-    deviceToken: {
+    deviceToken: [{
         type: String
-    }
+    }]
 })
 flatSchema.pre("save", async function(next){
     if(!this.isModified("password")) return next()
