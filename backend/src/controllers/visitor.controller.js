@@ -39,7 +39,7 @@ const getvisitor = asyncHandler(async( req, res) => {
         const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
         const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 0, 0, 0);
         const visitors = await Visitor.find({flat: flatid, $and: [
-            { checkin: { $gte: startOfToday }, checkin: { $lt: endOfToday } }
+            { checkin: { $gte: startOfToday.toISOString() }, checkin: { $lt: endOfToday/toISOString() } }
         ]});
         res
         .status(200)
@@ -48,16 +48,38 @@ const getvisitor = asyncHandler(async( req, res) => {
         console.log(error)
     }
 })
-const getAllVisitor = asyncHandler(async( req, res) => {
-    const visitors = await Visitor.find().populate('flat')
-    const visitorData = visitors.map(record => {
-        const flatnumber = record.flat.flatnumber
-        return {...record._doc, flatnumber}
-    })
-    console.log(visitors)
-    res
-    .status(200)
-    .json(new ApiResponse(200, {visitorData}, "all visitors data returned"))
-})
+const getAllVisitor = asyncHandler(async (req, res) => {
+    try {
+        const today = new Date();
+        const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
+        const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 0, 0, 0);
+
+        console.log(`Start of Today: ${startOfToday}`);
+        console.log(`End of Today: ${endOfToday}`);
+
+        // Fetch today's visitors and populate the 'flat' field
+        const visitors = await Visitor.find({
+            checkin: {
+                $gte: startOfToday,
+                $lt: endOfToday
+            }
+        }).populate('flat');
+
+        console.log(`Today's visitors found: ${visitors.length}`);
+
+        // Map through the visitors to include the flatnumber
+        const visitorData = visitors.map(record => {
+            const flatnumber = record.flat.flatnumber;
+            return { ...record._doc, flatnumber };
+        });
+
+        // Return the formatted visitor data
+        res.status(200).json(new ApiResponse(200, { visitorData }, "Today's visitors data returned"));
+    } catch (error) {
+        console.error('Error fetching today\'s visitors:', error);
+        res.status(500).json(new ApiResponse(500, null, "Internal server error"));
+    }
+});
+
 
 export {addvisitor, getvisitor, messageToAll, getAllVisitor}
