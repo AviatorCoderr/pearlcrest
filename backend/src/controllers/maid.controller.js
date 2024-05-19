@@ -3,7 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import Maid from "../models/maids.model.js";
 import {Flat} from "../models/flats.model.js"
-
+import { sendPushNotificationToDevice } from "../pushnotification.js";
 const addMaidByFlat = asyncHandler(async (req, res) => {
     const { _id } = req.body;
     const flatId = req?.flat?._id;
@@ -90,7 +90,15 @@ const isMaidCheckedIn = async (maidId) => {
 const checkin = asyncHandler(async(req, res) => {
     const {_id} = req.body;
     const currentTime = new Date();
+    const showTime = currentTime.toLocaleString()
     const existingMaid = await Maid.findById({_id})
+    const flatid = existingMaid.flat
+    const flat  = Flat.findById({_id: flatid})
+    if (flat?.deviceToken) {
+        const title = "Your Maid checked in";
+        const body = `Maid ${existingMaid?.name} has checked in at ${showTime}`;
+        await sendPushNotificationToDevice(flat.deviceToken, title, body);
+      }
     const datetimearray = existingMaid.checkin
     const newarray = [...datetimearray, currentTime]
     const response = await Maid.updateOne({_id}, {$set: {checkin: newarray}});
