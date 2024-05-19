@@ -88,22 +88,36 @@ const isMaidCheckedIn = async (maidId) => {
     }
 };
 const checkin = asyncHandler(async(req, res) => {
-    const {_id} = req.body;
+    const { _id } = req.body;
     const currentTime = new Date();
-    const showTime = currentTime.toLocaleString()
-    const existingMaid = await Maid.findById({_id})
-    const flatid = existingMaid.flat
-    const flat  = Flat.findById({_id: flatid})
-    if (flat?.deviceToken) {
-        const title = "Your Maid checked in";
-        const body = `Maid ${existingMaid?.name} has checked in at ${showTime}`;
-        await sendPushNotificationToDevice(flat.deviceToken, title, body);
-      }
-    const datetimearray = existingMaid.checkin
-    const newarray = [...datetimearray, currentTime]
-    const response = await Maid.updateOne({_id}, {$set: {checkin: newarray}});
-    res.status(200).json(new ApiResponse(200, {response}, "Check in time added"));
+    const showTime = currentTime.toLocaleString();
+    
+    const existingMaid = await Maid.findById(_id).populate('flat'); // populate to get flat details
+    
+    if (!existingMaid) {
+        throw new ApiError(404, "Maid not found");
+    }
+    
+    const flats = existingMaid.flat;
+    
+    // Iterate over each flat to send push notifications
+    for (const flat of flats) {
+        const flatDetail = await Flat.findById(flat._id);
+        if (flatDetail?.deviceToken) {
+            const title = "Your Maid checked in";
+            const body = `Maid ${existingMaid.name} has checked in at ${showTime}`;
+            await sendPushNotificationToDevice(flatDetail.deviceToken, title, body);
+        }
+    }
+
+    const datetimearray = existingMaid.checkin || [];
+    const newarray = [...datetimearray, currentTime];
+    
+    const response = await Maid.updateOne({ _id }, { $set: { checkin: newarray } });
+    
+    res.status(200).json(new ApiResponse(200, { response }, "Check in time added"));
 });
+
 
 const checkout = asyncHandler(async(req, res) => {
     const {_id} = req.body;
