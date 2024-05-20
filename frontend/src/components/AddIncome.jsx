@@ -352,7 +352,7 @@ export default function AddIncome() {
 
         {purpose === "MAINTENANCE" && (
           <>
-            <button className="p-2 rounded-lg bg-green-500 text-white font-bold" onClick={fetchMaintenanceByFlat}>Fetch Records</button>
+            <button className="p-2 rounded-lg bg-green-500 text-white font-bold" onClick={fetchMaintenanceByFlat}>Fetch Maintenance Records</button>
             <p className='font-semibold'>Select Year:</p>
             <select
               className='p-2 rounded-sm shadow-lg border border-black'
