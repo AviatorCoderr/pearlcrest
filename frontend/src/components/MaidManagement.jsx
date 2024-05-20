@@ -207,6 +207,7 @@ export default function MaidManagement() {
             <option value="MILKMAN">MILKMAN</option>
             <option value="SCHOOL VAN">SCHOOL VAN</option>
             <option value="NEWSPAPER">NEWSPAPER</option>
+             <option value="STAFF">STAFF</option>
           </select>
           <button onClick={handleAddClick} className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600" disabled={isSubmitting}>
             {isSubmitting ? <ClipLoader size={20} color={"#fff"} /> : "Submit"}
