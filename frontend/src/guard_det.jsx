@@ -10,9 +10,15 @@ export const guard_det = [
     },
     {
         key: 'visitor-manage',
-        label: 'Visitor Management',
+        label: 'One-Time Visitors',
         path: '/db/visitor-manage',
         icon: RiCommunityFill
+    },
+    {
+        key: 'maidmanage',
+        label: 'Regular Visitors',
+        path: '/db/maidmanage',
+        icon: MdPerson4
     },
     {
         key: 'findvehicle',
@@ -20,10 +26,4 @@ export const guard_det = [
         path: '/db/findvehicle',
         icon: MdLocalParking
     },
-    {
-        key: 'maidmanage',
-        label: 'Maid Management',
-        path: '/db/maidmanage',
-        icon: MdPerson4
-    }
 ];

@@ -24,7 +24,6 @@ const FlatRegistrationForm = () => {
                     title: 'Success',
                     text: 'Flat registered successfully',
                 });
-                // Clear the form
                 setFlatNumber('');
                 setCurrentStay('');
                 setPassword('');
@@ -33,14 +32,14 @@ const FlatRegistrationForm = () => {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: response.data.message || 'Something went wrong',
+                    text: error?.response.data.message || 'Something went wrong',
                 });
             }
         } catch (error) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: error.response?.data.message || error.message || 'Internal Server Error',
+                text: error?.response?.data?.message || 'Internal Server Error',
             });
         }
     };

@@ -19,6 +19,10 @@ const maidSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    purpose: {
+        type: String,
+        trim: true
+    },
     checkin: [{
         type: Date
     }]

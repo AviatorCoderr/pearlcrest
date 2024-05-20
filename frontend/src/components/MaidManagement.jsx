@@ -18,6 +18,7 @@ export default function MaidManagement() {
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [aadhar, setAadhar] = useState('');
+  const [purpose, setPurpose] = useState('');
   const [flatelement, setFlatelement] = useState('');
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -53,7 +54,7 @@ export default function MaidManagement() {
       }
 
       const aadharPattern = /^\d{12}$/;
-      if (!aadharPattern.test(aadhar)) {
+      if (aadhar && !aadharPattern.test(aadhar)) {
         throw new Error('Invalid Aadhar number');
       }
 
@@ -65,7 +66,8 @@ export default function MaidManagement() {
         flatnumber: flat,
         name,
         mobile,
-        aadhar
+        aadhar,
+        purpose
       });
 
       Swal.fire({
@@ -78,6 +80,7 @@ export default function MaidManagement() {
       setName('');
       setMobile('');
       setAadhar('');
+      setPurpose('');
       setAddClick(false);
       getAllMaids();
     } catch (error) {
@@ -85,7 +88,7 @@ export default function MaidManagement() {
       Swal.fire({
         icon: 'warning',
         title: 'Oops...',
-        text: error.response?.data?.message || 'Something went wrong!'
+        text: error?.data?.response?.message || error?.message || 'Something went wrong!'
       });
     } finally {
       setIsSubmitting(false);
@@ -146,46 +149,66 @@ export default function MaidManagement() {
   };
 
   return (
-    <div className="mx-auto">
-      <button onClick={handleAddMaid} className='block w-full max-w-lg m-auto py-2 bg-blue-500 text-white rounded-lg'>Add Maid</button>
+    <div className="mx-auto p-6 bg-white rounded-md shadow-md">
+      <button onClick={handleAddMaid} className='block w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'>Add Regular Visitor</button>
       {addClick && (
-        <div className="mt-4 bg-white rounded-lg shadow-md p-4">
-          <div className='flex'>
+        <div className="mt-4 bg-white rounded-md shadow-md p-4">
+          <div className='flex mb-4'>
             <input
               placeholder="Flat"
               type="text"
               value={flatelement}
               onChange={(e) => setFlatelement(e.target.value)}
-              className="w-full border-b-2 p-1 border-black rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
               disabled={isSubmitting}
             />
-            <button onClick={handleAddFlat} className="p-2 bg-blue-500 rounded-lg px-5 text-white" disabled={isSubmitting}>Add</button>
+            <button onClick={handleAddFlat} className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 ml-2" disabled={isSubmitting}>Add</button>
           </div>
-          <p className='my-2'>{flat.map((ele, index) => {
-            return <span className="bg-neutral-300 p-1 mx-2 px-4 rounded-lg" key={index}>{ele} <button onClick={() => handleDeleteFlat(ele)} className='text-neutral-600 text-bold'>X</button></span>;
-          })}</p>
+          <div className="mb-4">
+            {flat.map((ele, index) => (
+              <span className="bg-gray-200 p-2 rounded-md inline-block mr-2 mb-2" key={index}>
+                {ele} <button onClick={() => handleDeleteFlat(ele)} className='text-red-500 font-bold ml-1'>X</button>
+              </span>
+            ))}
+          </div>
           <input
             placeholder="Name"
             type="text"
+            value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+            className="w-full p-2 mb-4 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             disabled={isSubmitting}
           />
           <input
             placeholder="Mobile"
             type="text"
+            value={mobile}
             onChange={(e) => setMobile(e.target.value)}
-            className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+            className="w-full p-2 mb-4 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             disabled={isSubmitting}
           />
           <input
             placeholder="Aadhar"
             type="text"
+            value={aadhar}
             onChange={(e) => setAadhar(e.target.value)}
-            className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+            className="w-full p-2 mb-4 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             disabled={isSubmitting}
           />
-          <button onClick={handleAddClick} className="p-2 px-10 mt-4 bg-blue-500 text-white rounded-lg" disabled={isSubmitting}>
+          <select
+            placeholder="Purpose"
+            type="text"
+            onChange={(e) => setPurpose(e.target.value.toUpperCase())}
+            className="w-full p-2 mb-4 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            disabled={isSubmitting}
+          >
+            <option value="">Choose purpose</option>
+            <option value="MAID">MAID</option>
+            <option value="MILKMAN">MILKMAN</option>
+            <option value="SCHOOL VAN">SCHOOL VAN</option>
+            <option value="NEWSPAPER">NEWSPAPER</option>
+          </select>
+          <button onClick={handleAddClick} className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600" disabled={isSubmitting}>
             {isSubmitting ? <ClipLoader size={20} color={"#fff"} /> : "Submit"}
           </button>
         </div>
@@ -196,33 +219,35 @@ export default function MaidManagement() {
           placeholder="Search by name or phone number"
           value={searchQuery}
           onChange={handleSearch}
-          className="w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+          className="w-full p-2 border-2 border-gray-400 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
       {loading ? (
         <RingLoader className="mt-10 mx-auto" color="#00BFFF" loading={loading} size={60} />
       ) : (
-        <div className="overflow-x-auto">
-          <table className='text-gray-700 w-full text-center shadow-lg bg-white rounded-lg overflow-hidden mt-5'>
+        <div className="overflow-x-auto mt-5">
+          <table className='text-gray-700 w-full text-center shadow-md bg-white rounded-md overflow-hidden'>
             <thead className='bg-gray-200 text-gray-800 uppercase'>
               <tr>
-                <th className="px-4 py-2 border border-gray-300">Name</th>
-                <th className="px-4 py-2 border border-gray-300">Mobile</th>
-                <th className="px-4 py-2 border border-gray-300">Aadhar</th>
-                <th className="px-4 py-2 border border-gray-300">Check In</th>
+                <th className="px-4 py-2 border-gray-300">Name</th>
+                <th className="px-4 py-2 border-gray-300">Mobile</th>
+                <th className="px-4 py-2 border-gray-300">Aadhar</th>
+                <th className="px-4 py-2 border-gray-300">Purpose</th>
+                <th className="px-4 py-2 border-gray-300">Check In</th>
               </tr>
             </thead>
             <tbody>
               {filteredMaidList.map((maid, index) => (
                 <tr key={index} className={(index % 2 === 0) ? 'bg-gray-100' : 'bg-white'}>
-                  <td className="px-4 py-2 border border-gray-300">{maid.name}</td>
-                  <td className="px-4 py-2 border border-gray-300">{maid.mobile}</td>
-                  <td className="px-4 py-2 border border-gray-300">{maid.aadhar}</td>
-                  <td className="px-4 py-2 border border-gray-300">
+                  <td className="px-4 py-2 border-gray-300">{maid.name}</td>
+                  <td className="px-4 py-2 border-gray-300">{maid.mobile}</td>
+                  <td className="px-4 py-2 border-gray-300">{maid.aadhar}</td>
+                  <td className="px-4 py-2 border-gray-300">{maid.purpose}</td>
+                  <td className="px-4 py-2 border-gray-300">
                     {(maid?.checkedin && isToday(new Date(maid.checkin[maid.checkin.length - 1]))) ? (
                       `${formatDate(maid.checkin[maid.checkin.length - 1])}`
                     ) : (
-                      <button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-lg' disabled={checkInLoading[maid._id]}>
+                      <button onClick={() => handleCheckIn(maid._id)} className='p-2 bg-red-500 text-white font-bold rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600' disabled={checkInLoading[maid._id]}>
                         {checkInLoading[maid._id] ? <ClipLoader size={20} color={"#fff"} /> : "Check In"}
                       </button>
                     )}

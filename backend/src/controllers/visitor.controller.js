@@ -27,7 +27,7 @@ const addVisitor = asyncHandler(async (req, res) => {
       const title = "You have got a new Visitor";
       const body = `Visitor ${name} has checked in for ${purpose} at ${showtime}}`;
       for (const token of flat.deviceToken) {
-        await sendPushNotificationToDevice(token, title, body );
+        await sendPushNotificationToDevice(token, title, body);
       }
     }
 
@@ -36,15 +36,12 @@ const addVisitor = asyncHandler(async (req, res) => {
     res.status(400).json(new ApiResponse(400, null, error.message));
   }
 });
-
-
 const messageToAll = asyncHandler(async (req, res) => {
   const { flatnumber, name, mobile, numofpeople, purpose } = req.body;
   if (purpose === "schoolvan") {
     // Message all flats
   }
 });
-
 const getVisitor = asyncHandler(async (req, res) => {
   try {
     const flatid = req?.flat._id;

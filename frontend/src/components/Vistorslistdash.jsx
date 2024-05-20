@@ -30,7 +30,7 @@ export default function VisitorsListDash() {
             <div className='bg-blue-500 text-white py-3 px-4 flex items-center justify-between'>
                 <div className='flex items-center gap-2'>
                     <MdOutlineEmojiPeople className='text-2xl'/>
-                    <strong className='text-lg'>Visitors Log</strong>
+                    <strong className='text-lg'>One Time Visitors</strong>
                 </div>
                 <div className='text-sm'>Today: {new Date().toLocaleString("en-IN" ,{day: '2-digit', month: '2-digit', year: '2-digit'})}</div>
             </div>

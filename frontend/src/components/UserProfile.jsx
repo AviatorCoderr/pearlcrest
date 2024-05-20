@@ -56,6 +56,7 @@ export default function UserProfile() {
   const [mobile, setMobile] = useState('');
   const [aadhar, setAadhar] = useState('');
   const [addClick, setAddClick] = useState(false);
+  const [maidpurpose, setmaidpurpose] = useState('')
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -102,7 +103,48 @@ export default function UserProfile() {
   const toggleOwnerEditMode = () => {
     setOwnerEditMode(!ownerEditMode);
   };
-
+  //vehicles
+  const [newVehicleType, setNewVehicleType] = useState('');
+  const [newVehicleModel, setNewVehicleModel] = useState('');
+  const [newVehicleReg, setNewVehicleReg] = useState('');
+  const [addingNewVehicle, setAddingNewVehicle] = useState(false);
+  const handleCancelAddVehicle = () => {
+    // Reset input fields and hide the form
+    setNewVehicleType('');
+    setNewVehicleModel('');
+    setNewVehicleReg('');
+    setAddingNewVehicle(false);
+  };
+  const handleAddNewVehicle = async () => {
+    try {
+      // Add validation for required fields here if necessary
+      
+      // Make the API call to add the new vehicle
+      const response = await axios.post("/api/v1/vehicle/add-vehicle", {
+        type: newVehicleType,
+        model: newVehicleModel,
+        reg_no: newVehicleReg
+      });
+      
+      if (response.status === 200) {
+        // If successful, reload the page to reflect the changes
+        Swal.fire({
+          icon: 'success',
+          title: 'Vehicle Added',
+          timer: 1500,
+          showConfirmButton: false
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        console.error("Failed to add vehicle.");
+      }
+    } catch (error) {
+      console.error("Error adding vehicle:", error.message);
+      // Handle errors
+    }
+  };
   const toggleVehicleEditMode = (index) => {
     setVehicleEditMode(prevEditMode => {
       const updatedEditMode = [...prevEditMode];
@@ -198,7 +240,7 @@ export default function UserProfile() {
   };
   const filteredMaidList = maidlist?.filter(maid =>
     maid?.name?.toUpperCase().includes(searchQuery?.toUpperCase()) ||
-    maid?.mobile?.includes(searchQuery)
+    maid?.mobile?.includes(searchQuery) || maid?.purpose?.includes(searchQuery.toUpperCase())
   );
   const handleAdd = async(_id) => {
     try {
@@ -231,7 +273,7 @@ export default function UserProfile() {
       }
   
       const aadharPattern = /^\d{12}$/;
-      if (!aadharPattern.test(aadhar)) {
+      if (aadhar && !aadharPattern.test(aadhar)) {
         throw new Error('Invalid Aadhar number');
       }
       let flat = [];
@@ -241,7 +283,8 @@ export default function UserProfile() {
         flatnumber: flat,
         name,
         mobile,
-        aadhar
+        aadhar,
+        purpose: maidpurpose
       })
       .then(response => {
         Swal.fire({
@@ -262,7 +305,7 @@ export default function UserProfile() {
         Swal.fire({
           icon: 'warning',
           title: 'Oops...',
-          text: error.message || 'Something went wrong!'
+          text: error?.response?.data?.message || error.message || 'Something went wrong!'
         });
         console.log('Error adding maid:', error);
       })
@@ -270,7 +313,7 @@ export default function UserProfile() {
       Swal.fire({
         icon: 'warning',
         title: 'Oops...',
-        text: error.message || 'Something went wrong!'
+        text: error?.response?.data?.message || error.message || 'Something went wrong!'
       });
       console.log('Error adding maid:', error);
     } finally {
@@ -338,7 +381,38 @@ export default function UserProfile() {
                 </>
               )}
             </div>
-            <h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Vehicles</h2>
+            <h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Vehicles <button onClick={() => setAddingNewVehicle(true)} className="bg-black float-right text-white rounded-lg p-2">Add New Vehicle</button></h2>
+            {addingNewVehicle && (
+  <div className="mt-4 bg-white rounded-lg shadow-md p-4">
+    <select
+      placeholder="Type"
+      value={newVehicleType}
+      onChange={(e) => setNewVehicleType(e.target.value)}
+      className="w-full p-2 mb-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+    >
+      <option value="">Choose Type</option>
+      <option value="FourWheeler">FourWheeler</option>
+      <option value="TwoWheeler">TwoWheeler</option>
+    </select>
+    <input
+      placeholder="Model"
+      type="text"
+      onChange={(e) => setNewVehicleModel(e.target.value)}
+      className="w-full p-2 mb-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+    />
+    <input
+      placeholder="Registration Number"
+      type="text"
+      onChange={(e) => setNewVehicleReg(e.target.value)}
+      className="w-full p-2 mb-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+    />
+    <div className="flex justify-between mt-4">
+      <button onClick={handleAddNewVehicle} className="p-2 px-6 bg-blue-500 text-white rounded-lg">Submit</button>
+      <button onClick={handleCancelAddVehicle} className="p-2 px-6 bg-red-500 text-white rounded-lg">Cancel</button>
+    </div>
+  </div>
+)}
+
 {vehicle?.map((ele, index) => (
   <div key={index}>
     <p className='bg-blue-500 font-medium text-white py-3 px-4 flex items-center justify-between'>Vehicle {index+1}</p>
@@ -356,6 +430,7 @@ export default function UserProfile() {
           <label className="relative m-2">
             <div className='p-2 m-2 bg-neutral-100 rounded-sm border text-black border-black w-full'>
               <select className="bg-transparent rounded-sm border border-transparent w-full focus:border-black focus:ring-0" placeholder={ele?.type} label="Type" onChange={(e) => setvehcileType(e.target.value)} editable={vehicleEditMode[index]}>
+                <option value="">Choose Type</option>
                 <option value="FourWheeler">FourWheeler</option>
                 <option value="TwoWheeler">TwoWheeler</option>
               </select>
@@ -378,8 +453,8 @@ export default function UserProfile() {
     
   </div>
 ))}
-<h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Manage your HouseMaids</h2>
-<button onClick={handleAddMaid} className='block w-full max-w-lg m-auto py-2 bg-blue-500 text-white rounded-lg'>Add Maid</button>
+<h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Manage your Regular Visitors</h2>
+<button onClick={handleAddMaid} className='block w-full max-w-lg m-auto py-2 bg-blue-500 text-white rounded-lg'>Add Visitor</button>
       {addClick && (
         <div className="mt-4 bg-white rounded-lg shadow-md p-4">
           <input
@@ -400,13 +475,25 @@ export default function UserProfile() {
             onChange={(e) => setAadhar(e.target.value)}
             className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
           />
+          <select
+            placeholder="Purpose"
+            type="text"
+            onChange={(e) => setmaidpurpose(e.target.value.toUpperCase())}
+            className="w-full p-2 mb-4 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Choose purpose</option>
+            <option value="MAID">MAID</option>
+            <option value="MILKMAN">MILKMAN</option>
+            <option value="SCHOOL VAN">SCHOOL VAN</option>
+            <option value="NEWSPAPER">NEWSPAPER</option>
+          </select>
           <button onClick={handleAddClick} className="p-2 px-10 mt-4 bg-blue-500 text-white rounded-lg">Submit</button>
         </div>
       )}
 <div className="mt-4">
         <input
           type="text"
-          placeholder="Search maids name or phone number"
+          placeholder="Search visitors name or phone number"
           value={searchQuery}
           onChange={handleSearch}
           className="w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
@@ -419,7 +506,8 @@ export default function UserProfile() {
                 <th className="px-4 py-2 border border-gray-300">Name</th>
                 <th className="px-4 py-2 border border-gray-300">Mobile</th>
                 <th className="px-4 py-2 border border-gray-300">Aadhar</th>
-                <th className="px-4 py-2 border border-gray-300">Add as Your Maid</th>
+                <th className="px-4 py-2 border border-gray-300">Purpose</th>
+                <th className="px-4 py-2 border border-gray-300">Add to your flat</th>
               </tr>
             </thead>
             <tbody>
@@ -427,7 +515,8 @@ export default function UserProfile() {
                 <tr key={index} className={(index % 2 === 0) ? 'bg-gray-100' : 'bg-white'}>
                   <td className="px-4 py-2 border border-gray-300">{maid.name}</td>
                   <td className="px-4 py-2 border border-gray-300">{maid.mobile}</td>
-                  <td className="px-4 py-2 border border-gray-300">{maid.aadhar}</td> 
+                  <td className="px-4 py-2 border border-gray-300">{maid.aadhar || "NA"}</td> 
+                  <td className="px-4 py-2 border border-gray-300">{maid.purpose || "NA"}</td> 
                   <td className="px-4 py-2 border border-gray-300">
                   {maid.flat.some(flat => flat._id === flatid) ? (
                     "Added"

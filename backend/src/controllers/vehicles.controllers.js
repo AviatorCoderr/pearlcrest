@@ -6,7 +6,7 @@ import {Renter} from "../models/renters.model.js"
 import { ApiError } from "../utils/ApiError.js";
 import { Flat } from "../models/flats.model.js";
 const AddVehicle = asyncHandler(async(req, res) => {
-    const {type, reg_no, colour, model} = req.body
+    const {type, reg_no, model} = req.body
     const flatid = req?.flat._id
     const vehicle = await Vehicle.create({
         flat: flatid,

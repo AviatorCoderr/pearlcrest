@@ -16,21 +16,21 @@ const addMaidByFlat = asyncHandler(async (req, res) => {
 
     const flatWorking = existingMaid.flat || [];
     if (flatWorking.includes(flatId)) {
-        return res.status(400).json({ statusCode: 400, message: "Maid already linked" });
+        throw new ApiError(400, "Already linked");
     }
 
     const newFlatWorking = [...flatWorking, flatId];
 
     await Maid.findByIdAndUpdate(_id, { flat: newFlatWorking });
-    return res.status(200).json(new ApiResponse(200, null, "Maid added to flat"));
+    return res.status(200).json(new ApiResponse(200, null, "Added to flat"));
 });
 const addMaid = asyncHandler(async (req, res) => {
-    const { flatnumber, name, mobile, aadhar } = req.body;
+    const { flatnumber, name, mobile, aadhar, purpose } = req.body;
     const existingMaid = await Maid.findOne({
-        $or: [{ mobile: mobile }, { aadhar: aadhar }]
-        });
+        $or: [{ mobile: mobile }]
+    });
     if (existingMaid) {
-        throw new ApiError(400, "Maid already exists. Check Mobile or Aadhar number again");
+        throw new ApiError(400, "Already exists. Check Mobile or Aadhar number again");
     }
     let flatidList = [];
     for (const element of flatnumber) {
@@ -42,10 +42,11 @@ const addMaid = asyncHandler(async (req, res) => {
         flat: flatidList,
         name,
         mobile,
-        aadhar
+        aadhar,
+        purpose // Include purpose in creation
     });
 
-    return res.status(200).json(new ApiResponse(200, { response }, "Maid added"));
+    return res.status(200).json(new ApiResponse(200, { response }, "Aaid added"));
 });
 const getAllMaid = asyncHandler(async (req, res) => {
     try {
@@ -55,7 +56,7 @@ const getAllMaid = asyncHandler(async (req, res) => {
             const isCheckin = await isMaidCheckedIn(record._id);
             return { ...record._doc, flatnumber, checkedin: isCheckin };
         }));
-        res.status(200).json(new ApiResponse(200, { Maidlist }, "Maid data received"));
+        res.status(200).json(new ApiResponse(200, { Maidlist }, "Data received"));
     } catch (error) {
         throw new ApiError('something went wrong')
     }
@@ -64,7 +65,7 @@ const getAllMaidByFlat = asyncHandler(async (req, res) => {
     try {
         const {_id} =  req.body
         const response = await Maid.find({flat: _id});
-        res.status(200).json(new ApiResponse(200, { response }, "Maid data received"));
+        res.status(200).json(new ApiResponse(200, { response }, "Data received"));
     } catch (error) {
         throw new ApiError(500, "something went wrong")
     }
@@ -95,7 +96,7 @@ const checkin = asyncHandler(async (req, res) => {
     const existingMaid = await Maid.findById(_id).populate('flat'); // populate to get flat details
     
     if (!existingMaid) {
-      throw new ApiError(404, "Maid not found");
+      throw new ApiError(404, "Not found");
     }
     
     const flats = existingMaid.flat;
@@ -104,8 +105,8 @@ const checkin = asyncHandler(async (req, res) => {
     for (const flat of flats) {
       const flatDetail = await Flat.findById(flat._id);
       if (flatDetail?.deviceToken && flatDetail.deviceToken.length > 0) {
-        const title = "Your Maid checked in";
-        const body = `Maid ${existingMaid.name} has checked in at ${showTime}`;
+        const title = "Someone checked in";
+        const body = `${existingMaid.purpose}, ${existingMaid.name} has checked in at ${showTime}`;
         
         // Iterate over all device tokens and send notification to each
         await Promise.all(flatDetail.deviceToken.map(token => 
@@ -132,13 +133,13 @@ const deleteMaidbyFlat = asyncHandler(async(req, res) => {
     const {maidid, flatid} = req.body
     console.log(maidid, flatid)
     const exisitingmaid = await Maid.findById({_id: maidid})
-    if(!exisitingmaid) throw new ApiError(404, "Maid not found")
+    if(!exisitingmaid) throw new ApiError(404, "Not found")
     const flatarray = exisitingmaid.flat
     const newflatarray = flatarray.filter((ele) => ele===flatid)
     console.log(flatarray)
     console.log(newflatarray)
     await Maid.updateOne({_id: maidid}, {$set: {flat: newflatarray}})
-    return res.status(200).json(new ApiResponse(200, "maid removed"))
+    return res.status(200).json(new ApiResponse(200, "Removed"))
 })
 const addMaidbyloop = asyncHandler(async(req, res) => {
     const maiddet = req.body
