@@ -45,6 +45,10 @@ export default function AddIncome() {
 
   useEffect(() => {
     if (purpose === "MAINTENANCE") {
+      if(flatNumber==="CG4"){
+        setAmount(months.length * 2 * (payDemand.find((ele) => ele.type === purpose)?.amount || 0))
+      }
+      else
       setAmount(months.length * (payDemand.find((ele) => ele.type === purpose)?.amount || 0));
     }
   }, [months, purpose, payDemand]);

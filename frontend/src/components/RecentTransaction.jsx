@@ -45,7 +45,7 @@ export default function RecentTransaction() {
                                 <td className='px-4 py-2 border border-gray-400'>{transaction.purpose}</td>
                                 <td className='px-4 py-2 border border-gray-400'>{transaction.amount}</td>
                                 <td className='px-4 py-2 border border-gray-400'>{transaction.months.join(", ")}</td>
-                                <td className='px-4 py-2 border border-gray-400'>{formatDate(transaction.createdAt)}</td>
+                                <td className='px-4 py-2 border border-gray-400'>{formatDate(transaction.date)}</td>
                             </tr>
                         ))}
                     </tbody>

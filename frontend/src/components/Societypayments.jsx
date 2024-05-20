@@ -16,7 +16,7 @@ const Societypayments = () => {
   const [transactionId, setTransactionId] = useState(''); // Define transactionId state
   const [loading, setLoading] = useState(false); // Define loading state
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); 
-
+  const user = JSON.parse(localStorage.getItem("user"))
   useEffect(() => {
     const getMonthsPaid = async () => {
       try {
@@ -46,6 +46,10 @@ const Societypayments = () => {
     setAmountper(selectedAmount);
     let newAmount;
     if (purpose === "MAINTENANCE") {
+      if(user?.flatnumber === "CG4"){
+        newAmount = selectedMonths.length * selectedAmount * 2;
+      }
+      else
       newAmount = selectedMonths.length * selectedAmount;
     } else {
       newAmount = selectedAmount;
