@@ -61,6 +61,7 @@ export default function MaidLog() {
                         <tr>
                             <th className='px-4 py-2 border border-gray-300'>Name</th>
                             <th className='px-4 py-2 border border-gray-300'>Mobile</th>
+                            <th className='px-4 py-2 border border-gray-300'>Purpose</th>
                             <th className='px-4 py-2 border border-gray-300'>Check In</th>
                             <th className='px-4 py-2 border border-gray-300'>Remove</th>
                         </tr>
@@ -70,6 +71,7 @@ export default function MaidLog() {
                             <tr key={maid._id} className='hover:bg-gray-100 transition-all'>
                                 <td className='px-4 py-2 border border-gray-300'>{maid.name}</td>
                                 <td className='px-4 py-2 border border-gray-300'>{maid.mobile}</td>
+                                <td className='px-4 py-2 border border-gray-300'>{maid.purpose}</td>
                                 <td className='px-4 py-2 border border-gray-300'>{formatDate(maid.checkin[maid.checkin.length - 1])}</td>
                                 <td className='px-4 py-2 border text-center border-gray-300'>
                                     <button 
