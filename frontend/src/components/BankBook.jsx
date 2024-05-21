@@ -12,30 +12,33 @@ export default function CashBook() {
             const response = await axios.post("/api/v1/account/get-books", {
                 mode: "BANK"
             }, { withCredentials: true });
-            setRecordexp(response.data.data.cashexpense);
-            setRecordinc(response.data.data.cashincomeState);
-        };
+            setRecordexp(response.data.data.cashexpense.sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt)));
+            setRecordinc(response.data.data.cashincomeState.sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt)));
+        }; 
         getCashbook();
-        calculateTotals()
         console.log(recordinc)
         console.log(recordexp)
     }, []);
 
-    const calculateTotals = () => {
-        let incomeTotal = 0;
-        let expenseTotal = 0;
+    useEffect(() => {
+        const calculateTotals = () => {
+            let incomeTotal = 0;
+            let expenseTotal = 0;
 
-        for (let record of recordinc) {
-            incomeTotal += parseFloat(record.amount || 0);
-        }
+            for (let record of recordinc) {
+                incomeTotal += parseFloat(record.amount || 0);
+            }
 
-        for (let record of recordexp) {
-            expenseTotal += parseFloat(record.amount || 0);
-        }
+            for (let record of recordexp) {
+                expenseTotal += parseFloat(record.amount || 0);
+            }
 
-        setTotIncome(incomeTotal);
-        setTotExpense(expenseTotal);
-    };
+            setTotIncome(incomeTotal);
+            setTotExpense(expenseTotal);
+        };
+
+        calculateTotals();
+    }, [recordinc, recordexp]);
     const generateExcel = () => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('CashBook');
@@ -133,7 +136,7 @@ export default function CashBook() {
             <h2 className="text-3xl font-semibold mb-8">BankBook</h2>
             <button className="bg-blue-500 p-3 mb-5 text-white font-medium" onClick={generateExcel}>Generate Current Report</button>
 
-            <h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Bank Income<p className='float-right'>₹{totincome}</p></h2>
+            <h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Bank Income<p className='float-right text-green-600 font-bold text-xl'>₹{totincome}</p></h2>
             <div className="overflow-x-auto">
                 <table className="w-full text-gray-700 text-center table-auto shadow-lg bg-white divide-y divide-gray-200 rounded-lg overflow-hidden mt-5">
                     <thead className='bg-gray-200 text-gray-800 uppercase'>
@@ -147,22 +150,23 @@ export default function CashBook() {
                     <tbody>
                         {recordinc.map((record, index) => (
                             <tr key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-neutral-100"}>
-                                <td className="px-4 py-3 text-center text-sm font-semibold">{record.flatnumber}</td>
-                                <td className="px-4 py-3 text-center text-sm font-semibold">{formatDate(record.createdAt)}</td>
-                                <td className="px-4 py-3 text-center text-sm font-semibold">{record.purpose}</td>
-                                <td className="px-4 py-3 text-center text-sm font-semibold">{record.amount}</td>
+                                <td className="px-4 py-3 border-2 border-black text-center text-sm font-semibold">{record.flatnumber}</td>
+                                <td className="px-4 py-3 border-2 border-black text-center text-sm font-semibold">{formatDate(record.createdAt)}</td>
+                                <td className="px-4 py-3 border-2 border-black text-center text-sm font-semibold">{record.purpose}</td>
+                                <td className="px-4 py-3 border-2 border-black text-green-600 font-bold text-lg text-right">₹{record.amount}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
 
-            <h2 className='text-lg mt-10 font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Bank Expense<p className='float-right'>₹{totexpense}</p></h2>
+            <h2 className='text-lg mt-10 font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Bank Expense<p className='text-xl float-right font-bold text-red-600'>₹{totexpense}</p></h2>
             <div className="overflow-x-auto">
                 <table className="w-full text-gray-700 text-center table-auto shadow-lg bg-white divide-y divide-gray-200 rounded-lg overflow-hidden mt-5">
                     <thead className='bg-gray-200 text-gray-800 uppercase'>
                         <tr>
                             <th className="px-4 py-3 text-center text-sm font-semibold">Date</th>
+                            <th className="px-4 py-3 text-center text-sm font-semibold">Expense Head</th>
                             <th className="px-4 py-3 text-center text-sm font-semibold">Description</th>
                             <th className="px-4 py-3 text-center text-sm font-semibold">Amount</th>
                         </tr>
@@ -170,9 +174,10 @@ export default function CashBook() {
                     <tbody>
                         {recordexp.map((record, index) => (
                             <tr key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-neutral-100"}>
-                                <td className="px-4 py-3 text-center text-sm font-semibold">{formatDate(record.createdAt)}</td>
-                                <td className="px-4 py-3 text-center text-sm font-semibold">{record.description}</td>
-                                <td className="px-4 py-3 text-center text-sm font-semibold">{record.amount}</td>
+                                <td className="px-4 border-2 border-black py-3 text-center text-sm font-semibold">{formatDate(record.createdAt)}</td>
+                                <td className="px-4 border-2 border-black py-3 text-center text-sm font-semibold">{record.department}</td>
+                                <td className="px-4 border-2 border-black py-3 text-center text-sm font-semibold">{record.description}</td>
+                                <td className="px-4 border-2 border-black py-3 text-lg font-bold text-red-600 text-right">₹{parseFloat(record.amount).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>
