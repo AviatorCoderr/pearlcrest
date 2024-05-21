@@ -22,7 +22,7 @@ export default function CashBook() {
     const generateExcel = () => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('CashBook');
-
+    
         // Add headers with styling
         const headerRow = worksheet.addRow(['Date', 'Flat', 'Narration', 'Debit Amount', 'Date',  'Narration', 'Credit Amount']);
         headerRow.font = { bold: true };
@@ -32,19 +32,24 @@ export default function CashBook() {
             fgColor: { argb: 'FFD700' } // gold color
         };
         headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
-
+    
+        // Calculate totals
+        const totalIncome = recordinc.reduce((sum, record) => sum + parseFloat(record.amount || 0), 0);
+        const totalExpense = recordexp.reduce((sum, record) => sum + parseFloat(record.amount || 0), 0);
+    
         // Add data with formatting
         const maxLength = Math.max(recordexp.length, recordinc.length);
         for (let i = 0; i < maxLength; i++) {
             const row = worksheet.addRow([
-                (i+1<=recordinc.length)?formatDate(recordinc[i]?.createdAt): '',
-                (i+1<=recordinc.length)?recordinc[i]?.flatnumber: '',
-                (i+1<=recordinc.length)?recordinc[i]?.purpose: '',
-                (i+1<=recordinc.length)?recordinc[i]?.amount: '',
-                (i+1<=recordexp.length)?formatDate(recordexp[i]?.createdAt) : '',
-                (i+1<=recordexp.length)?recordexp[i]?.description: '',
-                (i+1<=recordexp.length)?recordexp[i]?.amount : '' 
+                (i < recordinc.length) ? formatDate(recordinc[i]?.createdAt) : '',
+                (i < recordinc.length) ? recordinc[i]?.flatnumber : '',
+                (i < recordinc.length) ? recordinc[i]?.purpose : '',
+                (i < recordinc.length) ? recordinc[i]?.amount : '',
+                (i < recordexp.length) ? formatDate(recordexp[i]?.createdAt) : '',
+                (i < recordexp.length) ? recordexp[i]?.description : '',
+                (i < recordexp.length) ? recordexp[i]?.amount : ''
             ]);
+    
             // Apply alternate row colors
             if (i % 2 === 0) {
                 row.fill = {
@@ -55,7 +60,27 @@ export default function CashBook() {
             }
             row.alignment = { vertical: 'middle', horizontal: 'center' };
         }
-
+    
+        // Add totals row for income
+        const totalIncomeRow = worksheet.addRow(['', '', 'Total Income', totalIncome, '', '', '']);
+        totalIncomeRow.font = { bold: true };
+        totalIncomeRow.alignment = { vertical: 'middle', horizontal: 'center' };
+        totalIncomeRow.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFFF00' } // yellow color
+        };
+    
+        // Add totals row for expense
+        const totalExpenseRow = worksheet.addRow(['', '', '', '', '', 'Total Expense', totalExpense]);
+        totalExpenseRow.font = { bold: true };
+        totalExpenseRow.alignment = { vertical: 'middle', horizontal: 'center' };
+        totalExpenseRow.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFFF00' } // yellow color
+        };
+    
         // Auto size columns
         worksheet.columns.forEach(column => {
             let maxLength = 0;
@@ -67,7 +92,7 @@ export default function CashBook() {
             });
             column.width = maxLength < 10 ? 10 : maxLength + 2;
         });
-
+    
         // Generate file
         workbook.xlsx.writeBuffer().then((buffer) => {
             const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -79,6 +104,8 @@ export default function CashBook() {
             window.URL.revokeObjectURL(url);
         });
     };
+    
+    
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const day = date.getDate().toString().padStart(2, '0');
