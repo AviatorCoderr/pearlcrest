@@ -5,7 +5,8 @@ import ExcelJS from 'exceljs';
 export default function CashBook() {
     const [recordexp, setRecordexp] = useState([]);
     const [recordinc, setRecordinc] = useState([]);
-
+    const [totincome, setTotIncome] = useState(0)
+    const [totexpense, setTotExpense] = useState(0)
     useEffect(() => {
         const getCashbook = async () => {
             const response = await axios.post("/api/v1/account/get-books", {
@@ -15,9 +16,26 @@ export default function CashBook() {
             setRecordinc(response.data.data.cashincomeState);
         };
         getCashbook();
+        calculateTotals()
         console.log(recordinc)
         console.log(recordexp)
     }, []);
+
+    const calculateTotals = () => {
+        let incomeTotal = 0;
+        let expenseTotal = 0;
+
+        for (let record of recordinc) {
+            incomeTotal += parseFloat(record.amount || 0);
+        }
+
+        for (let record of recordexp) {
+            expenseTotal += parseFloat(record.amount || 0);
+        }
+
+        setTotIncome(incomeTotal);
+        setTotExpense(expenseTotal);
+    };
 
     const generateExcel = () => {
         const workbook = new ExcelJS.Workbook();
@@ -118,7 +136,7 @@ export default function CashBook() {
             <h2 className="text-3xl font-semibold mb-8">CashBook</h2>
             <button className="bg-blue-500 p-3 mb-5 text-white font-medium" onClick={generateExcel}>Generate Current Report</button>
 
-            <h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Cash Income</h2>
+            <h2 className='text-lg font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Cash Income <p className='float-right'>₹{totincome}</p></h2>
             <div className="overflow-x-auto">
                 <table className="w-full text-gray-700 text-center table-auto shadow-lg bg-white divide-y divide-gray-200 rounded-lg overflow-hidden mt-5">
                     <thead className='bg-gray-200 text-gray-800 uppercase'>
@@ -142,7 +160,7 @@ export default function CashBook() {
                 </table>
             </div>
 
-            <h2 className='text-lg mt-10 font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Cash Expense</h2>
+            <h2 className='text-lg mt-10 font-medium border-l-2 bg-zinc-200 border-b-2 shadow-md shadow-black p-2 border-black'>Cash Expense <p className='float-right'>₹{totexpense}</p></h2>
             <div className="overflow-x-auto">
                 <table className="w-full text-gray-700 text-center table-auto shadow-lg bg-white divide-y divide-gray-200 rounded-lg overflow-hidden mt-5">
                     <thead className='bg-gray-200 text-gray-800 uppercase'>
