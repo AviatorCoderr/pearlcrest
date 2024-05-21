@@ -121,7 +121,7 @@ const sendFailureEmail = asyncHandler(async(trans) => {
 const generatedQr = asyncHandler(async(req, res) => {
   try {
     const {amount} = req.body
-    const qrcodeUrl = `upi://pay?pa=${process.env.ACCOUNT_NUM}@${process.env.IFSC_CODE}.ifsc.npci&pn=${process.env.PN}&am=${amount}`
+    const qrcodeUrl = `${process.env.QRCODE}${amount}`
     const qrCodeDataUri = await QRcode.toDataURL(qrcodeUrl)
     res.send({qrCodeDataUri, qrcodeUrl})
   } catch (error) {
