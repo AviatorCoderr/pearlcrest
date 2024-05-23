@@ -105,8 +105,65 @@ const checkin = asyncHandler(async (req, res) => {
     for (const flat of flats) {
       const flatDetail = await Flat.findById(flat._id);
       if (flatDetail?.deviceToken && flatDetail.deviceToken.length > 0) {
-        const title = "Someone checked in";
-        const body = `${existingMaid.purpose || "MAID"}, ${existingMaid.name} has checked in at ${showTime}`;
+        let title = "घर में धमाका! कोई आ गया!";
+      const body = `${existingMaid?.name} ने ${showTime} पर चेक-इन किया है।`;
+
+      const maidNotifications = [
+        "हाय मां! लगता है आज 'सास-बहू' का ड्रामा कम, सफाई का ज्यादा होगा!",
+        "'झाड़ू पकड़कर नाचो' बाई जी आ गई हैं, घर नाचने लगेगा!", 
+        "बोलो ज़रा 'बाई जी आई हैं तो चाय तो बनती है ही!' जल्दी से बनाओ, नहीं तो 'पड़ोसन चुरा लेगी'!"
+      ];
+
+      const milkmanNotifications = [
+        "'चाय के लिए दूध नहीं'  - ये झूठ बोलने का टाइम खत्म हुआ! दूध वाला भैया आ गए हैं!",
+        "क्या आज 'कॉफी पीने का मन नहीं करता'? दूध वाला आया है, जल्दी ले लो, नहीं तो 'पड़ोसी ले जाएगी'!",
+        "दूध वाला आया है!  'अरे बाप रे, सीरियल खत्म हो गया!' जल्दी से दुकान दौड़ो!"
+      ];
+
+      const schoolVanNotifications = [
+        "बच्चों को जल्दी तैयार करो, नहीं तो 'टाइमिंग है Boss!' स्कूल जाने में देर हो जाएगी और 'टीचर डांटेंगी'!",
+        "'बच्चे पढ़ने गए, घर में शांति!' का टाइम आ गया है! स्कूल वैन आ गई!",
+        "स्कूल वैन आई है! जल्दी से बच्चों को बिठाओ, नहीं तो 'होमवर्क पूरा नहीं किया' का बवाल मचेगा!"
+      ];
+
+      const garbageVanNotifications = [
+        "अरे बाप रे! कचरा का अंबार लग गया है! जल्दी से निकालो, गाड़ी आ गई है, नहीं तो 'पड़ोसी ताना मारेंगी'!",
+        "'स्वच्छ भारत अभियान' में अपना योगदान दो! कचरा बाहर निकालने का समय है, नहीं तो 'पति डांटेंगे'!",
+        "'कूड़ा करकट' जल्दी से बाहर निकालो, गाड़ी आ गई है, नहीं तो 'सास जी बोलेंगी'!"
+      ];
+
+      const newspaperNotifications = [
+        "ताज़ा खबरें आपके दरवाजे पर!️",
+        "नमस्ते! सुबह की ताज़ा खबरें आपके लिए तैयार हैं! ☕️️",
+        "दुनिया की खबरें, आपके घर में! ",
+        "चाय के साथ गरमागरम खबरें! ☕️️",
+        "अखबार आया है! पढ़कर जानिए देश-विदेश की हर बात! ",
+        "नए दिन की शुरुआत ताज़ा खबरों के साथ! ☀️️",
+      ];
+
+      const getRandomNotification = (notifications) => {
+        return notifications[Math.floor(Math.random() * notifications.length)];
+      };
+
+      switch (existingMaid.purpose) {
+        case "MAID":
+          title = getRandomNotification(maidNotifications);
+          break;
+        case "MILKMAN":
+          title = getRandomNotification(milkmanNotifications);
+          break;
+        case "SCHOOL VAN":
+          title = getRandomNotification(schoolVanNotifications);
+          break;
+        case "GARBAGE VAN":
+          title = getRandomNotification(garbageVanNotifications);
+          break;
+        case "NEWSPAPER":
+        title = getRandomNotification(newspaperNotifications)
+        break;
+        default:
+          title = "घर में धमाका! कोई आ गया!";
+      }
         
         // Iterate over all device tokens and send notification to each
         await Promise.all(flatDetail.deviceToken.map(token => {
