@@ -27,7 +27,7 @@ const addVisitor = asyncHandler(async (req, res) => {
       const title = "You have got a new Visitor";
       const body = `Visitor ${name} has checked in for ${purpose} at ${showtime}}`;
       for (const token of flat.deviceToken) {
-        await sendPushNotificationToDevice(token, title, body);
+        await sendPushNotificationToDevice(token, flat._id, title, body);
       }
     }
 

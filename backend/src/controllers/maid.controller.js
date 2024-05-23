@@ -91,7 +91,7 @@ const isMaidCheckedIn = async (maidId) => {
 const checkin = asyncHandler(async (req, res) => {
     const { _id } = req.body;
     const currentTime = new Date();
-    const showTime = currentTime.toLocaleString();
+    const showTime = currentTime.toLocaleString("en-IN", {timeZone: "Asia/Kolkata"});
     
     const existingMaid = await Maid.findById(_id).populate('flat'); // populate to get flat details
     
@@ -106,11 +106,12 @@ const checkin = asyncHandler(async (req, res) => {
       const flatDetail = await Flat.findById(flat._id);
       if (flatDetail?.deviceToken && flatDetail.deviceToken.length > 0) {
         const title = "Someone checked in";
-        const body = `${existingMaid.purpose}, ${existingMaid.name} has checked in at ${showTime}`;
+        const body = `${existingMaid.purpose || "MAID"}, ${existingMaid.name} has checked in at ${showTime}`;
         
         // Iterate over all device tokens and send notification to each
-        await Promise.all(flatDetail.deviceToken.map(token => 
-          sendPushNotificationToDevice(token, title, body)
+        await Promise.all(flatDetail.deviceToken.map(token => {
+          sendPushNotificationToDevice(token, flat._id, title, body)
+        }
         ));
       }
     }
