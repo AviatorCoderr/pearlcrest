@@ -91,79 +91,87 @@ export default function AddIncome() {
     doc.setLineWidth(0.5);
     doc.rect(10, 70, 185, 130);
 
+    // Define the starting y position for the text elements
+    let yPos = 80;
+
+    // Helper function to add wrapped text
+    const addWrappedText = (doc, text, x, y, maxWidth) => {
+        const lines = doc.splitTextToSize(text, maxWidth);
+        doc.text(lines, x, y);
+        return y + lines.length * 10; // Update y position for the next element
+    };
+
     // Receipt No
-    doc.setFont("helvetica", "normal");
-    doc.text("Receipt No:", 15, 80);
+    yPos = addWrappedText(doc, "Receipt No:", 15, yPos, 180);
     doc.setFont("helvetica", "bold");
-    doc.text(`${receiptNo}`, 50, 80);
+    yPos = addWrappedText(doc, `${receiptNo}`, 50, yPos - 10, 180);
 
     // Transaction Id or Mode
     doc.setFont("helvetica", "normal");
-    doc.text("Transaction Id:", 15, 90);
+    yPos = addWrappedText(doc, "Transaction Id:", 15, yPos, 180);
     doc.setFont("helvetica", "bold");
-    doc.text(`${transactionId ? transactionId : "CASH"}`, 50, 90);
+    yPos = addWrappedText(doc, `${transactionId ? transactionId : "CASH"}`, 50, yPos - 10, 180);
 
     // Date
     doc.setFont("helvetica", "normal");
-    doc.text("Date:", 15, 100);
+    yPos = addWrappedText(doc, "Date:", 15, yPos, 180);
     doc.setFont("helvetica", "bold");
-    doc.text(`${date}`, 35, 100);
+    yPos = addWrappedText(doc, `${date}`, 35, yPos - 10, 180);
 
     // Received with thanks from Flat No
     doc.setFont("helvetica", "normal");
     const receivedText = `Received with thanks in ${mode} from Flat No:`;
-    const receivedLines = doc.splitTextToSize(receivedText, 180);
-    doc.text(receivedLines, 15, 110);
+    yPos = addWrappedText(doc, receivedText, 15, yPos, 180);
     doc.setFont("helvetica", "bold");
-    doc.text(`${flatNo}`, 100, doc.previousAutoTable ? doc.previousAutoTable.finalY + 10 : 110);
+    yPos = addWrappedText(doc, `${flatNo}`, 100, yPos - 10, 180);
 
     // Amount
     doc.setFont("helvetica", "normal");
-    doc.text("Amount:", 15, 120);
+    yPos = addWrappedText(doc, "Amount:", 15, yPos, 180);
     doc.setFont("helvetica", "bold");
-    doc.text(`${amount}/-`, 40, 120);
+    yPos = addWrappedText(doc, `${amount}/-`, 40, yPos - 10, 180);
 
     // Transaction Date
     doc.setFont("helvetica", "normal");
-    doc.text("Transaction Date:", 15, 130);
+    yPos = addWrappedText(doc, "Transaction Date:", 15, yPos, 180);
     doc.setFont("helvetica", "bold");
-    doc.text(`${transactionDate}`, 60, 130);
+    yPos = addWrappedText(doc, `${transactionDate}`, 60, yPos - 10, 180);
 
     // For the month
     doc.setFont("helvetica", "normal");
-    doc.text("For the month of", 15, 140);
+    yPos = addWrappedText(doc, "For the month of", 15, yPos, 180);
     doc.setFont("helvetica", "bold");
-    doc.text(`${months}`, 50, 140);
+    yPos = addWrappedText(doc, `${months.join(', ')}`, 50, yPos - 10, 180); // Join months with comma and space
 
     // On account of purpose Charges of Society
     doc.setFont("helvetica", "normal");
     const purposeText = `On account of ${purpose} Charges of Society`;
-    const purposeLines = doc.splitTextToSize(purposeText, 180);
-    doc.text(purposeLines, 15, 150);
+    yPos = addWrappedText(doc, purposeText, 15, yPos, 180);
 
     // Dashed lines
     doc.setLineWidth(0.1);
     doc.setDrawColor(0);
     doc.setLineDashPattern([1, 1], 0);
-    doc.line(15, 155, 90, 155); // Draw dashed line
+    doc.line(15, yPos + 5, 90, yPos + 5); // Draw dashed line
 
     // Treasurer's Signature
     const signatureData = '/static/images/treasurersign.jpg';
-    doc.addImage(signatureData, 'PNG', 95, 160, 40, 20);
+    doc.addImage(signatureData, 'PNG', 95, yPos + 10, 40, 20);
 
     // Treasurer
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text("Treasurer", 105, 195, null, null, "center");
+    doc.text("Treasurer", 105, yPos + 45, null, null, "center");
 
     // Dashed lines
     doc.setLineWidth(0.1);
     doc.setDrawColor(0);
     doc.setLineDashPattern([1, 1], 0);
-    doc.line(15, 200, 90, 200); // Draw dashed line
+    doc.line(15, yPos + 50, 90, yPos + 50); // Draw dashed line
 
     return doc.output('arraybuffer');
 };
+
 
 
   const handleSubmit = async () => {
