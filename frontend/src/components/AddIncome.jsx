@@ -111,9 +111,11 @@ export default function AddIncome() {
 
     // Received with thanks from Flat No
     doc.setFont("helvetica", "normal");
-    doc.text(`Received with thanks in ${mode} from Flat No:`, 15, 110);
+    const receivedText = `Received with thanks in ${mode} from Flat No:`;
+    const receivedLines = doc.splitTextToSize(receivedText, 180);
+    doc.text(receivedLines, 15, 110);
     doc.setFont("helvetica", "bold");
-    doc.text(`${flatNo}`, 100, 110);
+    doc.text(`${flatNo}`, 100, doc.previousAutoTable ? doc.previousAutoTable.finalY + 10 : 110);
 
     // Amount
     doc.setFont("helvetica", "normal");
@@ -135,7 +137,9 @@ export default function AddIncome() {
 
     // On account of purpose Charges of Society
     doc.setFont("helvetica", "normal");
-    doc.text(`On account of ${purpose} Charges of Society`, 15, 150);
+    const purposeText = `On account of ${purpose} Charges of Society`;
+    const purposeLines = doc.splitTextToSize(purposeText, 180);
+    doc.text(purposeLines, 15, 150);
 
     // Dashed lines
     doc.setLineWidth(0.1);
@@ -159,7 +163,8 @@ export default function AddIncome() {
     doc.line(15, 200, 90, 200); // Draw dashed line
 
     return doc.output('arraybuffer');
-  };
+};
+
 
   const handleSubmit = async () => {
     try {
