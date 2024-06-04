@@ -120,14 +120,16 @@ export default function AddVisitor() {
           { header: 'Flat', key: 'flat', width: 10 },
           { header: 'Name', key: 'name', width: 30 },
           { header: 'Mobile', key: 'mobile', width: 15 },
-          { header: 'Purpose', key: 'purpose', width: 20 }
+          { header: 'Purpose', key: 'purpose', width: 20 },
+          { header: 'Time', key: 'time', width: 30 }
         ];
         dateVisitorMap[date].forEach(visitor => {
           worksheet.addRow({
             flat: visitor.flat.flatnumber,
             name: visitor.name,
             mobile: visitor.mobile,
-            purpose: visitor.purpose
+            purpose: visitor.purpose,
+            time: new Date(visitor.checkin).toLocaleTimeString("en-IN")
           });
         });
       });
