@@ -88,5 +88,9 @@ const getAllVisitor = asyncHandler(async (req, res) => {
     res.status(500).json(new ApiResponse(500, null, "Internal server error"));
   }
 });
-
-export { addVisitor, getVisitor, messageToAll, getAllVisitor };
+const getVisitors = asyncHandler(async(req , res) => {
+  const visitors = await Visitor.find().populate('flat');
+  console.log(visitors)
+  res.status(200).json(new ApiResponse(200, {visitors}, "Got all visitors"))
+})
+export { addVisitor, getVisitor, messageToAll, getAllVisitor, getVisitors };

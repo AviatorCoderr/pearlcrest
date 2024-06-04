@@ -1,5 +1,5 @@
 import { RiDashboardLine } from 'react-icons/ri';
-import { FaExchangeAlt, FaFileAlt, FaMoneyBillAlt, FaBalanceScale, FaMoneyCheckAlt, FaHandHoldingUsd, FaBook, FaWarehouse, FaUserFriends, FaPrayingHands, FaCross } from 'react-icons/fa';
+import { FaExchangeAlt, FaFileAlt, FaMoneyBillAlt, FaBalanceScale, FaMoneyCheckAlt, FaHandHoldingUsd, FaBook, FaWarehouse, FaUserFriends, FaPrayingHands, FaCross, FaUser } from 'react-icons/fa';
 import { MdSecurity, MdLocalParking, MdCloseFullscreen, MdCancel, MdCheck } from 'react-icons/md';
 
 export const admin_navi = [
@@ -8,6 +8,12 @@ export const admin_navi = [
         label: 'Dashboard',
         path: '/db',
         icon: RiDashboardLine
+    },
+    {
+        key: 'dwnldvis',
+        label: 'Visitor Registers',
+        path: '/db/dwnldvis',
+        icon: FaUser
     },
     {
         key: 'reg',

@@ -33,6 +33,7 @@ import PaymentApproval from "./components/PaymentApproval";
 import MemberCouncil from "./components/MemberCouncil";
 import Unauthorised from "./components/Unauthorised"
 import RegistrationPage from "./components/RegistrationPage";
+import VisitorDownload from "./components/VisitorDownload";
 function App() {
   return (
     <div>
@@ -75,6 +76,7 @@ function App() {
             <Route path="booking-details" element={<BookingDetails />} />
             <Route path="payment-approval" element={<PaymentApproval />} />
             <Route path="reg" element={<RegistrationPage />} />
+            <Route path="dwnldvis" element={<VisitorDownload/>} />
           </Route>
         </Routes>
       </Router>
