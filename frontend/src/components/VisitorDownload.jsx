@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import ClipLoader from "react-spinners/ClipLoader";
 import ExcelJS from 'exceljs';
 
-export default function AddVisitor() {
+export default function VisitorDownload() {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,6 +14,7 @@ export default function AddVisitor() {
   }, [navigate]);
 
   const [visitorlist, setVisitorlist] = useState([]);
+  const [filteredVisitorList, setFilteredVisitorList] = useState([]);
   const [addClick, setAddClick] = useState(false);
   const [flat, setFlat] = useState('');
   const [name, setName] = useState('');
@@ -21,17 +22,42 @@ export default function AddVisitor() {
   const [purpose, setPurpose] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [filterFlat, setFilterFlat] = useState('');
+  const [filterPurpose, setFilterPurpose] = useState('');
+  const [filterStartDate, setFilterStartDate] = useState('');
+  const [filterEndDate, setFilterEndDate] = useState('');
+
   useEffect(() => {
     const getAllVisitors = async () => {
       try {
         const response = await axios.get("/api/v1/visitor/get-visitors");
         setVisitorlist(response.data.data.visitors);
+        setFilteredVisitorList(response.data.data.visitors);
       } catch (error) {
         console.error("Error fetching visitors:", error);
       }
     };
     getAllVisitors();
   }, []);
+
+  const handleFilter = () => {
+    let filtered = visitorlist;
+
+    if (filterFlat) {
+      filtered = filtered.filter(visitor => visitor.flat.flatnumber.includes(filterFlat));
+    }
+    if (filterPurpose) {
+      filtered = filtered.filter(visitor => visitor.purpose === filterPurpose);
+    }
+    if (filterStartDate) {
+      filtered = filtered.filter(visitor => new Date(visitor.checkin) >= new Date(filterStartDate));
+    }
+    if (filterEndDate) {
+      filtered = filtered.filter(visitor => new Date(visitor.checkin) <= new Date(filterEndDate));
+    }
+
+    setFilteredVisitorList(filtered);
+  };
 
   const handleAddVisitor = () => {
     setAddClick(true);
@@ -100,7 +126,7 @@ export default function AddVisitor() {
       const workbook = new ExcelJS.Workbook();
       const dateVisitorMap = {};
 
-      visitorlist.forEach(visitor => {
+      filteredVisitorList.forEach(visitor => {
         const checkin = visitor.checkin;
         if (checkin) {
           const date = new Date(checkin).toISOString().split('T')[0];
@@ -111,9 +137,6 @@ export default function AddVisitor() {
         }
       });
 
-      // Log the dateVisitorMap for debugging
-      console.log(dateVisitorMap);
-
       Object.keys(dateVisitorMap).forEach(date => {
         const worksheet = workbook.addWorksheet(date);
         worksheet.columns = [
@@ -121,7 +144,8 @@ export default function AddVisitor() {
           { header: 'Name', key: 'name', width: 30 },
           { header: 'Mobile', key: 'mobile', width: 15 },
           { header: 'Purpose', key: 'purpose', width: 20 },
-          { header: 'Time', key: 'time', width: 30 }
+          { header: 'Time', key: 'time', width: 30 },
+          { header: 'Date', key: 'date', width: 30 }
         ];
         dateVisitorMap[date].forEach(visitor => {
           worksheet.addRow({
@@ -129,7 +153,8 @@ export default function AddVisitor() {
             name: visitor.name,
             mobile: visitor.mobile,
             purpose: visitor.purpose,
-            time: new Date(visitor.checkin).toLocaleTimeString("en-IN")
+            time: new Date(visitor.checkin).toLocaleDateString("en-IN"),
+            date: new Date(visitor.checkin).toLocaleTimeString("en-IN")
           });
         });
       });
@@ -200,6 +225,47 @@ export default function AddVisitor() {
           </button>
         </div>
       )}
+      <div className="mt-4 p-4 bg-white rounded-lg shadow-md">
+        <h2 className="text-xl mb-4">Filter Visitors</h2>
+        <input
+          placeholder="Flat"
+          type="text"
+          value={filterFlat}
+          onChange={(e) => setFilterFlat(e.target.value)}
+          className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+        />
+        <select
+          value={filterPurpose}
+          onChange={(e) => setFilterPurpose(e.target.value)}
+          className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+        >
+          <option value="">Select Visitor Type</option>
+          <option value="guest">Guest</option>
+          <option value="delivery">Delivery</option>
+          <option value="cab_driver">Cab Driver</option>
+          <option value="gas_delivery">Gas Delivery</option>
+          <option value="grocery_shop">Grocery Shop</option>
+          <option value="milkman">Milkman</option>
+        </select>
+        <input
+          type="date"
+          value={filterStartDate}
+          onChange={(e) => setFilterStartDate(e.target.value)}
+          className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+        />
+        <input
+          type="date"
+          value={filterEndDate}
+          onChange={(e) => setFilterEndDate(e.target.value)}
+          className="w-full p-1 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-2"
+        />
+        <button 
+          onClick={handleFilter} 
+          className="p-2 px-10 mt-4 bg-blue-500 text-white rounded-lg"
+        >
+          Apply Filters
+        </button>
+      </div>
       <div className='overflow-auto'>
         <table className='w-full text-gray-700 text-center table-auto shadow-lg bg-white divide-y divide-gray-200 rounded-lg overflow-hidden mt-5'>
           <thead className='bg-gray-200 text-gray-800 uppercase'>
@@ -212,7 +278,7 @@ export default function AddVisitor() {
             </tr>
           </thead>
           <tbody>
-            {visitorlist?.map((ele, index) => (
+            {filteredVisitorList?.map((ele, index) => (
               <tr key={index} className={(index % 2 === 0) ? 'bg-gray-100' : 'bg-white'}>
                 <td className="px-6 py-4">{index + 1}</td>
                 <td className="px-6 py-4">{ele.flat.flatnumber}</td>
