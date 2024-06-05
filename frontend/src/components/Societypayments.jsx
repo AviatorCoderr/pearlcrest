@@ -14,9 +14,11 @@ const Societypayments = () => {
   const [qrlink, setQrLink] = useState(null);
   const [checkout, setCheckout] = useState(false);
   const [transactionId, setTransactionId] = useState(''); // Define transactionId state
+  const [paymentMode, setPaymentMode] = useState(''); // Define paymentMode state
   const [loading, setLoading] = useState(false); // Define loading state
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); 
   const user = JSON.parse(localStorage.getItem("user"))
+  
   useEffect(() => {
     const getMonthsPaid = async () => {
       try {
@@ -126,25 +128,53 @@ const Societypayments = () => {
     }
   };
 
+  const validateTransactionId = (id, mode) => {
+    let regex;
+    switch (mode) {
+      case 'UPI':
+        regex = /^[a-zA-Z0-9]{12}$/;
+        break;
+      case 'NEFT':
+      case 'IMPS':
+        regex = /^[a-zA-Z0-9]{8,12}$/;
+        break;
+      case 'Cheque':
+        regex = /^[0-9]{6}$/;
+        break;
+      default:
+        return false;
+    }
+    return regex.test(id);
+  };
+
   const handleConfirm = async () => {
-    if (!transactionId) {
+    if (!paymentMode) {
       Swal.fire({
         icon: 'error',
-        title: 'Enter Transaction ID',
-        text: 'Please enter transaction ID correctly else your payment will not be verified.'
+        title: 'Select Payment Mode',
+        text: 'Please select a payment mode.'
+      });
+      return;
+    }
+    if (!transactionId || !validateTransactionId(transactionId, paymentMode)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Transaction ID',
+        text: `Please enter a valid transaction ID for ${paymentMode}.`
       });
       return;
     }
     setLoading(true);
     try {
+      const newId = paymentMode+":"+transactionId
       const response = await axios.post("/api/v1/account/add-untrans", {
-        purpose, amount, months: selectedMonths, transactionId
+        purpose, amount, months: selectedMonths, transactionId: newId
       });
       // Handle success
       Swal.fire({
         icon: 'success',
         title: 'Payment Confirmed',
-        text: `Your payment has been successfully confirmed. your transaction id is ${response?.data?.data?._id}`
+        text: `Your payment has been successfully confirmed. your payment id is ${response?.data?.data?._id}`
       })
       .then(response => {
         window.location.reload()
@@ -206,20 +236,54 @@ const Societypayments = () => {
       </div>
       <div className="m-3 flex justify-between items-center">
         <p>Payable Amount:</p>
-        <p className="font-semibold text-xl text-blue-500">₹{amount ? amount : 0}</p>
+        <p className="font-semibold text-xl text-blue-500">₹{amount ? amount : 0}        </p>
       </div>
-      <button onClick={() => handleCheckout()} className="mt-5 bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition duration-300">Continue & Pay</button>
+      <button onClick={() => handleCheckout()} className="mt-5 bg-blue-500 text-white px-5
+      py-2 rounded-lg hover:bg-blue-600 transition duration-300">Continue & Pay</button>
       <div>
         {checkout &&
           <div className='m-5'>
             <p className="text-red-500 font-semibold mb-2">Transaction ID is required. Please provide it:</p>
-            <label className='text-sm text-blue-600'><a href="https://support.coindcx.com/articles/inr-deposits/how-can-i-find-my-transactionreference-id-for-upi-transaction-inr-deposits/63f8b4fbc1b2d57ff3f4f612" target="_blank">How to find correct Transaction ID?</a></label>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">Enter UPI Ref No/ UTR No/ IMPS Ref. No/ NEFT No./ 12 digit transaction ID</label>
-            <input
-              type="text"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
-              onChange={(e) => setTransactionId(e.target.value)}
-            />
+            <div className="mb-4">
+              <label htmlFor="paymentMode" className="block text-sm font-medium text-gray-700 mb-2">Select Payment Mode</label>
+              <select 
+                id="paymentMode" 
+                onChange={(e) => setPaymentMode(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+              >
+                <option value="">Choose Payment Mode</option>
+                <option value="UPI">UPI</option>
+                <option value="NEFT">NEFT</option>
+                <option value="IMPS">IMPS</option>
+                <option value="Cheque">Cheque</option>
+              </select>
+            </div>
+            {paymentMode && (
+              <div className="mb-4">
+                <label htmlFor="transactionId" className="block text-sm font-medium text-gray-700 mb-2">
+                  Enter Transaction ID
+                  <button
+                    type="button"
+                    className="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none"
+                    title={`Information on Transaction ID for ${paymentMode === 'UPI' ? 'UPI: UPI Reference Number should be 12 alphanumeric characters long.' : paymentMode === 'NEFT' ? 'NEFT: NEFT Reference Number should be 8 to 12 alphanumeric characters long.' : paymentMode === 'IMPS' ? 'IMPS: IMPS Reference Number should be 8 to 12 alphanumeric characters long.' : 'Cheque: Cheque Number should be 6 numeric characters long.'}`}
+                  >
+                    ℹ
+                  </button>
+                </label>
+                <input
+                  id="transactionId"
+                  type="text"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+                  onChange={(e) => setTransactionId(e.target.value)}
+                />
+                <small className="text-gray-500">
+                  {paymentMode === 'UPI' && 'UPI Ref No (12 alphanumeric characters).'}
+                  {paymentMode === 'NEFT' && 'NEFT Ref No (8-12 alphanumeric characters).'}
+                  {paymentMode === 'IMPS' && 'IMPS Ref No (8-12 alphanumeric characters).'}
+                  {paymentMode === 'Cheque' && 'Cheque No (6 numeric characters).'}
+                </small>
+              </div>
+            )}
           </div>
         }
         {(qrCodeDataUri && checkout) &&
