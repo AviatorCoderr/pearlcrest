@@ -213,7 +213,8 @@ const Societypayments = () => {
         {checkout &&
           <div className='m-5'>
             <p className="text-red-500 font-semibold mb-2">Transaction ID is required. Please provide it:</p>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">Enter Transaction Id</label>
+            <label className='text-sm text-blue-600'><a href="https://support.coindcx.com/articles/inr-deposits/how-can-i-find-my-transactionreference-id-for-upi-transaction-inr-deposits/63f8b4fbc1b2d57ff3f4f612" target="_blank">How to find correct Transaction ID?</a></label>
+            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">Enter UPI Ref No/ UTR No/ IMPS Ref. No/ NEFT No./ 12 digit transaction ID</label>
             <input
               type="text"
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
