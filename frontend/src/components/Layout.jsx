@@ -5,10 +5,12 @@ import Header from './Header';
 import axios from 'axios';
 import Swal from 'sweetalert2'
 export default function Layout() {
+    console.log("layout")
     const navigate = useNavigate()
     useEffect(() => {
         axios.get("/api/v1/users/get-current-user")
         .catch(error => {
+            console.log("hello", error)
           Swal.fire({
             icon: 'warning',
             title: 'You have been logged out'

@@ -51,11 +51,11 @@ export default function Header() {
 
   let sidebarData = "";
 
-  if (user.flatnumber === "PCS") {
+  if (user?.flatnumber === "PCS") {
     sidebarData = admin_navi;
-  } else if (user.position === "executive") {
+  } else if (user?.position === "executive") {
     sidebarData = exe_det;
-  } else if (user.flatnumber === "GUARD") {
+  } else if (user?.flatnumber === "GUARD") {
     sidebarData = guard_det;
   }
   else {
@@ -108,7 +108,7 @@ export default function Header() {
           )}
         </Popover>
         <div className='flex h-full m-auto rounded-sm'>
-          Welcome, {user.flatnumber}
+          Welcome, {user?.flatnumber}
         </div>
       </div>
       <div className='ml-auto flex items-center gap-2 mr-2'>
