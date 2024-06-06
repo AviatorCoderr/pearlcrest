@@ -295,14 +295,14 @@ const Societypayments = () => {
               <p className="text-lg text-center font-semibold">Scan this QR Code</p>
               <p className="text-lg text-center font-semibold">OR</p>
               <p className='text-lg text-center font-semibold'>Click on the QR for UPI Payments</p>
+              <div className="mt-1 flex justify-center items-center space-x-4">
+              <p>Supported for now only on</p>
+              <img className="w-25 h-14" src="/static/images/bhim_sbi.jpeg" alt="bhim_upi" />
+            </div>
               <p className='text-lg text-center font-semibold'>OR</p>
               <p className='text-lg text-center font-semibold'>Transfer the amount through any payment mode and share the transaction ID</p>
               <p className='text-lg text-center font-semibold'>IFSC CODE - PUNB0093900</p>
               <p className='text-lg text-center font-semibold'>ACCOUNT NUMBER - 0939000100236216</p>
-            </div>
-            <div className="mt-4 flex justify-center items-center space-x-4">
-              <p>Supported for now only on</p>
-              <img className="w-12 h-12" src="/static/images/download.png" alt="bhim_upi" />
             </div>
             <button
               className="mt-8 w-full py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300"

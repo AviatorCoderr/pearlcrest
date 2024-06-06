@@ -18,6 +18,7 @@ export default function FacilityReservation() {
     const [checkout, setCheckout] = useState(false);
     const [track, setTrack] = useState([]);
     const [allDates, setAllDates] = useState([]);
+    const [paymentMode, setPaymentMode] = useState(''); // Define paymentMode state
 
     useEffect(() => {
         const fetchTrackDates = async () => {
@@ -133,7 +134,7 @@ export default function FacilityReservation() {
         } else {
             setSelectedDates(selectedDates.filter(selectedDate => selectedDate.getTime() !== newDateTimestamp));
         }
-        setCheckout(!checkout);
+        if(checkout) setCheckout(!checkout)
     };
 
     const filterDates = (date) => {
@@ -216,44 +217,80 @@ export default function FacilityReservation() {
             >
                 Checkout
             </button>
-            {checkout && (
-                <div className="m-5">
-                    <p className="text-red-500 font-semibold mb-2">Transaction ID is required. Please provide it:</p>
-                    <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">Enter Transaction Id</label>
-                    <input
-                        type="text"
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
-                        onChange={(e) => setTransactionId(e.target.value)}
-                    />
-                </div>
+            <div>
+        {checkout &&
+          <div className='m-5'>
+            <p className="text-red-500 font-semibold mb-2">Transaction ID is required. Please provide it:</p>
+            <div className="mb-4">
+              <label htmlFor="paymentMode" className="block text-sm font-medium text-gray-700 mb-2">Select Payment Mode</label>
+              <select 
+                id="paymentMode" 
+                onChange={(e) => setPaymentMode(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+              >
+                <option value="">Choose Payment Mode</option>
+                <option value="UPI">UPI</option>
+                <option value="NEFT">NEFT</option>
+                <option value="IMPS">IMPS</option>
+                <option value="Cheque">Cheque</option>
+              </select>
+            </div>
+            {paymentMode && (
+              <div className="mb-4">
+                <label htmlFor="transactionId" className="block text-sm font-medium text-gray-700 mb-2">
+                  Enter Transaction ID
+                  <button
+                    type="button"
+                    className="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none"
+                    title={`Information on Transaction ID for ${paymentMode === 'UPI' ? 'UPI: UPI Reference Number should be 12 alphanumeric characters long.' : paymentMode === 'NEFT' ? 'NEFT: NEFT Reference Number should be 8 to 12 alphanumeric characters long.' : paymentMode === 'IMPS' ? 'IMPS: IMPS Reference Number should be 8 to 12 alphanumeric characters long.' : 'Cheque: Cheque Number should be 6 numeric characters long.'}`}
+                  >
+                    ℹ
+                  </button>
+                </label>
+                <input
+                  id="transactionId"
+                  type="text"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+                  onChange={(e) => setTransactionId(e.target.value)}
+                />
+                <small className="text-gray-500">
+                  {paymentMode === 'UPI' && 'UPI Ref No (12 alphanumeric characters).'}
+                  {paymentMode === 'NEFT' && 'NEFT Ref No (8-12 alphanumeric characters).'}
+                  {paymentMode === 'IMPS' && 'IMPS Ref No (8-12 alphanumeric characters).'}
+                  {paymentMode === 'Cheque' && 'Cheque No (6 numeric characters).'}
+                </small>
+              </div>
             )}
-            {qrCodeDataUri && checkout && (
-                <div>
-                    <div className="mt-8 flex justify-center items-center">
-                        <a href={qrlink} target="_blank" rel="noopener noreferrer"><img src={qrCodeDataUri} alt="QR Code" className="w-full md:w-64 border-2 border-black h-64" /></a>
-                    </div>
-                    <div className="mt-8 flex-row justify-center items-center">
-                        <p className="text-lg text-center font-semibold">Scan this QR Code</p>
-                        <p className="text-lg text-center font-semibold">OR</p>
-                        <p className="text-lg text-center font-semibold">Click on the QR for UPI Payments</p>
-                        <p className="text-lg text-center font-semibold">OR</p>
-                        <p className="text-lg text-center font-semibold">Transfer the amount through any payment mode and share the transaction ID</p>
-                        <p className='text-lg text-center font-semibold'>IFSC CODE - PUNB0093900</p>
-                        <p className='text-lg text-center font-semibold'>ACCOUNT NUMBER - 0939000100236216</p>
-                    </div>
-                    <div className="mt-4 flex justify-center items-center space-x-4">
-                        <p>Supported for now only on</p>
-                        <img className="w-12 h-12" src="/static/images/download.png" alt="bhim_upi" />
-                    </div>
-                    <button
-                        className="mt-8 w-full py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
-                        onClick={handleConfirm}
-                        disabled={loading}
-                    >
-                        {loading ? <CircleLoader color="#ffffff" loading={loading} size={20} /> : 'Confirm Booking'}
-                    </button>
-                </div>
-            )}
+          </div>
+        }
+        {(qrCodeDataUri && checkout) &&
+          <div>
+            <div className="mt-8 flex justify-center items-center">
+              <a href={qrlink} target="_blank" rel="noopener noreferrer"><img src={qrCodeDataUri} alt="QR Code" className="w-full md:w-64 border-2 border-black h-64" /></a>
+            </div>
+            <div className="mt-8 flex-row justify-center items-center">
+              <p className="text-lg text-center font-semibold">Scan this QR Code</p>
+              <p className="text-lg text-center font-semibold">OR</p>
+              <p className='text-lg text-center font-semibold'>Click on the QR for UPI Payments</p>
+              <div className="mt-1 flex justify-center items-center space-x-4">
+              <p>Supported for now only on</p>
+              <img className="w-25 h-14" src="/static/images/bhim_sbi.jpeg" alt="bhim_upi" />
+            </div>
+              <p className='text-lg text-center font-semibold'>OR</p>
+              <p className='text-lg text-center font-semibold'>Transfer the amount through any payment mode and share the transaction ID</p>
+              <p className='text-lg text-center font-semibold'>IFSC CODE - PUNB0093900</p>
+              <p className='text-lg text-center font-semibold'>ACCOUNT NUMBER - 0939000100236216</p>
+            </div>
+            <button
+              className="mt-8 w-full py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
+              onClick={() => handleConfirm()}
+              disabled={loading}
+            >
+              {loading ? <CircleLoader color="#ffffff" loading={loading} size={20} /> : 'Confirm Booking'} {/* Show CircleLoader while loading */}
+            </button>
+          </div>
+        }
+      </div>
         </div>
     );
 }
