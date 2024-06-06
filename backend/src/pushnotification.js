@@ -24,6 +24,5 @@ export async function sendPushNotificationToDevice(deviceToken, flatid, title, b
     } else {
       console.log('Unknown error. Retrying later...', error);
     }
-    throw error; // Re-throw the error to handle it elsewhere if needed
   }
 }
