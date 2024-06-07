@@ -66,7 +66,94 @@ export default function AddIncome() {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
+  const jsPdfGenerator = (receiptNo, date, flatNo, amount, transactionDate, months, purpose, mode, transactionId) => {
+    const doc = new jsPDF();
+    // Add logo
+    const logoData = '/static/images/favicon-32x32.png';
+    doc.addImage(logoData, 'PNG', 10, 10, 20, 20);
+    // Title
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.text("e-Money Receipt", 105, 25, null, null, "center");
+    doc.setFontSize(14);
+    doc.text("PEARL CREST FLAT OWNERS’ SOCIETY", 105, 35, null, null, "center");
+    doc.setFontSize(12);
+    doc.text("ARGORA, PUNDAG ROAD, ARGORA, RANCHI – 834002", 105, 45, null, null, "center");
+    // Receipt Details
+    doc.setFont("times", "normal");
+    // Draw border around receipt details
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.rect(10, 70, 185, 130);
+    // Receipt No
+    doc.setFont("helvetica", "normal");
+    doc.text("Receipt No:", 15, 80);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${receiptNo}`, 50, 80);
 
+    // Transaction Id or Mode
+    doc.setFont("helvetica", "normal");
+    doc.text("Transaction Id:", 15, 90);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${(transactionId) ? transactionId : "CASH"}`, 50, 90);
+
+    // Date
+    doc.setFont("helvetica", "normal");
+    doc.text("Date:", 15, 100);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${date}`, 35, 100);
+    
+    // Received with thanks from Flat No
+    doc.setFont("helvetica", "normal");
+    doc.text(`Received with thanks in ${mode} from Flat No:`, 15, 110);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${flatNo}`, 100, 110);
+    
+    // Amount
+    doc.setFont("helvetica", "normal");
+    doc.text("Amount:", 15, 120);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${amount}/-`, 40, 120);
+    
+    // Transaction Date
+    doc.setFont("helvetica", "normal");
+    doc.text("Transaction Date:", 15, 130);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${transactionDate}`, 60, 130);
+    
+    // For the month
+    doc.setFont("helvetica", "normal");
+    doc.text("For the month of", 15, 140);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${months}`, 50, 140);
+    
+    // On account of purpose Charges of Society
+    doc.setFont("helvetica", "normal");
+    doc.text(`On account of ${purpose} Charges of Society`, 15, 150);
+
+    // Dashed lines
+    doc.setLineWidth(0.1);
+    doc.setDrawColor(0);
+    doc.setLineDashPattern([1, 1], 0);
+    doc.line(15, 155, 90, 155); // Draw dashed line
+    
+    // Treasurer's Signature
+    const signatureData = '/static/images/treasurersign.jpg';
+    doc.addImage(signatureData, 'PNG', 95, 160, 40, 20);
+    
+    // Treasurer
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Treasurer", 105, 195, null, null, "center");
+
+    // Dashed lines
+    doc.setLineWidth(0.1);
+    doc.setDrawColor(0);
+    doc.setLineDashPattern([1, 1], 0);
+    doc.line(15, 200, 90, 200); // Draw dashed line
+
+    return doc.output('arraybuffer');
+};
 
   const handleSubmit = async () => {
     try {
