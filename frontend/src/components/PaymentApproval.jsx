@@ -148,7 +148,7 @@ export default function PaymentApproval() {
             })
             .catch(error => {
                 Swal.fire({
-                    icon: 'error',
+                    icon: 'success',
                     title: 'Mail not sent but payment confirmed. Flatier can download receipt from his dashboard.',
                     text: error?.response?.data?.message
                 })

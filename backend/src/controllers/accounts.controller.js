@@ -12,6 +12,7 @@ import { Owner } from "../models/owners.model.js";
 import { Renter } from "../models/renters.model.js";
 import nodemailer from "nodemailer"
 import QRcode from "qrcode"
+import { sendPushNotificationToDevice } from "../pushnotification.js";
 
 //utilities like send mail, generate qr etc
 const transporter = nodemailer.createTransport({
@@ -604,6 +605,13 @@ const Approvepayment = asyncHandler(async (req, res) => {
       }
     }
     await UnTransaction.deleteOne({_id: untransid})
+    if (flat.deviceToken && flat.deviceToken.length > 0) {
+      const title = "Payment successful";
+      const body = `Your payment with transaction ID ${transactionId} is successful. You can download the receipt from payment history.`;
+      for (const token of flat.deviceToken) {
+        await sendPushNotificationToDevice(token, flat._id, title, body);
+      }
+    }
     await session.commitTransaction();
     res.status(201).json(
       new ApiResponse(200, { trans, incomerecord }, "Transaction and income added successfully")
