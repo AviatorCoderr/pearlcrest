@@ -631,7 +631,8 @@ const denyPayment = asyncHandler(async(req, res) => {
     const {untransid} = req.body
     const trans = await UnTransaction.findByIdAndDelete({_id: untransid}, {session: session})
     await sendFailureEmail(trans)
-    const flat = trans.flat
+    const flatid = trans.flat
+    const flat = await Flat.findById(flatid)
     if (flat.deviceToken && flat.deviceToken.length > 0) {
       const title = "PUNJAB NATIONAL BANK, PCS - Payment Denied";
       const body = `Your payment with transaction ID ${trans.transactionId} is failed due to non-matching of Transaction Id. Kindly re-enter it on the website.`;
