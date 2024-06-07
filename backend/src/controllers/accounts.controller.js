@@ -634,8 +634,8 @@ const denyPayment = asyncHandler(async(req, res) => {
     const flatid = trans.flat
     const flat = await Flat.findById(flatid)
     if (flat.deviceToken && flat.deviceToken.length > 0) {
-      const title = "PUNJAB NATIONAL BANK, PCS - Payment Denied";
-      const body = `Your payment with transaction ID ${trans.transactionId} is failed due to non-matching of Transaction Id. Kindly re-enter it on the website.`;
+      const title = "Pearl Crest Society - Payment Denied";
+      const body = `Your payment with transaction ID ${trans.transactionId} is failed due to non-matching of Transaction Id with bank. Kindly re-enter it on the website.`;
       for (const token of flat.deviceToken) {
         await sendPushNotificationToDevice(token, flat._id, title, body);
       }
