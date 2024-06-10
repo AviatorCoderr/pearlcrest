@@ -11,7 +11,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     axios.get("/api/v1/users/get-current-user")
       .then(response => {
@@ -120,7 +120,7 @@ export default function Login() {
         </div>
       </div>
 
-      {!isLoggingIn && (
+      {isLoggingIn && (
         <div className="fixed top-0 left-0 w-full h-full overflow-auto bg-gray-900 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white m-4 p-6 rounded-lg w-full max-w-md md:max-w-4xl">
             <BarLoader className="m-auto my-5" color="#4a90e2" size={100} />
