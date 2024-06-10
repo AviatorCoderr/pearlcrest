@@ -22,7 +22,7 @@ const addVisitor = asyncHandler(async (req, res) => {
       purpose,
       checkin 
     });
-    const showtime = checkin.toLocaleString("en-IN")
+    const showtime = checkin.toLocaleString("en-IN", {timeZone: "Asia/Kolkata"})
     if (flat.deviceToken && flat.deviceToken.length > 0) {
       const title = "You have got a new Visitor";
       const body = `Visitor ${name} has checked in for ${purpose} at ${showtime}}`;
