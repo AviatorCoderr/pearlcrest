@@ -20,19 +20,19 @@ export default function Login() {
         localStorage.setItem("user", JSON.stringify(response.data.data));
         navigate("/db");
       } catch (error) {
-        setIsFetchingUser(false); // Ensure the loader stops if the request fails
+        setIsFetchingUser(false);
       }
     };
 
     const timeoutId = setTimeout(() => {
       fetchUser().finally(() => {
-        setIsFetchingUser(false); // Ensure the loader stops after fetching the user
+        setIsFetchingUser(false); 
       });
-    }, 5000); // Minimum loader display time
+    }, 7000); 
 
     fetchUser().then(() => {
       clearTimeout(timeoutId);
-      setIsFetchingUser(false); // Ensure the loader stops after fetching the user
+      setIsFetchingUser(false); 
     });
   }, [navigate]);
 
