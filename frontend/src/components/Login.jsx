@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -10,67 +10,43 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [isFetchingUser, setIsFetchingUser] = useState(true);
   const navigate = useNavigate();
-  
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get("/api/v1/users/get-current-user");
-        localStorage.setItem("user", JSON.stringify(response.data.data));
-        navigate("/db");
-      } catch (error) {
-        setIsFetchingUser(false);
-      }
-    };
-
-    const timeoutId = setTimeout(() => {
-      fetchUser().finally(() => {
-        setIsFetchingUser(false); 
-      });
-    }, 10000); 
-
-    fetchUser().then(() => {
-      clearTimeout(timeoutId);
-      setIsFetchingUser(false); 
-    });
-  }, [navigate]);
 
   const handleLogin = () => {
     setIsLoggingIn(true);
-    axios
-      .post(
-        "/api/v1/users/login",
-        {
-          flatnumber: username,
-          password: password,
-        },
-        {
-          withCredentials: true,
-        }
-      )
-      .then((response) => {
-        console.log(response);
-        console.log("Login success:", JSON.stringify(response.data.data.flat));
-        localStorage.setItem("user", JSON.stringify(response.data.data.flat));
-        navigate("/db");
-      })
-      .catch((error) => {
-        Swal.fire({
-          title: "Invalid Credentials",
-          text: "Check your flatnumber or password",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
-        console.error("Login error:", error);
-      })
-      .finally(() => {
-        setIsLoggingIn(false);
+
+    axios.post(
+      "/api/v1/users/login",
+      {
+        flatnumber: username,
+        password: password,
+      },
+      {
+        withCredentials: true,
+      }
+    )
+    .then((response) => {
+      console.log(response);
+      console.log("Login success:", JSON.stringify(response.data.data.flat));
+      localStorage.setItem("user", JSON.stringify(response.data.data.flat));
+    })
+    .catch((error) => {
+      Swal.fire({
+        title: "Invalid Credentials",
+        text: "Check your flatnumber or password",
+        icon: "error",
+        confirmButtonText: "OK",
       });
+      console.error("Login error:", error);
+    });
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleContinue = () => {
+    navigate("/db");
   };
 
   return (
@@ -136,10 +112,15 @@ export default function Login() {
         </div>
       </div>
 
-      {(isLoggingIn || isFetchingUser) && (
+      {isLoggingIn && (
         <div className="fixed top-0 left-0 w-full h-full overflow-auto bg-gray-900 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white m-4 p-6 rounded-lg w-full max-w-md md:max-w-4xl max-h-full overflow-y-auto">
-            <BarLoader className="m-auto my-5" color="#4a90e2" size={100} />
+          <button
+              className="bg-black w-1/2 text-white m-auto rounded-md p-4 text-center flex items-center justify-center my-2 hover:opacity-80"
+              onClick={handleContinue}
+            >
+              Continue to Dashboard
+            </button>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:flex justify-center items-center">
                 <img
@@ -150,7 +131,9 @@ export default function Login() {
                 />
               </div>
               <div className="text-left">
-                <h1 className="text-lg bg-gray-100 text-gray-800 font-bold p-3">Know Your Treasurer</h1>
+                <h1 className="text-lg bg-gray-100 text-gray-800 font-bold p-3">Meet Your Treasurer</h1>
+                <p className=" text-lg mt-2 bg-gray-100 text-gray-800 font-bold p-3">
+                Thank you for choosing and trusting me. I appreciate your confidence and look forward to serving you well.</p>
                 <p className="mt-6 leading-8 text-gray-700">
                   Meet <strong>Manish</strong>, a <strong>Senior Programmer in the Finance Department at Central Coalfields Limited, Ranchi</strong>. An academic <strong>topper in Master of Computer Applications</strong>, Manish excels in MS Excel and Programming, enhancing financial processes with his technical expertise. As a <strong>blackbelt in karate</strong>, he embodies discipline and dedication.
                 </p>

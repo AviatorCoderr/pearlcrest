@@ -8,7 +8,7 @@ const dev_details = [
   {
     img_url: "/static/images/manish_jpg.jpg",
     name: "Manish",
-    description: "Lead Developer & PCS Treasurer, MCA"
+    description: "Web Designer & PCS Treasurer, MCA"
   },
   {
     img_url: "/static/images/kush.jpg",
@@ -17,7 +17,7 @@ const dev_details = [
     linkedin_id: "https://www.linkedin.com/in/kushagra-sahay-500b671b8/",
     contact: "https://github.com/AviatorCoderr",
     portfolio: "https://wonderful-shortbread-50834c.netlify.app/",
-    description: "Assistant Developer, CSE, BIT MESRA"
+    description: "Web Developer, CSE, BIT MESRA"
 }]
 function Meetdev() {
   return (
