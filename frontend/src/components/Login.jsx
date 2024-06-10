@@ -28,7 +28,7 @@ export default function Login() {
       fetchUser().finally(() => {
         setIsFetchingUser(false); 
       });
-    }, 7000); 
+    }, 10000); 
 
     fetchUser().then(() => {
       clearTimeout(timeoutId);
