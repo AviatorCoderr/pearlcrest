@@ -3,7 +3,7 @@ import pillarsdet from "../pillarsdet";
 
 function Pillarmem(){
   return (
-    <div className="my-10 mt-5 p-10 md:grid grid-cols-3 bg-cover bg-center">
+    <div className="my-10 mt-5 p-10 md:grid grid-cols-3 bg-cover bg-center ">
       {pillarsdet.map((ele, index) =>
       <Pillars key={index} ele={ele}/>
       )}

@@ -2,21 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { RingLoader } from 'react-spinners';
+import { BarLoader } from 'react-spinners';
 import { Link } from 'react-router-dom';
+
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
+  
   useEffect(() => {
     axios.get("/api/v1/users/get-current-user")
-    .then(response => {
-      localStorage.setItem("user", JSON.stringify(response.data.data))
-      navigate("/db")
-    })
-  }, [])
+      .then(response => {
+        localStorage.setItem("user", JSON.stringify(response.data.data))
+        navigate("/db")
+      })
+  }, [navigate]);
+
   const handleLogin = () => {
     setIsLoggingIn(true);
     axios
@@ -66,7 +69,7 @@ export default function Login() {
       <div className="w-full bg-white p-6 md:p-20 justify-between">
         <h3 className="text-xl text-black font-semibold">Pearl Crest</h3>
 
-        <div className="w-full flex flex-col max-w-[500px] ">
+        <div className="w-full flex flex-col max-w-[500px]">
           <div className="flex flex-col w-full mb-5">
             <h3 className="text-3xl font-semibold mb-4">Login</h3>
             <p className="text-base mb-2">Enter Your login details.</p>
@@ -75,7 +78,7 @@ export default function Login() {
             <input
               type="text"
               placeholder="Flat Number"
-              className="w-fulltext-black py-2 my-2 bg-transparent border-b border-black outline-none focus:outline-none"
+              className="w-full text-black py-2 my-2 bg-transparent border-b border-black outline-none focus:outline-none"
               onChange={(e) => setUsername(e.target.value)}
             />
             <div className="relative">
@@ -117,12 +120,29 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Spinner and message */}
-      {isLoggingIn && (
-        <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg flex flex-col items-center">
-            <RingLoader color="#4a90e2" size={100} />
-            <p className="mt-4 text-gray-800">Thank you for your patience logging in to your flat...</p>
+      {!isLoggingIn && (
+        <div className="fixed top-0 left-0 w-full h-full overflow-auto bg-gray-900 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white m-4 p-6 rounded-lg w-full max-w-md md:max-w-4xl">
+            <BarLoader className="m-auto my-5" color="#4a90e2" size={100} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <h1 className="text-lg bg-gray-100 text-gray-800 font-bold p-3">Know Your Treasurer</h1>
+              <div className="md:flex justify-center items-center">
+                <img
+                  loading="lazy"
+                  className="w-1/2 rounded-full md:w-3/4 shadow-2xl m-auto shadow-black border-2 border-black"
+                  src='/static/images/manish_jpg.jpg'
+                  alt="img"
+                />
+              </div>
+              <div className="text-left">
+                <p className="mt-6 leading-8 text-gray-700">
+                  Meet <strong>Manish</strong>, a <strong>Senior Programmer in the Finance Department at Central Coalfields Limited, Ranchi</strong>. An academic <strong>topper in Master of Computer Applications</strong>, Manish excels in MS Excel and Programming, enhancing financial processes with his technical expertise. As a <strong>blackbelt in karate</strong>, he embodies discipline and dedication.
+                </p>
+                <p className="mt-6 leading-8 text-gray-700">
+                  Serving as the <strong>Treasurer of the Pearl Crest Society</strong>, Manish is committed to maintaining integrity and transparency, enforcing a <strong>strict no-corruption policy</strong>. His blend of technical proficiency and ethical standards drives the society towards innovation and accountability.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )}
