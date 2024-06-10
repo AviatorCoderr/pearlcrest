@@ -10,14 +10,30 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isFetchingUser, setIsFetchingUser] = useState(true);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
-    axios.get("/api/v1/users/get-current-user")
-      .then(response => {
-        localStorage.setItem("user", JSON.stringify(response.data.data))
-        navigate("/db")
-      })
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get("/api/v1/users/get-current-user");
+        localStorage.setItem("user", JSON.stringify(response.data.data));
+        navigate("/db");
+      } catch (error) {
+        setIsFetchingUser(false); // Ensure the loader stops if the request fails
+      }
+    };
+
+    const timeoutId = setTimeout(() => {
+      fetchUser().finally(() => {
+        setIsFetchingUser(false); // Ensure the loader stops after fetching the user
+      });
+    }, 5000); // Minimum loader display time
+
+    fetchUser().then(() => {
+      clearTimeout(timeoutId);
+      setIsFetchingUser(false); // Ensure the loader stops after fetching the user
+    });
   }, [navigate]);
 
   const handleLogin = () => {
@@ -120,21 +136,21 @@ export default function Login() {
         </div>
       </div>
 
-      {isLoggingIn && (
+      {(isLoggingIn || isFetchingUser) && (
         <div className="fixed top-0 left-0 w-full h-full overflow-auto bg-gray-900 bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white m-4 p-6 rounded-lg w-full max-w-md md:max-w-4xl">
+          <div className="bg-white m-4 p-6 rounded-lg w-full max-w-md md:max-w-4xl max-h-full overflow-y-auto">
             <BarLoader className="m-auto my-5" color="#4a90e2" size={100} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <h1 className="text-lg bg-gray-100 text-gray-800 font-bold p-3">Know Your Treasurer</h1>
               <div className="md:flex justify-center items-center">
                 <img
                   loading="lazy"
-                  className="w-1/2 rounded-full md:w-3/4 shadow-2xl m-auto shadow-black border-2 border-black"
+                  className="w-1/2 rounded-full md:rounded-none md:w-3/4 shadow-2xl m-auto shadow-black border-2 border-black"
                   src='/static/images/manish_jpg.jpg'
                   alt="img"
                 />
               </div>
               <div className="text-left">
+                <h1 className="text-lg bg-gray-100 text-gray-800 font-bold p-3">Know Your Treasurer</h1>
                 <p className="mt-6 leading-8 text-gray-700">
                   Meet <strong>Manish</strong>, a <strong>Senior Programmer in the Finance Department at Central Coalfields Limited, Ranchi</strong>. An academic <strong>topper in Master of Computer Applications</strong>, Manish excels in MS Excel and Programming, enhancing financial processes with his technical expertise. As a <strong>blackbelt in karate</strong>, he embodies discipline and dedication.
                 </p>
