@@ -10,11 +10,11 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    setIsLoggingIn(true);
-
+  const handleContinue = () => {
+    setIsLoading(true);
     axios.post(
       "/api/v1/users/login",
       {
@@ -29,6 +29,8 @@ export default function Login() {
       console.log(response);
       console.log("Login success:", JSON.stringify(response.data.data.flat));
       localStorage.setItem("user", JSON.stringify(response.data.data.flat));
+      setIsLoading(false);
+      navigate("/db"); 
     })
     .catch((error) => {
       Swal.fire({
@@ -36,8 +38,16 @@ export default function Login() {
         text: "Check your flatnumber or password",
         icon: "error",
         confirmButtonText: "OK",
+      })
+      .then(result => {
+        if(result.isConfirmed)
+          setIsLoggingIn(false);
+          setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Login error:", error);
+        setIsLoading(false);
       });
-      console.error("Login error:", error);
     });
   };
 
@@ -45,8 +55,8 @@ export default function Login() {
     setShowPassword(!showPassword);
   };
 
-  const handleContinue = () => {
-    navigate("/db");
+  const handleLogin = () => {
+    setIsLoggingIn(true);
   };
 
   return (
@@ -115,12 +125,18 @@ export default function Login() {
       {isLoggingIn && (
         <div className="fixed top-0 left-0 w-full h-full overflow-auto bg-gray-900 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white m-4 p-6 rounded-lg w-full max-w-md md:max-w-4xl max-h-full overflow-y-auto">
-          <button
-              className="bg-black w-1/2 text-white m-auto rounded-md p-4 text-center flex items-center justify-center my-2 hover:opacity-80"
-              onClick={handleContinue}
-            >
-              Continue to Dashboard
-            </button>
+            {isLoading ? (
+              <div className="flex justify-center items-center">
+                <BarLoader color="#000" />
+              </div>
+            ) : (
+              <button
+                className="bg-black w-1/2 text-white m-auto rounded-md p-4 text-center flex items-center justify-center my-2 hover:opacity-80"
+                onClick={handleContinue}
+              >
+                Continue to Dashboard
+              </button>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:flex justify-center items-center">
                 <img
