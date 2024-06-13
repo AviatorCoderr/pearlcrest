@@ -129,6 +129,7 @@ export default function AddVisitor() {
             <option value="gas_delivery">Gas Delivery</option>
             <option value="grocery_shop">Grocery Shop</option>
             <option value="milkman">Milkman</option>
+            <option value="others">Others</option>
           </select>
           <button 
             onClick={handleAddClick} 
