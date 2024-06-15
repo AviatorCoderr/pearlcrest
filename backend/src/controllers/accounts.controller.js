@@ -298,8 +298,8 @@ const incomeexpaccount = asyncHandler(async(req, res) => {
 })
 const cashbook = asyncHandler(async(req, res) => {
   const {mode} = req.body
-  const cashincome = await Income.find({mode, purpose: { $nin: ["Cash withdrawal", "Cash Deposit"] }}).populate('flat');
-  const cashexpense = await Expenditure.find({mode, department: { $ne: "Contra Entry" } });
+  const cashincome = await Income.find({mode}).populate('flat');
+  const cashexpense = await Expenditure.find({mode});
   const cashincomeState = cashincome.map(record => {
     const flatnumber = record.flat.flatnumber;
     return { ...record._doc, flatnumber };
