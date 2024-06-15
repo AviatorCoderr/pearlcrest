@@ -1,5 +1,5 @@
 import { RiDashboardLine } from 'react-icons/ri';
-import { FaExchangeAlt, FaFileAlt, FaMoneyBillAlt, FaBalanceScale, FaMoneyCheckAlt, FaHandHoldingUsd, FaBook, FaWarehouse, FaUserFriends, FaPrayingHands, FaCross, FaUser } from 'react-icons/fa';
+import { FaExchangeAlt, FaFileAlt, FaMoneyBillAlt, FaBalanceScale, FaMoneyCheckAlt, FaHandHoldingUsd, FaBook, FaWarehouse, FaUserFriends, FaPrayingHands, FaCross, FaUser, FaMeetup } from 'react-icons/fa';
 import { MdSecurity, MdLocalParking, MdCloseFullscreen, MdCancel, MdCheck } from 'react-icons/md';
 
 export const admin_navi = [
@@ -14,6 +14,12 @@ export const admin_navi = [
         label: 'Visitor Registers',
         path: '/db/dwnldvis',
         icon: FaUser
+    },
+    {
+        key: 'gbmeet',
+        label: 'GB Meeting',
+        path: '/db/gbm',
+        icon: FaMeetup
     },
     {
         key: 'reg',

@@ -1,7 +1,7 @@
 import {HiOutlineViewGrid} from 'react-icons/hi'
 import { RiCommunityFill } from "react-icons/ri";
 import { MdOutlinePayment, MdEmojiPeople, MdAccountCircle, MdLogout } from "react-icons/md";
-import { FaRegSadCry, FaReceipt, FaRupeeSign, FaLock } from "react-icons/fa"
+import { FaRegSadCry, FaReceipt, FaRupeeSign, FaLock, FaVoteYea } from "react-icons/fa"
 import { FaWarehouse, FaBook } from 'react-icons/fa';
 import { CiReceipt } from "react-icons/ci";
 export const sidebar_det = [
@@ -10,6 +10,12 @@ export const sidebar_det = [
         label: 'Dashboard',
         path: '/db',
         icon: HiOutlineViewGrid
+    },
+    {
+        key: 'gbmeet',
+        label: 'GB Meeting',
+        path: '/db/vote',
+        icon: FaVoteYea
     },
     {
         key: 'payments',
