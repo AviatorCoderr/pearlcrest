@@ -57,7 +57,7 @@ export default function Vote() {
 
     return (
         <div className="p-6 mx-auto bg-gray-100 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-8 text-center text-indigo-700">निर्णय का हिस्सा बनें: GB मीटिंग में वोट करें </h2>
+            <h2 className="text-3xl font-bold mb-8 text-center text-indigo-700">निर्णय का हिस्सा बनें: GB मीटिंग में वोट करें </h2>
             {questions.map((q, index) => {
                 const totalVotes = q.yes.length + q.no.length;
                 const yesPercentage = calculatePercentage(q.yes.length, totalVotes);
