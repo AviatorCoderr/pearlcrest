@@ -10,7 +10,11 @@ const voteSchema = new mongoose.Schema({
     no: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Flat'
-    }]
+    }],
+    closed: {
+        type: Boolean,
+        default: false
+    }
 });
 
 export const Vote = mongoose.model("Vote", voteSchema);
