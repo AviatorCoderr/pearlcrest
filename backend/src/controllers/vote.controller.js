@@ -11,7 +11,7 @@ const closeVoting = async (req, res) => {
         throw new ApiError(404, 'Question not found');
     }
 
-    vote.closed = true;
+    vote.closed = !vote.closed;
     await vote.save();
 
     res.status(200).json(new ApiResponse(200, 'Voting closed successfully'));
