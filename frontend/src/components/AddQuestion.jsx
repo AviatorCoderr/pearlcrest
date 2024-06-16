@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { FaVoteYea, FaTimesCircle, FaLock, FaLockOpen } from 'react-icons/fa';
 
 export default function AddQuestion() {
     const [question, setQuestion] = useState("");
@@ -85,6 +86,10 @@ export default function AddQuestion() {
         });
     };
 
+    const calculatePercentage = (votes, total) => {
+        return total === 0 ? 0 : Math.round((votes / total) * 100);
+    };
+
     return (
         <div className="p-6 mx-auto bg-gray-100 rounded-lg shadow-lg">
             <h2 className="text-3xl font-bold mb-8 text-center text-indigo-700">Add Question</h2>
@@ -112,17 +117,55 @@ export default function AddQuestion() {
 
             <h2 className="text-2xl font-bold mt-8 text-center text-indigo-700">Existing Questions</h2>
             <ul className="mt-4 space-y-4">
-                {questions.map((q) => (
-                    <li key={q._id} className="p-4 bg-white rounded-lg shadow-md flex justify-between items-center">
-                        <span className="text-gray-700">{q.question}</span>
-                        <button 
-                            onClick={() => handleToggleVoting(q._id, q.closed)} 
-                            className={`inline-flex items-center px-4 py-2 ${q.closed ? 'bg-green-600' : 'bg-red-600'} border border-transparent rounded-md font-semibold text-white hover:${q.closed ? 'bg-green-700' : 'bg-red-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${q.closed ? 'red' : 'green'}-500`}
-                        >
-                            {q.closed ? 'Open Voting' : 'Close Voting'}
-                        </button>
-                    </li>
-                ))}
+                {questions.map((q) => {
+                    const totalVotes = q.yes.length + q.no.length;
+                    const yesPercentage = calculatePercentage(q.yes.length, totalVotes);
+                    const noPercentage = calculatePercentage(q.no.length, totalVotes);
+                    const result = q.closed ? (q.yes.length > q.no.length ? 'Passed' : 'Rejected') : null;
+
+                    return (
+                        <li key={q._id} className="p-4 bg-white rounded-lg shadow-md">
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-gray-700">{q.question}</span>
+                                <button 
+                                    onClick={() => handleToggleVoting(q._id, q.closed)} 
+                                    className={`inline-flex items-center px-4 py-2 ${q.closed ? 'bg-green-600' : 'bg-red-600'} border border-transparent rounded-md font-semibold text-white hover:${q.closed ? 'bg-green-700' : 'bg-red-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${q.closed ? 'red' : 'green'}-500`}
+                                >
+                                    {q.closed ? <FaLockOpen className="mr-2" /> : <FaLock className="mr-2" />}
+                                    {q.closed ? 'Open Voting' : 'Close Voting'}
+                                </button>
+                            </div>
+                            <div className="mb-2">
+                                <p className="text-sm text-gray-600 flex items-center">
+                                    <FaVoteYea className="mr-2 text-teal-500" /> Yes: {yesPercentage}%
+                                </p>
+                                <div className="w-full bg-gray-200 rounded-full h-4 mb-2">
+                                    <div
+                                        className="bg-teal-500 h-4 rounded-full"
+                                        style={{ width: `${yesPercentage}%` }}
+                                    ></div>
+                                </div>
+                                <p className="text-sm text-gray-600 flex items-center">
+                                    <FaTimesCircle className="mr-2 text-rose-500" /> No: {noPercentage}%
+                                </p>
+                                <div className="w-full bg-gray-200 rounded-full h-4">
+                                    <div
+                                        className="bg-rose-500 h-4 rounded-full"
+                                        style={{ width: `${noPercentage}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                            <div className="text-sm text-gray-600">
+                                <p>Total Votes: {totalVotes}</p>
+                                {q.closed && (
+                                    <p className={`font-semibold ${result === 'Passed' ? 'text-green-600' : 'text-red-600'}`}>
+                                        Result: {result}
+                                    </p>
+                                )}
+                            </div>
+                        </li>
+                    );
+                })}
             </ul>
         </div>
     );
