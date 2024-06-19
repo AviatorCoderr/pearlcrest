@@ -39,7 +39,7 @@ function ChallanList() {
     // Title
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(20);
-    doc.text('Challan Receipt', 105, 25, null, null, 'center');
+    doc.text('Challan Ticket', 105, 25, null, null, 'center');
     doc.setFontSize(14);
     doc.text("PEARL CREST FLAT OWNERS’ SOCIETY", 105, 35, null, null, 'center');
     doc.setFontSize(12);
