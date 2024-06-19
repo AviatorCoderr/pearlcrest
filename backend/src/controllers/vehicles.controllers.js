@@ -69,7 +69,7 @@ const generateChallan = asyncHandler(async (req, res) => {
         vehicle: vehicle._id,
         amount
     });
-    const flat = vehicle.flat._id
+    const flat = vehicle.flat
     if (flat.deviceToken && flat.deviceToken.length > 0) {
         const title = "Wrong Parking!! You have a challan issued.";
         const body = `A challan issued for vehicle ${vehicle.reg_no} of ${amount}. Please check your challan ticket on website.`;

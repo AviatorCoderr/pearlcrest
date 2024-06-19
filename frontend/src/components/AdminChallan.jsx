@@ -95,7 +95,7 @@ function AdminChallan() {
     doc.text(`${flat.flatnumber}`, 60, 140);
 
     // Signature
-    const signatureData = '/static/images/treasurersign.jpg';
+    const signatureData = '/static/images/presidentsign.jpg';
     doc.addImage(signatureData, 'PNG', 80, 190, 40, 20);
 
     // Treasurer
