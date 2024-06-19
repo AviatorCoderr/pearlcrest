@@ -1,5 +1,5 @@
 import { MdAccountCircle, MdLocalParking } from 'react-icons/md';
-import { FaCarCrash } from 'react-icons/fa';
+import { FaCarCrash, FaCheckDouble } from 'react-icons/fa';
 import { sidebar_det } from './navi';
 
 export const exe_det = [
@@ -15,6 +15,12 @@ export const exe_det = [
         label: 'Challans',
         path: '/db/adminchallan',
         icon: FaCarCrash
+    },
+    {
+        key: 'complains',
+        label: 'Manage Complains',
+        path: '/db/manage-complains',
+        icon: FaCheckDouble
     },
     {
         key: 'owner-details',

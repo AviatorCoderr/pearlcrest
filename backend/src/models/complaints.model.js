@@ -1,30 +1,12 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from 'mongoose';
 
 const complaintSchema = new mongoose.Schema({
-    flat: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Flat'
-    },
-    description: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    department: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now
-    },
-    closedAt: {
-        type: Date
-    }
+  category: { type: String, required: true },
+  description: { type: String, required: true },
+  flatNumber: { type: mongoose.Schema.Types.ObjectId, ref: 'Flat', required: true },
+  executiveFlat: { type: mongoose.Schema.Types.ObjectId, ref: 'Flat', required: true },
+  status: { type: String, enum: ['pending', 'in progress', 'resolved'], default: 'pending' },
+  createdAt: { type: Date, default: Date.now }
 });
 
-const Complaint = mongoose.model("Complaint", complaintSchema);
-
-export default Complaint;
+export default mongoose.model('Complaint', complaintSchema);
