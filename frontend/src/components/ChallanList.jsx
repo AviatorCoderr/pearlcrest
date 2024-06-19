@@ -10,7 +10,7 @@ function AdminChallan() {
   useEffect(() => {
     const fetchChallans = async () => {
       try {
-        const response = await axios.get(`/api/v1/vehicle/challans`);
+        const response = await axios.post(`/api/v1/vehicle/challans`);
         setChallans(response.data.data);
         setError(null);
       } catch (error) {
