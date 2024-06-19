@@ -1,6 +1,6 @@
 import {HiOutlineViewGrid} from 'react-icons/hi'
 import { RiCommunityFill } from "react-icons/ri";
-import { MdOutlinePayment, MdEmojiPeople, MdAccountCircle, MdLogout } from "react-icons/md";
+import { MdOutlinePayment, MdEmojiPeople, MdAccountCircle, MdLogout, MdCarCrash } from "react-icons/md";
 import { FaRegSadCry, FaReceipt, FaRupeeSign, FaLock, FaVoteYea } from "react-icons/fa"
 import { FaWarehouse, FaBook } from 'react-icons/fa';
 import { CiReceipt } from "react-icons/ci";
@@ -40,6 +40,12 @@ export const sidebar_det = [
         label: 'Visitors Log',
         path: '/db/visitor',
         icon: MdEmojiPeople
+    },
+    {
+        key: 'challan',
+        label: 'Challans Issued',
+        path: '/db/challan',
+        icon: MdCarCrash
     },
     {
         key: 'cashbook',

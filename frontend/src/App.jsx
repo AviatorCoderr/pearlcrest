@@ -36,6 +36,8 @@ import RegistrationPage from "./components/RegistrationPage";
 import VisitorDownload from "./components/VisitorDownload";
 import AddQuestion from "./components/AddQuestion";
 import Vote from "./components/Vote";
+import ChallanList from "./components/ChallanList";
+import AdminChallan from "./components/AdminChallan";
 function App() {
   return (
     <div>
@@ -81,6 +83,8 @@ function App() {
             <Route path="dwnldvis" element={<VisitorDownload/>} />
             <Route path="gbm" element={<AddQuestion/>} />
             <Route path="vote" element={<Vote/>} />
+            <Route path="challan" element={<ChallanList/>} />
+            <Route path="adminchallan" element={<AdminChallan/>} />
           </Route>
         </Routes>
       </Router>

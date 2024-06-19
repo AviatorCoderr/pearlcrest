@@ -1,7 +1,5 @@
-import { RiCommunityFill } from 'react-icons/ri';
 import { MdAccountCircle, MdLocalParking } from 'react-icons/md';
-import { CiReceipt } from 'react-icons/ci';
-import { FaUserFriends } from 'react-icons/fa';
+import { FaCarCrash } from 'react-icons/fa';
 import { sidebar_det } from './navi';
 
 export const exe_det = [
@@ -11,6 +9,12 @@ export const exe_det = [
         label: 'Find Vehicle',
         path: '/db/findvehicle',
         icon: MdLocalParking
+    },
+    {
+        key: 'challan',
+        label: 'Challans',
+        path: '/db/adminchallan',
+        icon: FaCarCrash
     },
     {
         key: 'owner-details',

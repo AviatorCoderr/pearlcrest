@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 function FindVehicle() {
   const navigate = useNavigate();
@@ -14,26 +15,61 @@ function FindVehicle() {
   const [regNo, setRegNo] = useState('');
   const [vehicleData, setVehicleData] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [challanMessage, setChallanMessage] = useState(null);
 
   const handleInputChange = (e) => {
     setRegNo(e.target.value.toUpperCase());
   };
 
   const handleSubmit = async (e) => {
-      await axios.post("/api/v1/vehicle/get-vehicle-by-regno", {
-        reg_no: regNo
+    e.preventDefault();
+    setLoading(true);
+    await axios.post("/api/v1/vehicle/get-vehicle-by-regno", {
+      reg_no: regNo
+    })
+    .then(response => {
+      setVehicleData(response.data.data);
+      setError(null);
+    })
+    .catch(error => {
+      setVehicleData(null);
+      setError("Vehicle does not exist");
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+  };
+
+  const handleSendChallan = async () => {
+    if (!vehicleData || !vehicleData.vehicle._id) return;
+
+    // Use SweetAlert for confirmation
+    const result = await Swal.fire({
+      title: 'Generate Challan',
+      text: 'Are you sure you want to generate a challan for this vehicle?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, generate challan'
+    });
+
+    if (result.isConfirmed) {
+      setLoading(true);
+      await axios.post("/api/v1/vehicle/generate-challan", {
+        vehicleId: vehicleData.vehicle._id
       })
       .then(response => {
-        console.log("hello")
-        setVehicleData(response.data.data);
-        setError(null);
+        setChallanMessage("Challan generated successfully!");
       })
       .catch(error => {
-        console.log("hello")
-        console.log(error)
-        setVehicleData(null)
-        setError("No records found");
+        setChallanMessage("Failed to generate challan.");
       })
+      .finally(() => {
+        setLoading(false);
+      });
+    }
   };
 
   return (
@@ -55,7 +91,9 @@ function FindVehicle() {
         Search
       </button>
 
-      {error && <p className="text-red-500 mt-4">Vehicle does not exist</p>}
+      {loading && <p className="text-blue-500 mt-4">Loading...</p>}
+      
+      {error && <p className="text-red-500 mt-4">{error}</p>}
       
       {vehicleData && (
         <div className="mt-8">
@@ -72,8 +110,16 @@ function FindVehicle() {
             <a href={`tel:${vehicleData.renter?.mobile}`}>{vehicleData.renter?.mobile}</a>, 
             <a href={`tel:${vehicleData.renter?.spouse_mobile}`}>{vehicleData.renter?.spouse_mobile}</a>
           </p>
+          <button
+            className="w-full py-2 px-4 mt-4 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 focus:outline-none focus:bg-red-600"
+            onClick={handleSendChallan}
+          >
+            Send Challan
+          </button>
         </div>
       )}
+
+      {challanMessage && <p className="mt-4">{challanMessage}</p>}
     </div>
   );
 }
