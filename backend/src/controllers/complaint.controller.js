@@ -22,7 +22,7 @@ export const createComplaint = async (req, res) => {
     console.log(executiveFlat)
     const executive = await Flat.findOne({flatnumber: executiveFlat})
     const executiveid = executive?._id
-    const complainflat = await Flat.findById({flatNumber})
+    const complainflat = await Flat.findById({_id: flatNumber})
     console.log(executiveid)
     const newComplaint = await Complaint.create({
       category,
