@@ -1,10 +1,13 @@
-// This is a mock function to map category to executive flat
 export const getExecutiveFlatByCategory = (category) => {
     const mapping = {
-      plumbing: 'PCS',
-      electrical: 'PCS',
-      housekeeping: 'PCS',
-      // Add more mappings as necessary
+      plumbing: 'B403',
+      electrical: 'C306',
+      housekeeping: 'A405',
+      sewerage: 'A301',
+      parking: 'CG3',
+      security: 'CG4',
+      lift: 'B204',
+      technical: 'PCS'
     };
     return mapping[category];
   };

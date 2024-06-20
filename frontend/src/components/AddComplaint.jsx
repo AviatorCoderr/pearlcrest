@@ -6,7 +6,11 @@ const categories = [
   { value: 'plumbing', label: 'Plumbing' },
   { value: 'electrical', label: 'Electrical' },
   { value: 'housekeeping', label: 'Housekeeping' },
-  // Add more categories as necessary
+  { value: 'sewerage', label: 'Sewerage' },
+  { value: 'parking', label: 'Parking' },
+  { value: 'security', label: 'Security' },
+  { value: 'lift', label: 'Lift' },
+  { value: 'technical', label: 'Technical/Website Related' }
 ];
 
 const statusColors = {

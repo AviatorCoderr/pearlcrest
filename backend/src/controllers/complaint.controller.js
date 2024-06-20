@@ -1,6 +1,7 @@
 import Complaint from '../models/complaints.model.js';
 import { getExecutiveFlatByCategory } from '../utils/executiveMapping.js';
 import { Flat } from '../models/flats.model.js';
+import { sendPushNotificationToDevice } from '../pushnotification.js';
 // Create a new complaint
 export const getUserComplaints = async (req, res) => {
   try {
@@ -21,6 +22,7 @@ export const createComplaint = async (req, res) => {
     console.log(executiveFlat)
     const executive = await Flat.findOne({flatnumber: executiveFlat})
     const executiveid = executive?._id
+    const complainflat = await Flat.findById({flatNumber})
     console.log(executiveid)
     const newComplaint = await Complaint.create({
       category,
@@ -28,7 +30,13 @@ export const createComplaint = async (req, res) => {
       flatNumber,
       executiveFlat: executiveid
     });
-
+    if (executive.deviceToken && executive.deviceToken.length > 0) {
+      const title = `You have a new complain from ${complainflat.flatnumber} to resolve`;
+      const body = `Regarding ${description}`;
+      for (const token of executive.deviceToken) {
+        await sendPushNotificationToDevice(token, executive._id, title, body);
+      }
+    }
     await newComplaint.save();
     res.status(201).json({ message: 'Complaint created successfully', data: newComplaint });
   } catch (error) {
