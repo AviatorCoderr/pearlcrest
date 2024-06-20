@@ -1,3 +1,4 @@
+// src/components/SubmitComplaint.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -97,6 +98,28 @@ const SubmitComplaint = () => {
     });
   };
 
+  const handleRatingHover = (complaintId, value) => {
+    setComplaints((prevComplaints) =>
+      prevComplaints.map((complaint) =>
+        complaint._id === complaintId ? { ...complaint, tempRating: value } : complaint
+      )
+    );
+  };
+
+  const handleRatingClick = async (complaintId, value) => {
+    try {
+      await axios.patch(`/api/v1/complain/complaints/${complaintId}/rate`, { rating: value });
+      setComplaints((prevComplaints) =>
+        prevComplaints.map((complaint) =>
+          complaint._id === complaintId ? { ...complaint, rating: value, tempRating: 0 } : complaint
+        )
+      );
+      Swal.fire('Thank you!', 'Your rating has been submitted.', 'success');
+    } catch (error) {
+      showError('Failed to submit rating');
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Submit Complaint</h2>
@@ -145,7 +168,7 @@ const SubmitComplaint = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned Executive</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -154,12 +177,39 @@ const SubmitComplaint = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{complaint.category}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{complaint.description}</td>
                   <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium rounded ${statusColors[complaint.status]}`}>{complaint.status}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{complaint.executiveFlat.flatnumber}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {complaint.status.toLowerCase() === 'resolved' ? (
+                      <div className="flex items-center">
+                        {[...Array(5)].map((_, index) => (
+                          <svg
+                            key={index}
+                            xmlns="http://www.w3.org/2000/svg"
+                            className={`h-6 w-6 cursor-pointer ${index < (complaint.rating || complaint.tempRating || 0) ? 'text-yellow-500' : 'text-gray-300'}`}
+                            viewBox="0 0 20 20"
+                            fill={index < (complaint.rating || complaint.tempRating || 0) ? 'currentColor' : 'none'}
+                            stroke="currentColor"
+                            onMouseOver={() => handleRatingHover(complaint._id, index + 1)}
+                            onMouseOut={() => handleRatingHover(complaint._id, 0)}
+                            onClick={() => handleRatingClick(complaint._id, index + 1)}
+                          >
+                            <path
+                              fillRule="evenodd"
+                              clipRule="evenodd"
+                              d="M10 1l2.39 4.853h5.13l-4.15 3.447 1.56 5.05L10 12.207 5.07 14.35l1.56-5.05-4.15-3.447h5.13L10 1z"
+                            />
+                          </svg>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-gray-500">Pending</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+       
+          </div>
       )}
     </div>
   );

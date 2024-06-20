@@ -12,6 +12,32 @@ export const getUserComplaints = async (req, res) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+// Update complaint rating
+export const rateComplaint = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating } = req.body;
+
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({ message: 'Rating should be between 1 and 5' });
+    }
+
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      id,
+      { rating },
+      { new: true }
+    );
+
+    if (!updatedComplaint) {
+      return res.status(404).json({ message: 'Complaint not found' });
+    }
+
+    res.status(200).json({ message: 'Rating updated successfully', data: updatedComplaint });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
 export const createComplaint = async (req, res) => {
   try {
     const { category, description } = req.body;
@@ -19,28 +45,30 @@ export const createComplaint = async (req, res) => {
 
     // Determine executiveFlat based on category
     const executiveFlat = getExecutiveFlatByCategory(category);
-    console.log(executiveFlat)
-    const executive = await Flat.findOne({flatnumber: executiveFlat})
-    const executiveid = executive?._id
-    const complainflat = await Flat.findById({_id: flatNumber})
-    console.log(executiveid)
+
+    const executive = await Flat.findOne({ flatnumber: executiveFlat });
+    const executiveid = executive ? executive._id : null;
+    const flat = await Flat.findById({_id: flatNumber})
     const newComplaint = await Complaint.create({
       category,
       description,
       flatNumber,
-      executiveFlat: executiveid
+      executiveFlat: executiveid,
+      rating: 0 // Initialize rating to 0
     });
+
     if (executive.deviceToken && executive.deviceToken.length > 0) {
-      const title = `You have a new complain from ${complainflat.flatnumber} to resolve`;
+      const title = `You have a new complaint from ${flat.flatnumber} to resolve`;
       const body = `Regarding ${description}`;
       for (const token of executive.deviceToken) {
         await sendPushNotificationToDevice(token, executive._id, title, body);
       }
     }
+
     await newComplaint.save();
     res.status(201).json({ message: 'Complaint created successfully', data: newComplaint });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ message: 'Server error', error });
   }
 };
