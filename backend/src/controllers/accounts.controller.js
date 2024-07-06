@@ -137,6 +137,11 @@ const getTransaction = asyncHandler(async(req, res) => {
   res.status(200)
   .json(new ApiResponse(200, {data}, "transaction data fetched"))
 })
+const getAllTransaction = asyncHandler(async(req, res) => {
+  const data = await Transaction.find().populate('flat')
+  res.status(200)
+  .json(new ApiResponse(200, {data}, "transaction data fetched"))
+})
 const getTotalIncome = asyncHandler(async (req, res) => {
   const totalIncomeCash = await Income.aggregate([
     {
@@ -552,12 +557,25 @@ const Approvepayment = asyncHandler(async (req, res) => {
   session.startTransaction();
   try {
     const { flatnumber, mode, purpose, amount, months, transactionId, date, untransid } = req.body;
+    
+    // Check for missing fields
     if(!mode || !purpose || !amount || !months) 
-      throw new ApiError(400, "One or More fields are missing")
+      throw new ApiError(400, "One or More fields are missing");
+
+    // Find the flat by flatnumber
     const flat = await Flat.findOne({ flatnumber });
     if(!flat)
-      throw new ApiError(404, "Invalid Flatnumber/ Flat not exists")
+      throw new ApiError(404, "Invalid Flatnumber/ Flat not exists");
+      
     const flatid = flat._id;
+
+    // Check for an existing transaction with the same transactionId
+    const existingTransaction = await Transaction.findOne({ transactionId });
+    if (existingTransaction) {
+      throw new ApiError(400, "Transaction with this ID already exists");
+    }
+
+    // Create the transaction
     const trans = await Transaction.create(
       [{
         flat: flatid,
@@ -571,6 +589,8 @@ const Approvepayment = asyncHandler(async (req, res) => {
       }],
       { session: session }
     );
+
+    // Create the income record
     const incomerecord = await Income.create(
       [{
         flat: flatid,
@@ -582,6 +602,8 @@ const Approvepayment = asyncHandler(async (req, res) => {
       }],
       { session: session }
     );
+
+    // Handle maintenance records
     if (purpose === "MAINTENANCE") {
       const maintenanceRecord = await Maintenance.findOne({ flat: flatid });
       let maintenance;
@@ -604,7 +626,11 @@ const Approvepayment = asyncHandler(async (req, res) => {
         );
       }
     }
-    await UnTransaction.deleteOne({_id: untransid})
+
+    // Delete the unapproved transaction
+    await UnTransaction.deleteOne({_id: untransid});
+
+    // Send push notification if deviceToken exists
     if (flat.deviceToken && flat.deviceToken.length > 0) {
       const title = "Payment successful";
       const body = `Your payment with transaction ID ${transactionId} is successful. You can download the receipt from payment history.`;
@@ -612,6 +638,8 @@ const Approvepayment = asyncHandler(async (req, res) => {
         await sendPushNotificationToDevice(token, flat._id, title, body);
       }
     }
+
+    // Commit the transaction
     await session.commitTransaction();
     res.status(201).json(
       new ApiResponse(200, { trans, incomerecord }, "Transaction and income added successfully")
@@ -619,11 +647,12 @@ const Approvepayment = asyncHandler(async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     console.error(error);
-    throw new ApiError(error.statusCode, error.message)
+    throw new ApiError(error.statusCode, error.message);
   } finally {
     session.endSession();
   }
 });
+
 const denyPayment = asyncHandler(async(req, res) => {
   const session = await mongoose.startSession()
   session.startTransaction()
@@ -678,5 +707,5 @@ const updateMainbyloop = asyncHandler(async(req, res) => {
 // exports
 export { addTransaction, addTransactionByAdmin, addIncomeByAdmin, 
   addExpenditure, getTransaction, getTotalIncome, getTotalExpenditure,
-getCashBalance, getTransaction5, getMaintenanceRecord, getIncomeStatements, getAllMaintenanceRecord, getExpenditureStatements, incomeexpaccount, cashbook, sendEmail
+getCashBalance, getTransaction5, getMaintenanceRecord, getAllTransaction, getIncomeStatements, getAllMaintenanceRecord, getExpenditureStatements, incomeexpaccount, cashbook, sendEmail
 , generatedQr, addUnVerfiedTransaction, getUnTrans, Approvepayment, denyPayment, updateMainbyloop, getMaintenanceRecordByFlat};
