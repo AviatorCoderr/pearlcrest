@@ -673,7 +673,7 @@ const denyPayment = asyncHandler(async(req, res) => {
     res.status(200).json(new ApiResponse(200, "Denied successfully"))
   } catch (error) {
     await session.abortTransaction()
-    throw new ApiError(500, "Something went wrong")
+    throw new ApiError(500, error)
   } finally {
     await session.endSession()
   }
