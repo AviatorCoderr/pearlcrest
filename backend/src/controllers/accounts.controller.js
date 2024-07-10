@@ -660,6 +660,7 @@ const denyPayment = asyncHandler(async(req, res) => {
     const {untransid} = req.body
     const trans = await UnTransaction.findByIdAndDelete({_id: untransid}, {session: session})
     await sendFailureEmail(trans)
+    await session.commitTransaction()
     const flatid = trans.flat
     const flat = await Flat.findById(flatid)
     if (flat.deviceToken && flat.deviceToken.length > 0) {
@@ -669,7 +670,6 @@ const denyPayment = asyncHandler(async(req, res) => {
         await sendPushNotificationToDevice(token, flat._id, title, body);
       }
     }
-    await session.commitTransaction()
     res.status(200).json(new ApiResponse(200, "Denied successfully"))
   } catch (error) {
     await session.abortTransaction()
