@@ -660,9 +660,6 @@ const denyPayment = asyncHandler(async(req, res) => {
     const {untransid} = req.body
     const trans = await UnTransaction.findByIdAndDelete({_id: untransid}, {session: session})
     await sendFailureEmail(trans)
-    await session.commitTransaction()
-    const flatid = trans.flat
-    const flat = await Flat.findById(flatid)
     if (flat.deviceToken && flat.deviceToken.length > 0) {
       const title = "Pearl Crest Society - Payment Denied";
       const body = `Your payment with transaction ID ${trans.transactionId} is failed due to non-matching of Transaction Id with bank. Kindly re-enter it on the website.`;
@@ -670,10 +667,14 @@ const denyPayment = asyncHandler(async(req, res) => {
         await sendPushNotificationToDevice(token, flat._id, title, body);
       }
     }
+    await session.commitTransaction()
+    const flatid = trans.flat
+    const flat = await Flat.findById(flatid)
     res.status(200).json(new ApiResponse(200, "Denied successfully"))
   } catch (error) {
     await session.abortTransaction()
-    throw new ApiError(500, error)
+    console.log(error)
+    throw new ApiError(500, error.message)
   } finally {
     await session.endSession()
   }
