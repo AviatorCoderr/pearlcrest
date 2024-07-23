@@ -641,7 +641,7 @@ const Approvepayment = asyncHandler(async (req, res) => {
 
     // Commit the transaction
     await session.commitTransaction();
-    res.status(201).json(
+    return res.status(201).json(
       new ApiResponse(200, { trans, incomerecord }, "Transaction and income added successfully")
     );
   } catch (error) {
@@ -670,7 +670,7 @@ const denyPayment = asyncHandler(async(req, res) => {
       }
     }
     await session.commitTransaction()
-    res.status(200).json(new ApiResponse(200, "Denied successfully"))
+    return res.status(200).json(new ApiResponse(200, "Denied successfully"))
   } catch (error) {
     await session.abortTransaction()
     console.log(error)

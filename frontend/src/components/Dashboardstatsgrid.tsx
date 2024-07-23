@@ -53,7 +53,7 @@ export default function Dashboardstatsgrid() {
             <div className='pl-4'>
               <span className='text-sm text-black font-bold'>Total Income</span>
               <div className='flex items-center'>
-                <strong className='text-xl text-green-500 font-semibold'>{income[0] + income[1]}</strong>
+                <strong className='text-xl text-green-500 font-semibold'>{parseFloat(income[0] + income[1]).toFixed(2)}</strong>
               </div>
             </div>
           </>
@@ -70,7 +70,7 @@ export default function Dashboardstatsgrid() {
             <div className='pl-4'>
               <span className='text-sm text-black font-bold'>Total Expenditure</span>
               <div className='flex items-center'>
-                <strong className='text-xl text-red-400 font-semibold'>{exp[0] + exp[1]}</strong>
+                <strong className='text-xl text-red-400 font-semibold'>{parseFloat(exp[0] + exp[1]).toFixed(2)}</strong>
               </div>
             </div>
           </>
@@ -87,7 +87,7 @@ export default function Dashboardstatsgrid() {
         <div className='pl-4'>
           <span className='text-sm text-gray-500 font-light'>Cash Balance</span>
           <div className='flex items-center'>
-            <strong className='text-xl text-gray-700 font-semibold'>{income[0] - exp[0]}</strong>
+            <strong className='text-xl text-gray-700 font-semibold'>{(income[0] - exp[0]).toFixed(2)}</strong>
           </div>
         </div>
         </>
@@ -104,7 +104,7 @@ export default function Dashboardstatsgrid() {
         <div className='pl-4'>
           <span className='text-sm text-gray-500 font-light'>Bank Balance</span>
           <div className='flex items-center'>
-            <strong className='text-xl text-gray-700 font-semibold'>{income[1] - exp[1]}</strong>
+            <strong className='text-xl text-gray-700 font-semibold'>{(income[1] - exp[1]).toFixed(2)}</strong>
           </div>
         </div>
         </>
