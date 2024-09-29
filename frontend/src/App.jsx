@@ -40,6 +40,7 @@ import ChallanList from "./components/ChallanList";
 import AdminChallan from "./components/AdminChallan";
 import ExecutiveComplaints from "./components/ManageComplaint";
 import SubmitComplaint from "./components/AddComplaint";
+import DailyVisitors from "./components/DailyVisitors";
 function App() {
   return (
     <div>
@@ -89,6 +90,7 @@ function App() {
             <Route path="adminchallan" element={<AdminChallan/>} />
             <Route path="manage-complains" element={<ExecutiveComplaints/>} />
             <Route path="raise-complains" element={<SubmitComplaint/>} />
+            <Route path="daily-vis" element={<DailyVisitors/>} />
           </Route>
         </Routes>
       </Router>

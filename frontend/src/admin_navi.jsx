@@ -10,6 +10,12 @@ export const admin_navi = [
         icon: RiDashboardLine
     },
     {
+        key: 'dwnlddailyvis',
+        label: 'Daily Visitors',
+        path: '/db/daily-vis',
+        icon: FaUser
+    },
+    {
         key: 'dwnldvis',
         label: 'Visitor Registers',
         path: '/db/dwnldvis',
