@@ -25,12 +25,13 @@ export default function Renters() {
         const worksheet = workbook.addWorksheet('Renters');
 
         // Add headers
-        worksheet.addRow(['Sl No', 'Name', 'Mobile', 'Aadhar', 'Spouse Name', 'Spouse Mobile']);
+        worksheet.addRow(['Sl No', 'Name', 'Flat', 'Mobile', 'Aadhar', 'Spouse Name', 'Spouse Mobile']);
 
         // Add data rows
         renterData.forEach((renter, index) => {
-            const { name, mobile, aadhar, spouse_name, spouse_mobile } = renter;
-            worksheet.addRow([index + 1, name, mobile, aadhar, spouse_name, spouse_mobile]);
+            const { name, flat, mobile, aadhar, spouse_name, spouse_mobile } = renter;
+            const flatNumbers = flat.map(flatObj => flatObj.flatnumber).join(', ');
+            worksheet.addRow([index + 1, name, flatNumbers, mobile, aadhar, spouse_name, spouse_mobile]);
         });
 
         // Generate Excel file
