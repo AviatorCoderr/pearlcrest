@@ -29,10 +29,11 @@ export default function Renters() {
 
         // Add data rows
         renterData.forEach((renter, index) => {
-            const { name, flat, mobile, aadhar, spouse_name, spouse_mobile } = renter;
-            const flatNumbers = flat.map(flatObj => flatObj.flatnumber).join(', ');
-            worksheet.addRow([index + 1, name, flatNumbers, mobile, aadhar, spouse_name, spouse_mobile]);
+            const { flat, name, mobile, aadhar, spouse_name, spouse_mobile } = renter;
+            const flatNumbers = flat?.flatnumber; // Join flat numbers with commas
+            worksheet.addRow([index + 1, flatNumbers, name, mobile, aadhar, spouse_name, spouse_mobile]);
         });
+
 
         // Generate Excel file
         workbook.xlsx.writeBuffer().then((buffer) => {
