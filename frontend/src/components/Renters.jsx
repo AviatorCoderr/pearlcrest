@@ -25,7 +25,7 @@ export default function Renters() {
         const worksheet = workbook.addWorksheet('Renters');
 
         // Add headers
-        worksheet.addRow(['Sl No', 'Name', 'Flat', 'Mobile', 'Aadhar', 'Spouse Name', 'Spouse Mobile']);
+        worksheet.addRow(['Sl No', 'Flat', 'Name', 'Mobile', 'Aadhar', 'Spouse Name', 'Spouse Mobile']);
 
         // Add data rows
         renterData.forEach((renter, index) => {
