@@ -83,6 +83,7 @@ const sendSuccessEmail = asyncHandler(async(trans, facility) => {
     try {
         // Format booking dates
         const formattedDates = facility.dates.map(date => new Date(date).toLocaleDateString("en-IN", {
+            timeZone: "Asia/Kolkata",
             weekday: "long", 
             year: "numeric", 
             month: "long",

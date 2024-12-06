@@ -187,14 +187,17 @@ export default function FacilityReservation() {
                 </div>
                 <div className="m-5">
                     <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-2">Select Dates</label>
-                    <DatePicker
+                    {type ? (<DatePicker
                         selected={null}
                         onChange={(date) => handleDateClick(date)}
                         inline
                         minDate={ new Date()}
                         filterDate={filterDates}
                         dayClassName={dayClassName}
-                    />
+                    /> ):
+                    (
+                        <p>Please select a facility first</p>
+                    )}
                 </div>
                 <div className="m-5">
                     <p className="text-gray-700">Number of Days: {selectedDates.length}</p>
