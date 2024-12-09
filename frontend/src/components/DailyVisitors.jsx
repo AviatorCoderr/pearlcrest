@@ -4,21 +4,34 @@ import axios from 'axios';
 
 const MaidAttendance = () => {
   const [maidList, setMaidList] = useState([]);
+  const [filteredMaidList, setFilteredMaidList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [selectedMaid, setSelectedMaid] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchMaidData();
   }, []);
 
-  // Fetch maid attendance data from the API
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = maidList.filter((maid) =>
+        maid.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredMaidList(filtered);
+    } else {
+      setFilteredMaidList(maidList);
+    }
+  }, [searchTerm, maidList]);
+
   const fetchMaidData = async () => {
     setLoading(true);
     try {
       const response = await axios.get('/api/v1/maid/get-all-maid');
       setMaidList(response.data.data.Maidlist);
+      setFilteredMaidList(response.data.data.Maidlist);
     } catch (error) {
       console.error('Error fetching maid data:', error);
     } finally {
@@ -30,119 +43,103 @@ const MaidAttendance = () => {
   const generateExcel = async () => {
     const workbook = new ExcelJS.Workbook();
     const attendanceData = {};
-
+  
+    const getDateRange = (start, end) => {
+      const dateArray = [];
+      let currentDate = new Date(start);
+      const endDate = new Date(end);
+  
+      while (currentDate <= endDate) {
+        dateArray.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      return dateArray;
+    };
+    
+    function getFirstDateOfCurrentYear() {
+      const now = new Date();
+      const firstDate = new Date(now.getFullYear(), 0, 1); // Month is 0-based (0 = January)
+      return firstDate;
+    }
+    const firstDate = getFirstDateOfCurrentYear();
+    // Ensure startDate and endDate are valid
+    const dateRange = getDateRange(
+      startDate || firstDate,
+      endDate || new Date().toISOString().split('T')[0]
+    );
+  
     maidList.forEach((maid) => {
       if (selectedMaid && selectedMaid !== maid._id) return; // Filter by selected maid
-
+  
+      // Initialize attendance for the maid
+      attendanceData[maid._id] = {};
+  
+      // Populate check-in times for the maid
       maid.checkin.forEach((checkinDate) => {
-        const date = new Date(checkinDate);
-        const time = date.toLocaleTimeString();
-        const month = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-        const formattedDate = date.toLocaleDateString();
-
-        // Check date range
-        if (startDate && new Date(startDate) > date) return;
-        if (endDate && new Date(endDate) < date) return;
-
-        if (!attendanceData[month]) {
-          attendanceData[month] = {};
-        }
-
-        if (!attendanceData[month][formattedDate]) {
-          attendanceData[month][formattedDate] = {};
-        }
-
-        attendanceData[month][formattedDate][maid._id] = time;
+        const date = new Date(checkinDate).toLocaleDateString();
+        attendanceData[maid._id][date] = new Date(checkinDate).toLocaleTimeString();
       });
     });
-
-    for (const [month, dates] of Object.entries(attendanceData)) {
-      const worksheet = workbook.addWorksheet(month);
-      const columns = [
-        { header: 'Date', key: 'date', width: 15, style: { font: { bold: true } } },
-      ];
-
-      // Add maid column if a specific maid is selected
-      if (selectedMaid) {
-        const maid = maidList.find(m => m._id === selectedMaid);
-        if (maid) {
-          columns.push({
-            header: maid.name,
-            key: maid._id,
-            width: 15,
-            style: { font: { bold: true } }
-          });
-        }
-      } else {
-        // If no maid is selected, add all maids
-        maidList.forEach(maid => {
-          columns.push({
-            header: maid.name,
-            key: maid._id,
-            width: 15,
-            style: { font: { bold: true } }
-          });
-        });
+  
+    // Prepare the Excel sheet
+    const worksheet = workbook.addWorksheet('Attendance Report');
+    const columns = [{ header: 'Date', key: 'date', width: 15 }];
+  
+    // Add columns for maids
+    maidList.forEach((maid) => {
+      if (!selectedMaid || selectedMaid === maid._id) {
+        columns.push({ header: maid.name, key: maid._id, width: 15 });
       }
-
-      worksheet.columns = columns;
-
-      // Add header row styling
-      worksheet.getRow(1).font = { bold: true, size: 12 };
-      worksheet.getRow(1).fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FF4F81BD' }, // Light blue
-      };
-      worksheet.getRow(1).alignment = { horizontal: 'center' };
-
-      // Sort dates
-      const sortedDateEntries = Object.keys(dates).sort((a, b) => new Date(a) - new Date(b));
-
-      sortedDateEntries.forEach((date, index) => {
-        const row = [date]; // Start row with date
-        if (selectedMaid) {
-          const attendanceRecord = dates[date][selectedMaid];
-          row.push(attendanceRecord ? attendanceRecord : 'Absent');
-        } else {
-          maidList.forEach((maid) => {
-            const attendanceRecord = dates[date][maid._id];
-            row.push(attendanceRecord ? attendanceRecord : 'Absent');
-          });
-        }
-        
-        const currentRow = worksheet.addRow(row);
-
-        // Add alternating row colors for better legibility
-        if (index % 2 === 0) {
-          currentRow.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FFEBF1DE' }, // Light yellow
-          };
-        } else {
-          currentRow.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FFFFFFFF' }, // White
-          };
+    });
+  
+    worksheet.columns = columns;
+  
+    // Add header styling
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).alignment = { horizontal: 'center' };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF4F81BD' },
+    };
+  
+    // Fill attendance data for all dates
+    dateRange.forEach((date) => {
+      const formattedDate = date.toLocaleDateString();
+      const row = { date: formattedDate };
+  
+      maidList.forEach((maid) => {
+        if (!selectedMaid || selectedMaid === maid._id) {
+          row[maid._id] = attendanceData[maid._id][formattedDate] || 'Absent';
         }
       });
-
-      // Set borders for all cells
-      worksheet.eachRow({ includeEmpty: true }, (row) => {
-        row.eachCell({ includeEmpty: true }, (cell) => {
-          cell.border = {
-            top: { style: 'thin' },
-            left: { style: 'thin' },
-            bottom: { style: 'thin' },
-            right: { style: 'thin' },
-          };
-          cell.alignment = { vertical: 'middle', horizontal: 'center' }; // Center align the text
-        });
+  
+      worksheet.addRow(row);
+    });
+  
+    // Add borders and alignment for all cells
+    worksheet.eachRow((row, rowIndex) => {
+      row.eachCell((cell) => {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
       });
-    }
-
+  
+      // Add alternating row colors for better readability
+      if (rowIndex > 1) {
+        row.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: rowIndex % 2 === 0 ? 'FFEBF1DE' : 'FFFFFFFF' },
+        };
+      }
+    });
+  
+    // Save and download the workbook
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const url = URL.createObjectURL(blob);
@@ -152,6 +149,12 @@ const MaidAttendance = () => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+  };
+  
+
+  const handleMaidSelection = (maidId) => {
+    setSelectedMaid(maidId);
+    setSearchTerm('');
   };
 
   return (
@@ -174,17 +177,41 @@ const MaidAttendance = () => {
               onChange={(e) => setEndDate(e.target.value)}
               className="border rounded p-2"
             />
-            <select
-              value={selectedMaid}
-              onChange={(e) => setSelectedMaid(e.target.value)}
-              className="border rounded p-2"
-            >
-              <option value="">All Maids</option>
-              {maidList.map((maid) => (
-                <option key={maid._id} value={maid._id}>{maid.name}</option>
-              ))}
-            </select>
           </div>
+          <div className="relative mb-4">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search for maids..."
+              className="border rounded w-full p-2"
+            />
+            {searchTerm && (
+              <ul className="absolute z-10 bg-white border rounded w-full mt-1 max-h-40 overflow-y-auto shadow-md">
+                {filteredMaidList.length > 0 ? (
+                  filteredMaidList.map((maid) => (
+                    <li
+                      key={maid._id}
+                      className="p-2 hover:bg-gray-200 cursor-pointer"
+                      onClick={() => handleMaidSelection(maid._id)}
+                    >
+                      {maid.name}
+                    </li>
+                  ))
+                ) : (
+                  <li className="p-2 text-gray-500">No results found</li>
+                )}
+              </ul>
+            )}
+          </div>
+          {selectedMaid && (
+            <p className="mb-4">
+              Selected Maid:{" "}
+              <strong>
+                {maidList.find((maid) => maid._id === selectedMaid)?.name || "All Maids"}
+              </strong>
+            </p>
+          )}
           <button
             onClick={generateExcel}
             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4"
