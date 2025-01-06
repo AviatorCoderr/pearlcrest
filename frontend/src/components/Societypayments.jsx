@@ -213,7 +213,7 @@ const Societypayments = () => {
         }
         {purpose === "MAINTENANCE" &&
           <>
-            <select onChange={handleYearChange} defaultValue={2024} className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500">
+            <select onChange={handleYearChange} defaultValue={new Date().getFullYear()} className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500">
               {years.map((year, index) => (
                 <option key={index} value={year}>{year}</option>
               ))}
