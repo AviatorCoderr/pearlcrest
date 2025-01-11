@@ -215,7 +215,7 @@ const Societypayments = () => {
           <>
             <select onChange={handleYearChange} defaultValue={new Date().getFullYear()} className="p-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500">
               {years.map((year, index) => (
-                <option key={index} value={year}>{year}</option>
+                <option key={index} value={year}>FY{year}-{year+1}</option>
               ))}
             </select>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
