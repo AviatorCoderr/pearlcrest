@@ -28,7 +28,7 @@ export default function Login() {
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
-        navigate("/dashboard"); // Redirect to the dashboard or desired page
+        navigate("/vote-dash"); // Redirect to the dashboard or desired page
       });
       setIsLoading(false);
     })
