@@ -41,12 +41,16 @@ import AdminChallan from "./components/AdminChallan";
 import ExecutiveComplaints from "./components/ManageComplaint";
 import SubmitComplaint from "./components/AddComplaint";
 import DailyVisitors from "./components/DailyVisitors";
+import VoteLogin from "./components/VoteLogin"
+import VotingDashboard from "./components/VoteDashboard";
 function App() {
   return (
     <div>
       <Router>
         <Routes>
           <Route path="/log" element={<Login />} />
+          <Route path="/votelog" element={<VoteLogin />} />
+          <Route path="/vote-dash" element={<VotingDashboard />} />
           <Route path="/" element={<Home />} />
           <Route path="/paymentsuccess" element={<PaymentSucess />} />
           <Route path="/forgot-password" element={<ForgotPass />} />

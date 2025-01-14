@@ -116,6 +116,7 @@ const generateAccessandRefreshTokens = asyncHandler(async(flatId) => {
     }
 })
 // for log in of flatier
+
 const loginFlat = asyncHandler(async (req, res) => {
     console.log("hello")
     const {flatnumber, password} = req.body

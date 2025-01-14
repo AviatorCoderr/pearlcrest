@@ -31,6 +31,7 @@ import bookingRouter from './routes/facilityreservation.routes.js';
 import notificationRouter from './routes/notification.routes.js'; // Add this line
 import voteRouter from "./routes/vote.routes.js"
 import complainRouter from "./routes/complaint.routes.js"
+import electionRouter from "./routes/voting.routes.js"
 // Routes declaration
 app.use('/api/v1/users', flatRouter);
 app.use('/api/v1/owners', ownerRouter);
@@ -47,7 +48,7 @@ app.use('/api/v1/booking', bookingRouter);
 app.use('/api/v1/notifications', notificationRouter);
 app.use('/api/v1/vote', voteRouter)
 app.use('/api/v1/complain', complainRouter)
-
+app.use('/api/v1/election', electionRouter)
 app.use('/api/v1/getkey', (req, res) =>
   res.status(200).json({ key: process.env.RAZORPAY_API_KEY })
 );
