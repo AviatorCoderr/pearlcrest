@@ -43,6 +43,7 @@ import SubmitComplaint from "./components/AddComplaint";
 import DailyVisitors from "./components/DailyVisitors";
 import VoteLogin from "./components/VoteLogin"
 import VotingDashboard from "./components/VoteDashboard";
+import VoterRegistration from "./components/VoterRegistration";
 function App() {
   return (
     <div>
@@ -50,6 +51,7 @@ function App() {
         <Routes>
           <Route path="/log" element={<Login />} />
           <Route path="/votelog" element={<VoteLogin />} />
+          <Route path="/votereg" element={<VoterRegistration/>} />
           <Route path="/vote-dash" element={<VotingDashboard />} />
           <Route path="/" element={<Home />} />
           <Route path="/paymentsuccess" element={<PaymentSucess />} />

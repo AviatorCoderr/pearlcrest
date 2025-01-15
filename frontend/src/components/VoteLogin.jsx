@@ -74,15 +74,15 @@ export default function Login() {
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: "url('/static/images/election-bg.jpg')" }}>
+    <div className="relative min-h-screen flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: "url('/static/images/PC2.jpg')" }}>
       {/* Overlay */}
       <div className="absolute inset-0 bg-black opacity-50"></div>
 
       {/* Form Container */}
       <div className="relative bg-white rounded-lg shadow-lg p-10 max-w-md w-full">
         <h3 className="text-center text-3xl font-bold text-blue-600 mb-2">🗳️ Pearl Crest Society Elections 2025</h3>
-        <p className="text-center text-gray-500 mb-8">"Your Vote, Your Voice – Make it Count!"</p>
-
+        <p className="text-center text-gray-500 mb-3 ">"Your Vote, Your Voice – Make it Count!"</p>
+        <h2 className="text-2xl font-bold mb-4 text-center">Voter Login</h2>
         <div className="space-y-6">
           <input
             type="text"
@@ -125,6 +125,12 @@ export default function Login() {
           </button>
         </div>
         <p className="text-center text-gray-400 text-sm mt-8">Need help? Contact your election officer!</p>
+          <div className="mt-4 text-center">
+            <Link to="/votereg" className="text-blue-600 hover:underline">Not Registered? Register Here</Link>
+          </div>
+          <div className="mt-4 text-center">
+            <Link to="/" className="text-blue-600 hover:underline">Back to Home</Link>
+          </div>
       </div>
     </div>
   );
