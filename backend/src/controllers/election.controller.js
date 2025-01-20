@@ -6,6 +6,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import nodemailer from "nodemailer";
 import bcrypt from "bcrypt";
+import AuditLog from "../models/audit.model.js";
 
 // Set up nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -211,11 +212,10 @@ const voteLogin = asyncHandler(async (req, res) => {
     }
 
     const voterId = voter?._id;
-
     // Find the OTP record
     const otpRecord = await otpelection.findOne({ userId: voterId });
     if (!otpRecord) {
-        throw new ApiError(401, "Account record doesn't exist or has been verified already. Please login.");
+        throw new ApiError(404, "Account record doesn't exist or has been verified already. Please login.");
     }
 
     const { expiresAt, otp: hashedOTP } = otpRecord;
@@ -238,8 +238,21 @@ const voteLogin = asyncHandler(async (req, res) => {
     // Generate access and refresh tokens
     const { accessToken, refreshToken } = await generateAccessandRefreshTokens(voterId);
 
+    try {
+        const auditLog = await AuditLog.create({
+            userId: voterId,
+            action: 'Logged In',
+            description: `User ${voterId} has logged in for voting.`,
+        });
+        console.log("AuditLog created:", auditLog);
+    } catch (error) {
+        console.log("Error creating AuditLog:", error);
+        throw new ApiError(200, "Failed to log the audit entry.");
+    }
+
     // Delete the OTP record
     await otpelection.deleteMany({ userId: voterId });
+    
 
     // Set cookie options
     const options = {  

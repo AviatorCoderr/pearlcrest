@@ -5,7 +5,7 @@ const president = [
         name: "Rahul Sharma",
         aadhar: "1234-5678-9101",
         mobile: "9876543210",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "P002",
@@ -13,7 +13,7 @@ const president = [
         name: "Priya Mehta",
         aadhar: "2345-6789-0123",
         mobile: "8765432109",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "P003",
@@ -21,7 +21,7 @@ const president = [
         name: "Ankit Verma",
         aadhar: "3456-7890-1234",
         mobile: "7654321098",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "P004",
@@ -29,7 +29,7 @@ const president = [
         name: "Sneha Kapoor",
         aadhar: "4567-8901-2345",
         mobile: "6543210987",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     }
 ];
 
@@ -40,7 +40,7 @@ const treasurer = [
         name: "Vikas Kumar",
         aadhar: "5678-9012-3456",
         mobile: "5432109876",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "T002",
@@ -48,7 +48,7 @@ const treasurer = [
         name: "Anjali Singh",
         aadhar: "6789-0123-4567",
         mobile: "4321098765",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     }
 ];
 
@@ -59,7 +59,7 @@ const secretary = [
         name: "Kunal Jain",
         aadhar: "7890-1234-5678",
         mobile: "3210987654",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "S002",
@@ -67,7 +67,7 @@ const secretary = [
         name: "Divya Gupta",
         aadhar: "8901-2345-6789",
         mobile: "2109876543",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     }
 ];
 
@@ -78,7 +78,7 @@ const executiveAblock = [
         name: "Manish Tiwari",
         aadhar: "9012-3456-7890",
         mobile: "1234567890",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "EA002",
@@ -86,7 +86,7 @@ const executiveAblock = [
         name: "Ritika Roy",
         aadhar: "0123-4567-8901",
         mobile: "9876543210",
-        photo: ""
+       photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "EA003",
@@ -94,7 +94,7 @@ const executiveAblock = [
         name: "Sanjay Patel",
         aadhar: "1234-5678-9012",
         mobile: "8765432109",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "EA004",
@@ -102,7 +102,7 @@ const executiveAblock = [
         name: "Meera Nair",
         aadhar: "2345-6789-0123",
         mobile: "7654321098",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     }
 ];
 
@@ -113,7 +113,7 @@ const executiveBblock = [
         name: "Ajay Khanna",
         aadhar: "3456-7890-1234",
         mobile: "6543210987",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "EB002",
@@ -121,7 +121,7 @@ const executiveBblock = [
         name: "Neha Sharma",
         aadhar: "4567-8901-2345",
         mobile: "5432109876",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "EB003",
@@ -129,7 +129,7 @@ const executiveBblock = [
         name: "Ravi Malik",
         aadhar: "5678-9012-3456",
         mobile: "4321098765",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "EB004",
@@ -137,7 +137,7 @@ const executiveBblock = [
         name: "Tanya Arora",
         aadhar: "6789-0123-4567",
         mobile: "3210987654",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     }
 ];
 
@@ -148,7 +148,7 @@ const executiveCblock = [
         name: "Varun Pandey",
         aadhar: "7890-1234-5678",
         mobile: "2109876543",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "EC002",
@@ -156,7 +156,7 @@ const executiveCblock = [
         name: "Shivani Sharma",
         aadhar: "8901-2345-6789",
         mobile: "1098765432",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "EC003",
@@ -164,7 +164,7 @@ const executiveCblock = [
         name: "Rajesh Kumar",
         aadhar: "9012-3456-7890",
         mobile: "9876543210",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "EC004",
@@ -172,7 +172,7 @@ const executiveCblock = [
         name: "Pooja Verma",
         aadhar: "0123-4567-8901",
         mobile: "8765432109",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "EC005",
@@ -180,7 +180,7 @@ const executiveCblock = [
         name: "Ankur Mishra",
         aadhar: "1234-5678-9012",
         mobile: "7654321098",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     },
     {
         nomineeId: "EC006",
@@ -188,7 +188,7 @@ const executiveCblock = [
         name: "Nidhi Kaur",
         aadhar: "2345-6789-0123",
         mobile: "6543210987",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     }
 ];
 
@@ -199,7 +199,7 @@ const executiveDblock = [
         name: "Siddharth Joshi",
         aadhar: "3456-7890-1234",
         mobile: "5432109876",
-        photo: ""
+        photo: "/static/images/manish_jpg.jpg"
     }
 ];
 

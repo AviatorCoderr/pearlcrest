@@ -28,11 +28,12 @@ export default function Login() {
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
-        navigate("/vote-dash"); // Redirect to the dashboard or desired page
+        navigate("/vote-dash");
       });
       setIsLoading(false);
     })
     .catch((error) => {
+      console.log(error)
       Swal.fire({
         title: "Invalid Credentials",
         text: "Check otp",

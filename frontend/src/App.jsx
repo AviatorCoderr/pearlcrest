@@ -44,6 +44,7 @@ import DailyVisitors from "./components/DailyVisitors";
 import VoteLogin from "./components/VoteLogin"
 import VotingDashboard from "./components/VoteDashboard";
 import VoterRegistration from "./components/VoterRegistration";
+import VoteReceipt from "./components/VoteReceipt";
 function App() {
   return (
     <div>
@@ -53,6 +54,7 @@ function App() {
           <Route path="/votelog" element={<VoteLogin />} />
           <Route path="/votereg" element={<VoterRegistration/>} />
           <Route path="/vote-dash" element={<VotingDashboard />} />
+          <Route path="/vote-receipt" element={<VoteReceipt />} />
           <Route path="/" element={<Home />} />
           <Route path="/paymentsuccess" element={<PaymentSucess />} />
           <Route path="/forgot-password" element={<ForgotPass />} />

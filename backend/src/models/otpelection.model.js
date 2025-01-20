@@ -1,7 +1,8 @@
 import mongoose from "mongoose"
 const otpelectionSchema = new mongoose.Schema({
     userId: {
-        type: String
+        type: String,
+        required: true
     },
     otp: {
         type: String
