@@ -39,7 +39,6 @@ function Sidebar() {
     } else if (user?.flatnumber === "GUARD") {
         sidebarData = guard_det;
     }
-    else
     sidebarData = sidebar_det
 
     const handleLogout = () => {

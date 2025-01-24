@@ -5,7 +5,8 @@ import crypto from 'crypto-js'; // To encrypt/decrypt votes
 import jwt from 'jsonwebtoken'; // For verifying the logged-in user
 import { Candidate } from '../models/candidates.model.js';
 import { ApiError } from '../utils/ApiError.js';
-
+import electionOfficer from '../models/Electionofficer.model.js';
+import { ApiResponse } from '../utils/ApiResponse.js';
 const encryptVote = (voteData) => {
     const secretKey = process.env.SECRET_KEY;
     return voteData.map(vote => crypto.AES.encrypt(vote, secretKey).toString());
@@ -23,6 +24,17 @@ const encryptVote = (voteData) => {
     ];
   };
 // Store the encrypted votes from frontend
+const createOfficer = async (req, res) => {
+  try {
+    const {fullName, email} = req.body
+    const createOfficer = await electionOfficer.create({fullName, email});
+    res.status(201).json({ success: true, createOfficer, message: 'Officer created successfully.' });
+  } catch (error) {
+    console.error('Error in creating officer:', error);
+    res.status(500).json({ success: false, message: 'Error creating officer' });
+  }
+};
+
 const storeVote = async (req, res) => {
   try {
     const { votes } = req.body;
@@ -115,62 +127,70 @@ const generateVoteReceipt = async (req, res) => {
   }
 };
 
-// Election Timer Setup
-const setElectionTimer = async (req, res) => {
+const createElection = async(req, res) => {
   try {
-    const { startDate, endDate } = req.body;
-    const election = new Election({ startDate, endDate });
-
+    const election = new Election({});
     await election.save();
-    res.status(201).json({ success: true, message: 'Election started.' });
+    res.status(201).json({ success: true, message: 'election created' });
   } catch (error) {
-    console.error('Error setting election timer:', error);
+    console.error('Error creating election:', error);
     res.status(500).json({ success: false, message: 'Error setting election timer.' });
+  }
+}
+const startElectionTimer = async (req, res) => {
+  try {
+    const election = await Election.findOne();
+    election.status = "ongoing";
+    await election.save();
+    return res.status(201).json({ success: true, message: 'election started' });
+  } catch (error) {
+    console.error('Error starting election:', error);
+    return res.status(500).json({ success: false, message: 'Error starting election.' });
   }
 };
 
-// Decrypt and count votes after election ends
+const endElectionTimer = async (req, res) => {
+  try {
+    const election = await Election.findOne();
+    election.status = "finished";
+    await election.save();
+    return res.status(201).json({ success: true, message: 'election ended' });
+  } catch (error) {
+    console.error('Error ending election:', error);
+    return res.status(500).json({ success: false, message: 'Error ending election.' });
+  }
+};
+
 const decryptVotesAndCount = async (req, res) => {
     try {
-      // Find the ongoing election
       const election = await Election.findOne({ status: 'ongoing' });
       if (!election) {
         return res.status(400).json({ success: false, message: 'Election has already ended or not started.' });
       }
   
-      // Change election status to finished
       election.status = 'finished';
       await election.save();
   
-      // Fetch all the votes
       const votes = await Vote.find();
-      const secretKey = process.env.SECRET_KEY; // The secret key to decrypt the votes
+      const secretKey = process.env.SECRET_KEY; 
   
-      // Initialize the vote count for each candidate
       const candidateVoteCounts = {};
   
-      // Iterate over the votes and decrypt them
       votes.forEach((vote) => {
         const decryptedVotes = vote.encryptedVotes.map((encryptedVote) => {
           const bytes = crypto.AES.decrypt(encryptedVote, secretKey);
-          return bytes.toString(crypto.enc.Utf8); // Get the decrypted nominee IDs
+          return bytes.toString(crypto.enc.Utf8); 
         });
   
-        // Increment the vote count for each candidate in the decrypted votes
         decryptedVotes.forEach(async (nomineeId) => {
-          // Find the candidate by nomineeId (assuming the nomineeId is stored in the `Candidate` model)
           const candidate = await Candidate.findById(nomineeId);
           if (candidate) {
-            // Increment the vote count for the candidate
             candidate.votes += 1;
-  
-            // Save the updated candidate vote count
             await candidate.save();
           }
         });
       });
-  
-      // Send response with success
+
       res.status(200).json({ success: true, message: 'Votes decrypted and counted successfully.' });
     } catch (error) {
       console.error('Error decrypting and counting votes:', error);
@@ -178,9 +198,27 @@ const decryptVotesAndCount = async (req, res) => {
     }
   };
 
+const getElectionStatus = async(req, res) => {
+  const election = await Election.findOne();
+  return res.status(200).json(new ApiResponse(200, election?.status))
+}
+
+const getlogs = async(req, res) => {
+  console.log("logging")
+  const logs = await AuditLog.find().populate('userId');
+  return res.status(200).json(new ApiResponse(200, logs))
+}
+const declareResult = async(req, res) => {
+
+}
 export {
   storeVote,
+  getlogs,
   generateVoteReceipt,
-  setElectionTimer,
+  startElectionTimer,
+  endElectionTimer,
   decryptVotesAndCount,
+  createElection,
+  createOfficer,
+  getElectionStatus
 };

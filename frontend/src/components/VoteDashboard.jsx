@@ -17,7 +17,7 @@ export default function VotingDashboard() {
     executiveDblock: [],
   });
   const [currentSection, setCurrentSection] = useState('');  // To track the current voting section
-
+  const [showVoicePrompt, setShowVoicePrompt] = useState(false);
   const sectionRefs = {
     president: useRef(null),
     treasurer: useRef(null),
@@ -138,6 +138,7 @@ export default function VotingDashboard() {
       cancelButtonText: 'Cancel',
     }).then((result) => {
       if (result.isConfirmed) {
+        setShowVoicePrompt(true);
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'en-US';
         recognition.start();
@@ -145,6 +146,7 @@ export default function VotingDashboard() {
         recognition.onresult = (event) => {
           const spokenText = event.results[0][0].transcript.toLowerCase();
           if (spokenText === 'confirm') {
+            setShowVoicePrompt(true);
             axios.post('/api/v1/ele/vote', { votes: votedCandidate })
               .then((response) => {
                 if (response.data.success) {
@@ -185,6 +187,7 @@ export default function VotingDashboard() {
                       });
                   });
                 } else {
+                  setShowVoicePrompt(true);
                   Swal.fire({
                     title: "Submission Failed",
                     text: "There was an error submitting your votes.",
@@ -274,6 +277,17 @@ export default function VotingDashboard() {
 
   return (
     <div className="min-h-screen p-6">
+      {showVoicePrompt && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-xl shadow-lg text-center">
+            <h2 className="text-2xl font-bold">Listening for "Confirm"...</h2>
+            <p className="mt-4 text-gray-600">Please speak "confirm" to lock your vote.</p>
+            <div className="mt-6">
+              <img src="/static/images/mic.png" alt="Mic Icon" className="w-12 h-12 mx-auto" />
+            </div>
+          </div>
+        </div>
+      )}
       {currentSection && (
         <div className="fixed z-50 top-0 left-0 right-0 bg-yellow-300 text-black text-center border-2 border-black py-2 font-bold">
           Voting in: {currentSection === 'executiveAblock' ? 'Executive for A Block' :

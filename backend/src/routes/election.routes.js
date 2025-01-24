@@ -1,24 +1,27 @@
 import express from 'express';
-import { verifyElectionOfficer, verifyVoter } from '../middlewares/auth.middleware.js';
+import { verifyElectionOfficer, verifyJWT, verifyVoter } from '../middlewares/auth.middleware.js';
 import {
   storeVote,
   generateVoteReceipt,
-  setElectionTimer,
+  startElectionTimer,
+  endElectionTimer,
+  createElection,
   decryptVotesAndCount,
+  createOfficer,
+  getElectionStatus,
+  getlogs
 } from '../controllers/voteController.controller.js';
+
 
 const router = express.Router();
 
-// Route to store the encrypted votes
 router.post('/vote', verifyVoter, storeVote);
-
-// Route to generate vote receipt
 router.get('/vote-receipt', verifyVoter, generateVoteReceipt);
-
-// Route to set the election timer
-router.post('/election-timer', verifyElectionOfficer, setElectionTimer);
-
-// Route to decrypt and count votes
 router.post('/count-votes', verifyElectionOfficer, decryptVotesAndCount);
-
+// router.post('/create-election', createElection);
+router.post('/start-election', verifyElectionOfficer, startElectionTimer);
+router.post('/end-election', verifyElectionOfficer, endElectionTimer);
+router.get('/ele-status', verifyElectionOfficer, getElectionStatus);
+// router.post('/create-officer', createOfficer)
+router.get('/get-logs', verifyElectionOfficer, getlogs);
 export default router;

@@ -7,7 +7,9 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import nodemailer from "nodemailer";
 import bcrypt from "bcrypt";
 import AuditLog from "../models/audit.model.js";
-
+import electionOfficer from "../models/Electionofficer.model.js";
+import EncryptedVotes from "../models/encryptedvotes.model.js";
+import Election from "../models/election.model.js";
 // Set up nodemailer transporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -44,6 +46,7 @@ const sendOtpVerificationEmail = asyncHandler(async (email, voterId) => {
     return { info, voterId, email };
 });
 
+
 const generateAccessandRefreshTokens = asyncHandler(async (voterId) => {
     try {
         const flat = await Voter.findById(voterId);
@@ -58,6 +61,19 @@ const generateAccessandRefreshTokens = asyncHandler(async (voterId) => {
     }
 });
 
+const generateAccessandRefreshTokensOfficer = asyncHandler(async (voterId) => {
+    try {
+        const flat = await electionOfficer.findById(voterId);
+        const accessToken = await flat.generateAccessToken();
+        const refreshToken = await flat.generateRefreshToken();
+        flat.refreshToken = refreshToken;
+        flat.lastLogIn = new Date();
+        await flat.save({ validateBeforeSave: false });
+        return { accessToken, refreshToken };
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while generating tokens");
+    }
+});
 // Register Voter
 const registerVoterByOTP = asyncHandler(async (req, res) => {
         const { flatnumber, name, email, mobile } = req.body;
@@ -187,6 +203,11 @@ const voteLoginSendOtp = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Invalid Credentials/ Voter not registered");
     }
 
+    const electionStatus = await Election.findOne();
+    if(electionStatus.status==="finished") throw new ApiError(400, "Election has ended. Check for results")
+    const voteGiven = await EncryptedVotes.find({userId: voter._id})
+    if(voteGiven) throw new ApiError(400, "Vote already given")
+
     const { info, voterId, email: voterEmail } = await sendOtpVerificationEmail(email, voter._id);
 
     if (!info) {
@@ -267,4 +288,87 @@ const voteLogin = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, { votedet: voter, accessToken, refreshToken }, "Voter logged in successfully"));
 });
 
-export { voteLogin, registerVoterByOTP, voteLoginSendOtp, register };
+
+const voteLoginSendOtpOfficer = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    if ([email].some((field) => field?.trim() === "")) {
+        throw new ApiError(400, "email is missing");
+    }
+
+    const voter = await electionOfficer.findOne({email});
+    console.log(voter)
+    if (!voter) {
+        throw new ApiError(404, "Invalid Credentials/ Officer not registered");
+    }
+
+    const { info, voterId, email: voterEmail } = await sendOtpVerificationEmail(email, voter._id);
+
+    if (!info) {
+        throw new ApiError(500, "Error in sending OTP");
+    }
+
+    return res.status(200).json(new ApiResponse(200, "OTP sent successfully", { userId: voterId, email: voterEmail }));
+});
+
+const voteLoginOfficer = asyncHandler(async (req, res) => {
+    const { email, otp } = req.body;
+    if (!otp || otp.trim() === "") {
+        throw new ApiError(400, "OTP is missing");
+    }
+
+    const voter = await electionOfficer.findOne({ email });
+
+    if (!voter) {
+        throw new ApiError(404, "Officer not found. Please check your details.");
+    }
+
+    const voterId = voter?._id; 
+
+    const otpRecord = await otpelection.findOne({ userId: voterId });
+    if (!otpRecord) {
+        throw new ApiError(404, "Account record doesn't exist or has been verified already. Please login.");
+    }
+
+    const { expiresAt, otp: hashedOTP } = otpRecord;
+
+    if (expiresAt < Date.now()) {
+        await otpelection.deleteMany({ userId: voterId });
+        throw new ApiError(400, "Code has expired. Please request again.");
+    }
+
+    const isValidOTP = await bcrypt.compare(otp, hashedOTP);
+    if (!isValidOTP) {
+        throw new ApiError(401, "Invalid code. Please check your inbox.");
+    }
+    const { accessToken, refreshToken } = await generateAccessandRefreshTokensOfficer(voterId);
+    try {
+        const auditLog = await AuditLog.create({
+            userId: voterId,
+            action: 'Logged In',
+            description: `Election Officer ${voterId} has logged in for scrutiny.`,
+        });
+        console.log("AuditLog created:", auditLog);
+    } catch (error) {
+        console.log("Error creating AuditLog:", error);
+        throw new ApiError(200, "Failed to log the audit entry.");
+    }
+
+    // Delete the OTP record
+    await otpelection.deleteMany({ userId: voterId });
+    
+
+    // Set cookie options
+    const options = {  
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none'
+    };
+
+    return res.status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(new ApiResponse(200, { votedet: voter, accessToken, refreshToken }, "Officer logged in successfully"));
+});
+
+export { voteLogin, registerVoterByOTP, voteLoginSendOtp, register, voteLoginOfficer, voteLoginSendOtpOfficer};

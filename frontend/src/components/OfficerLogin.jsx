@@ -6,7 +6,6 @@ import { BarLoader } from 'react-spinners';
 import { Link } from 'react-router-dom';
 
 export default function Login() {
-  const [flatnumber, setFlatNumber] = useState("");
   const [email, setEmail] = useState("");
   const [otp, setOTP] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -15,10 +14,10 @@ export default function Login() {
 
   const handleContinue = () => {
     setIsLoading(true);
+    console.log("sending")
     axios.post(
-      "/api/v1/election/voter-login",
-      { flatnumber, email, otp },
-      { withCredentials: true }
+      "/api/v1/election/voter-login-off",
+      { email, otp }
     )
     .then((response) => {
       console.log("Login success:");
@@ -28,7 +27,7 @@ export default function Login() {
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
-        navigate("/vote-dash");
+        navigate("/offdash");
       });
       setIsLoading(false);
     })
@@ -47,8 +46,8 @@ export default function Login() {
   const getOtp = () => {
     setIsLoading(true);
     axios.post(
-      "/api/v1/election/voter-otp",
-      { flatnumber, email },
+      "/api/v1/election/voter-otp-off",
+      { email },
     )
     .then((response) => {
       console.log("OTP sent:");
@@ -61,10 +60,10 @@ export default function Login() {
       setIsLoading(false);
     })
     .catch((error) => {
-      console.log(error.response.data.message);
+      console.log(error.message);
       Swal.fire({
         title: "Invalid Credentials",
-        text: error.response.data.message,
+        text: "Email not in the registered voter's list",
         icon: "error",
         confirmButtonText: "OK",
       });
@@ -76,21 +75,12 @@ export default function Login() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: "url('/static/images/PC2.jpg')" }}>
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black opacity-50"></div>
-
-      {/* Form Container */}
       <div className="relative bg-white rounded-lg shadow-lg p-10 max-w-md w-full">
         <h3 className="text-center text-3xl font-bold text-blue-600 mb-2">🗳️ Pearl Crest Society Elections 2025</h3>
         <p className="text-center text-gray-500 mb-3 ">"Your Vote, Your Voice – Make it Count!"</p>
-        <h2 className="text-2xl font-bold mb-4 text-center">Voter Login</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">Officer Login</h2>
         <div className="space-y-6">
-          <input
-            type="text"
-            placeholder="Flat Number (A104 / CG4 / D1)"
-            className="w-full p-3 rounded-md border border-gray-300 focus:border-blue-600 focus:outline-none"
-            onChange={(e) => setFlatNumber(e.target.value)}
-          />
           <input
             type="email"
             placeholder="Email"
@@ -125,10 +115,6 @@ export default function Login() {
             {isLoading ? <BarLoader color="#fff" /> : "Log In"}
           </button>
         </div>
-        <p className="text-center text-gray-400 text-sm mt-8">Need help? Contact your election officer!</p>
-          <div className="mt-4 text-center">
-            <Link to="/votereg" className="text-blue-600 hover:underline">Not Registered? Register Here</Link>
-          </div>
           <div className="mt-4 text-center">
             <Link to="/" className="text-blue-600 hover:underline">Back to Home</Link>
           </div>
