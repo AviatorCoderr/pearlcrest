@@ -248,12 +248,20 @@ const getlogs = async(req, res) => {
   const logs = await AuditLog.find().populate('userId');
   return res.status(200).json(new ApiResponse(200, logs))
 }
+
+const getResults = asyncHandler(async(req, res) => {
+  const candidates = await Candidate.find()
+  const ele = await Election.findOne();
+  if(ele.status!=="declared") return res.status(400).json(new ApiResponse(400, "Results are not yet declared."))
+  return res.status(200).json(new ApiResponse(200, candidates, "Results declared"))
+})
 export {
   storeVote,
   getlogs,
   generateVoteReceipt,
   startElectionTimer,
   endElectionTimer,
+  getResults,
   decryptVotesAndCount,
   createElection,
   createOfficer,

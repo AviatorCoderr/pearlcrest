@@ -46,6 +46,7 @@ import VotingDashboard from "./components/VoteDashboard";
 import VoterRegistration from "./components/VoterRegistration";
 import VoteLoginOfficer from "./components/OfficerLogin"
 import OffDash from "./components/OfficerDash"
+import Result from "./components/Results"
 function App() {
   return (
     <div>
@@ -60,7 +61,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/paymentsuccess" element={<PaymentSucess />} />
           <Route path="/forgot-password" element={<ForgotPass />} />
-          <Route path="/council" element={<MemberCouncil />} />
+          <Route path="/results" element={<Result />} />
           <Route
             path="/db"
             element={<Layout />}

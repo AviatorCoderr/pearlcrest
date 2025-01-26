@@ -415,7 +415,7 @@ const registerCandidates = asyncHandler(async (req, res) => {
 });
 
 const getCandidates = asyncHandler(async (req, res) => {
-    const candidates = await Candidate.find().select("-votes"); // Exclude 'votes' field
+    const candidates = await Candidate.find().select("-votes"); 
     return res.status(200).json(new ApiResponse(200, candidates, "Candidates fetched successfully"));
 });
 

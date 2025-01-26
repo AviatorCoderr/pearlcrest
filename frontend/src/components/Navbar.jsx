@@ -28,8 +28,8 @@ function Navbar() {
             </button>
           </li>
           <li className="p-3 text-lg mx-5 group">
-            <button className="relative overflow-hidden py-2 px-4">
-              Gallery
+            <button onClick={() => navigate("/results")} className="relative overflow-hidden py-2 px-4">
+              Results
               <span className="absolute hover:visible duration-200 inset-x-0 bottom-0 w-1/3 group-hover:w-full h-1 bg-black"></span>
             </button>
           </li>

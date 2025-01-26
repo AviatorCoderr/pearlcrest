@@ -10,7 +10,8 @@ import {
   createOfficer,
   getElectionStatus,
   getlogs,
-  resultsDeclared
+  resultsDeclared,
+  getResults
 } from '../controllers/voteController.controller.js';
 
 
@@ -26,4 +27,5 @@ router.get('/ele-status', verifyElectionOfficer, getElectionStatus);
 // router.post('/create-officer', createOfficer)
 router.get('/get-logs', verifyElectionOfficer, getlogs);
 router.post('/result-declare', verifyElectionOfficer, resultsDeclared);
+router.get('/result', getResults);
 export default router;
