@@ -192,7 +192,6 @@ const register = asyncHandler(async (req, res) => {
 // Vote Login Send OTP
 const voteLoginSendOtp = asyncHandler(async (req, res) => {
     const { flatnumber, email } = req.body;
-
     // Check for missing fields
     if ([flatnumber, email].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "flatnumber or email is missing");
@@ -204,9 +203,12 @@ const voteLoginSendOtp = asyncHandler(async (req, res) => {
     }
 
     const electionStatus = await Election.findOne();
-    if(electionStatus.status==="finished") throw new ApiError(400, "Election has ended. Check for results")
+    if(electionStatus.status!=="ongoing") throw new ApiError(400, "Election has ended/ not started")
     const voteGiven = await EncryptedVotes.find({userId: voter._id})
-    if(voteGiven) throw new ApiError(400, "Vote already given")
+    console.log(voteGiven)
+    if(voteGiven.length > 0) {
+        throw new ApiError(400, "Vote already given")
+    }
 
     const { info, voterId, email: voterEmail } = await sendOtpVerificationEmail(email, voter._id);
 
@@ -371,4 +373,51 @@ const voteLoginOfficer = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, { votedet: voter, accessToken, refreshToken }, "Officer logged in successfully"));
 });
 
-export { voteLogin, registerVoterByOTP, voteLoginSendOtp, register, voteLoginOfficer, voteLoginSendOtpOfficer};
+const logoutOfficer = asyncHandler( async(req, res) => {
+    res.clearCookie('accessToken')
+    res.clearCookie('refreshToken')
+    res.json(new ApiResponse(200, "officer logged out successfully"))
+})
+
+const logoutuser = asyncHandler( async(req, res) => {
+    res.clearCookie('accessToken')
+    res.clearCookie('refreshToken')
+    res.json(new ApiResponse(200, "voter logged out successfully"))
+})
+
+const registerCandidates = asyncHandler(async (req, res) => {
+    const candidates = req.body; // Expecting an array of candidate objects [{flatnumber, name, post}, ...]
+
+    if (!Array.isArray(candidates)) {
+        throw new ApiError(400, "Input must be an array of candidate objects");
+    }
+
+    const newCandidates = [];
+
+    for (const candidate of candidates) {
+        const { flatnumber, name, post } = candidate;
+
+        // Ensure all necessary fields are provided
+        if (!flatnumber || !name || !post) {
+            throw new ApiError(400, "Each candidate must have flatnumber, name, and post");
+        }
+
+        const newCand = await Candidate.create({ flatnumber, name, post });
+
+        if (!newCand) {
+            throw new ApiError(500, `Cannot create candidate: ${JSON.stringify(candidate)}`);
+        }
+
+        newCandidates.push(newCand);
+    }
+
+    return res.status(200).json(new ApiResponse(200, newCandidates, "Created new candidates successfully"));
+});
+
+const getCandidates = asyncHandler(async (req, res) => {
+    const candidates = await Candidate.find().select("-votes"); // Exclude 'votes' field
+    return res.status(200).json(new ApiResponse(200, candidates, "Candidates fetched successfully"));
+});
+
+
+export { registerCandidates, getCandidates, voteLogin, registerVoterByOTP, voteLoginSendOtp, register, voteLoginOfficer, voteLoginSendOtpOfficer, logoutOfficer, logoutuser};

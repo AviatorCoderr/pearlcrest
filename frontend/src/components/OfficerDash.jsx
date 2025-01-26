@@ -16,7 +16,7 @@ export default function OfficerDashboard() {
         setElectionStatus(response.data.data); // Assume the API returns { status: "Ongoing" }
       })
       .catch((error) => {
-        console.error("Error fetching election status:", error);
+        console.log("Error fetching election status:", error);
         setElectionStatus("Error"); // Fallback in case of an error
       });
       axios.get("/api/v1/ele/get-logs").then((response) => {
@@ -69,17 +69,29 @@ export default function OfficerDashboard() {
       confirmButtonText: "Yes, Start Counting",
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.post("/api/v1/ele/count-votes").then(() => {
-          setElectionStatus("Counting");
-          Swal.fire("Counting Started!", "Vote counting is now in progress.", "success");
-        });
+        axios
+          .post("/api/v1/ele/count-votes")
+          .then((response) => {
+            console.log(response.data);
+            if (response.data.success) {
+              setElectionStatus("Counting");
+              Swal.fire("Counting Started!", "Vote counting is now in progress.", "success");
+            } else {
+              Swal.fire("Error!", response.data.message || "Failed to start counting votes.", "error");
+            }
+          })
+          .catch((error) => {
+            console.log("Error starting vote counting:", error);
+            Swal.fire("Error!", "An error occurred while starting vote counting.", "error");
+          });
       }
     });
   };
+  
 
   const handleDeclareResults = () => {
-    axios.get("/api/v1/ele/results").then((response) => {
-      setResults(response.data.results);
+    axios.post("/api/v1/ele/result-declare").then((response) => {
+      console.log(response)
       Swal.fire("Results Declared!", "The election results are now available.", "success");
     });
   };
@@ -100,11 +112,32 @@ export default function OfficerDashboard() {
           <p className="text-gray-500">Manage elections and oversee the process.</p>
         </div>
         <button
-          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-          onClick={() => navigate("/logout")}
-        >
-          Logout
-        </button>
+  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+  onClick={() => {
+    Swal.fire({
+      title: "Logging out",
+      text: "Are you sure you want to log out?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Logout",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.post("/api/v1/election/officer-logout")
+          .then(() => {
+            Swal.fire("Logged Out!", "You have been successfully logged out.", "success");
+            navigate("/"); 
+          })
+          .catch((error) => {
+            console.error("Logout failed:", error);
+            Swal.fire("Error!", "Failed to log out. Please try again.", "error");
+          });
+      }
+    });
+  }}
+>
+  Logout
+</button>
+
       </header>
 
       {/* Election Status */}

@@ -60,11 +60,28 @@ function Showcase() {
             From Payments to Complaints: Pearl Crest Puts it All at Your
             Fingertips
           </h2>
+          <div className="flex gap-4">
           <Link className="m-auto md:m-0" to="/log">
             <button className="px-10 py-4 text-center bg-black hover:opacity-80 border-white text-white border-2 rounded-l-3xl rounded-r-3xl">
               Login
             </button>
           </Link>
+          <Link className="m-auto md:m-0" to="/votereg">
+            <button className="px-10 py-4 text-center bg-yellow-800 hover:opacity-80 border-white text-white border-2 rounded-l-3xl rounded-r-3xl">
+              Voter Register
+            </button>
+          </Link>
+          <Link className="m-auto md:m-0" to="/votelog">
+            <button className="px-10 py-4 text-center bg-yellow-800 hover:opacity-80 border-white text-white border-2 rounded-l-3xl rounded-r-3xl">
+              Voter Login
+            </button>
+          </Link>
+          <Link className="m-auto md:m-0" to="/votelogoff">
+            <button className="px-10 py-4 text-center bg-yellow-800 hover:opacity-80 border-white text-white border-2 rounded-l-3xl rounded-r-3xl">
+              CEO login
+            </button>
+          </Link>
+          </div>
         </div>
       </div>
     </div>

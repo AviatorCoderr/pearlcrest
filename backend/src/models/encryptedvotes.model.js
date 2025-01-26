@@ -16,13 +16,6 @@ const voteSchema = new mongoose.Schema({
   }
 });
 
-voteSchema.pre('save', function (next) {
-  if (this.isModified('encryptedVotes')) {
-    throw new Error('encryptedVotes is immutable and cannot be modified.');
-  }
-  next();
-});
-
 const EncryptedVotes = mongoose.model('EncryptedVotes', voteSchema);
 
 export default EncryptedVotes;

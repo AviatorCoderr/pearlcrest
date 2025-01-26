@@ -16,21 +16,9 @@ const candidateSchema = mongoose.Schema({
         uppercase: true,
         trim: true
     },
-    aadhar: {
-        type: String,
-        uppercase: true,
-        trim: true
-    },
-    mobile: {
-        type: String,
-        uppercase: true
-    },
-    photo: {
-        type: String
-    },
     votes:{
         type: Number,
-        immutable: true
+        default: 0
     }
 })
 
