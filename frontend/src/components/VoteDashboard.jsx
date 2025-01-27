@@ -212,6 +212,7 @@ export default function VotingDashboard() {
       }
     });
   };
+  
 
   const formatSectionName = (post) => {
     if (post.startsWith('executive')) {
