@@ -105,7 +105,7 @@ export default function OfficerDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      {/* Header */}
+
       <header className="bg-white shadow-md p-6 rounded-lg mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-blue-800">Election Officer Dashboard</h1>
@@ -147,12 +147,14 @@ export default function OfficerDashboard() {
           Current Status:{" "}
           <span
             className={`px-3 py-1 rounded-lg ${
-              electionStatus === "Not Started"
+              electionStatus === "not started"
                 ? "bg-gray-300 text-gray-800"
-                : electionStatus === "Ongoing"
+                : electionStatus === "ongoing"
                 ? "bg-blue-300 text-blue-800"
-                : electionStatus === "Counting"
+                : electionStatus === "finished"
                 ? "bg-yellow-300 text-yellow-800"
+                : electionStatus === "declared"
+                ? "bg-green-300 text-green-800"
                 : "bg-green-300 text-green-800"
             }`}
           >
@@ -160,8 +162,6 @@ export default function OfficerDashboard() {
           </span>
         </p>
       </section>
-
-      {/* Election Actions */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <button
           className="bg-blue-600 text-white px-6 py-4 rounded-lg shadow-md hover:bg-blue-700"
@@ -173,7 +173,7 @@ export default function OfficerDashboard() {
         <button
           className="bg-red-600 text-white px-6 py-4 rounded-lg shadow-md hover:bg-red-700"
           onClick={handleCloseElection}
-          disabled={electionStatus !== "Ongoing"}
+          disabled={electionStatus !== "ongoing"}
         >
           Close Election
         </button>
