@@ -144,51 +144,75 @@ export default function VotingDashboard() {
       return;
     }
   
-    const voteData = Object.values(votedCandidate).flat();
-    axios.post('/api/v1/ele/vote', { votes: voteData })
-      .then(response => {
-        if (response.data.success) {
-          axios.get('/api/v1/ele/vote-receipt')
-            .then(receiptResponse => {
-              Swal.fire({
-                title: 'Votes Locked!',
-                text: `Verification Token: ${receiptResponse.data.verificationToken}. Save for future uses.`,
-                icon: 'success',
-                confirmButtonText: 'OK',
-              }).then(() => {
-                axios.post('/api/v1/election/voter-logout')
-                  .then(logoutResponse => {
-                    if (logoutResponse.data.success) {
-                      navigate('/votelog');
-                    } else {
-                      Swal.fire({
-                        title: 'Logout Failed',
-                        text: 'Please try logging out again.',
-                        icon: 'error',
-                        confirmButtonText: 'OK',
-                      });
-                    }
-                  });
-              });
-            });
-        } else {
-          Swal.fire({
-            title: 'Submission Failed',
-            text: response.data.message,
-            icon: 'error',
-            confirmButtonText: 'OK',
-          });
-        }
+    const voteSummary = Object.entries(votedCandidate)
+      .filter(([post, votes]) => votes.length > 0)
+      .map(([post, votes]) => {
+        const candidateNames = votes
+          .map((id) =>
+            candidates[post]?.find((candidate) => candidate._id === id)?.name || 'Unknown'
+          )
+          .join(', ');
+        return `<strong>${formatSectionName(post)}</strong>: ${candidateNames}`;
       })
-      .catch(() => {
-        Swal.fire({
-          title: 'Error',
-          text: 'There was an error submitting your votes.',
-          icon: 'error',
-          confirmButtonText: 'OK',
-        });
-      });
+      .join('<br>');
+  
+    Swal.fire({
+      title: 'Confirm Your Votes',
+      html: `You have voted for the following candidates:<br><br>${voteSummary}`,
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Submit Votes',
+      cancelButtonText: 'Review Votes',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const voteData = Object.values(votedCandidate).flat();
+        axios.post('/api/v1/ele/vote', { votes: voteData })
+          .then((response) => {
+            if (response.data.success) {
+              axios.get('/api/v1/ele/vote-receipt')
+                .then((receiptResponse) => {
+                  Swal.fire({
+                    title: 'Votes Locked!',
+                    text: `Verification Token: ${receiptResponse.data.verificationToken}. Save for future uses.`,
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                  }).then(() => {
+                    axios.post('/api/v1/election/voter-logout')
+                      .then((logoutResponse) => {
+                        if (logoutResponse.data.success) {
+                          navigate('/votelog');
+                        } else {
+                          Swal.fire({
+                            title: 'Logout Failed',
+                            text: 'Please try logging out again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                          });
+                        }
+                      });
+                  });
+                });
+            } else {
+              Swal.fire({
+                title: 'Submission Failed',
+                text: response.data.message,
+                icon: 'error',
+                confirmButtonText: 'OK',
+              });
+            }
+          })
+          .catch(() => {
+            Swal.fire({
+              title: 'Error',
+              text: 'There was an error submitting your votes.',
+              icon: 'error',
+              confirmButtonText: 'OK',
+            });
+          });
+      }
+    });
   };
+  
 
   const formatSectionName = (post) => {
     if (post.startsWith('executive')) {
