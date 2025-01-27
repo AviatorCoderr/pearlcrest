@@ -1,36 +1,45 @@
 import React from "react";
 import pillarsdet from "../pillarsdet";
 
-function Pillarmem(){
+function Pillarmem() {
   return (
-    <div className="my-10 mt-5 p-10 md:grid grid-cols-3 bg-cover bg-center ">
-      {pillarsdet.map((ele, index) =>
-      <Pillars key={index} ele={ele}/>
-      )}
+    <div className="py-20 bg-gradient-to-r from-blue-50 to-purple-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 text-center mb-12">
+          Our Pillars of Strength
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {pillarsdet.map((ele, index) => (
+            <Pillars key={index} ele={ele} />
+          ))}
+        </div>
+      </div>
     </div>
-  )
+  );
 }
-function Pillars({ele}){
-    return(
-        <div className="l-container border-black border-2 mx-auto mb-10 md:my-0 items-center rounded-xl p-0 text-center">
-        <div className="l-card items-center rounded-xl">
-          <div className="l-front rounded-xl">
-            <img
-              loading="lazy"
-              className="m-auto h-[100%] rounded-xl"
-              src={ele.img_URL}
-              alt="clb-img"
-            />
-          </div>
-          <div className="l-rear text-black bg-cover bg-bottom flex flex-col flex-wrap items-center rounded-xl bg-white">
-            <h3 className="absolute top-20 mx-auto text-xl font-bold">
-              {ele.name}
-            </h3>
-            <p className="m-auto">{ele.post}</p>
-          </div>
+
+function Pillars({ ele }) {
+  return (
+    <div className="relative group overflow-hidden rounded-3xl shadow-2xl transform transition-all duration-500 hover:scale-105">
+      <div className="relative h-96">
+        {/* Front Side */}
+        <div className="absolute inset-0 w-full h-full transition-all duration-500 group-hover:opacity-0">
+          <img
+            loading="lazy"
+            className="w-full h-full object-cover rounded-3xl"
+            src={ele.img_URL}
+            alt="clb-img"
+          />
         </div>
+
+        {/* Rear Side */}
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-600 to-purple-600 flex flex-col items-center justify-center text-white opacity-0 transition-all duration-500 group-hover:opacity-100 rounded-3xl p-6">
+          <h3 className="text-2xl font-bold mb-2">{ele.name}</h3>
+          <p className="text-lg text-center">{ele.post}</p>
         </div>
-    )
+      </div>
+    </div>
+  );
 }
 
 export default Pillarmem;

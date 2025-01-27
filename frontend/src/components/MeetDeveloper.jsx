@@ -1,14 +1,11 @@
 import React from "react";
-import { FaInstagram, FaPortrait } from "react-icons/fa";
-import { FaLinkedin } from "react-icons/fa";
-import { FaExternalLinkAlt } from "react-icons/fa";
-import { FaGithub } from "react-icons/fa";
-import { FaCode } from "react-icons/fa";
+import { FaInstagram, FaLinkedin, FaGithub, FaPortrait } from "react-icons/fa";
+
 const dev_details = [
   {
     img_url: "/static/images/manish_jpg.jpg",
     name: "Manish",
-    description: "Web Designer & PCS Treasurer, MCA"
+    description: "Web Designer & PCS Treasurer, MCA",
   },
   {
     img_url: "/static/images/kush.jpg",
@@ -17,61 +14,105 @@ const dev_details = [
     linkedin_id: "https://www.linkedin.com/in/kushagra-sahay-500b671b8/",
     contact: "https://github.com/AviatorCoderr",
     portfolio: "https://wonderful-shortbread-50834c.netlify.app/",
-    description: "Web Developer, CSE, BIT MESRA"
-}]
+    description: "Web Developer, CSE, BIT MESRA",
+  },
+];
+
 function Meetdev() {
   return (
-    <div id="developersSection" className="m-3 mt-20 md:ml-10">
-      <h2 className="p-2 text-5xl text-center md:text-left mb-5 md:text-6xl">
-        Meet Developers
-      </h2>
-      <div className="mx-auto text-white md:grid md:grid-cols-2">
-        {dev_details.map((ele, index) => (
-          <Card
-            key={index}
-            img_url={ele.img_url}
-            name={ele.name}
-            insta_id={ele.insta_id}
-            linkedin_id={ele.linkedin_id}
-            contact={ele.contact}
-            portfolio={ele.portfolio}
-            description={ele.description}
-          />
-        ))}
+    <div className="py-20 bg-gradient-to-r from-blue-50 to-purple-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Heading Section */}
+        <h2 className="text-5xl md:text-6xl font-extrabold text-gray-900 text-center mb-12">
+          Meet the Developers
+        </h2>
+
+        {/* Developers Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {dev_details.map((ele, index) => (
+            <Card
+              key={index}
+              img_url={ele.img_url}
+              name={ele.name}
+              insta_id={ele.insta_id}
+              linkedin_id={ele.linkedin_id}
+              contact={ele.contact}
+              portfolio={ele.portfolio}
+              description={ele.description}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
 }
+
 function Card(props) {
   return (
-    <div className="mt-5 m-auto border-2 w-3/4 border-black">
-      <div className="text-center m-2">
-        <img
-          loading="lazy"
-          className="dev-img m-auto h-auto hover:shadow-2xl hover:shadow-gray-500 transform transition hover:scale-105 duration-300"
-          src={props.img_url}
-          alt="img"
-        />
+    <div className="bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+      {/* Developer Image */}
+      <div className="w-full flex justify-center pt-8">
+        <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-white shadow-lg">
+          <img
+            loading="lazy"
+            className="w-full h-full object-cover transform transition-all duration-300 hover:scale-110"
+            src={props.img_url}
+            alt={props.name}
+          />
+        </div>
       </div>
-      <div className="text-center p-2 text-2xl bg-neutral-100 text-black font-semibold">
-        <p>{props.name}</p>
-        <p>{props.description}</p>
-      </div>
-      <div className="grid grid-cols-4 p-3 bg-black">
-        <a className="m-auto p-2 text-2xl" href={props.insta_id}>
-          <FaInstagram />
-        </a>
-        <a className="m-auto p-2 text-2xl" href={props.linkedin_id}>
-          <FaLinkedin />
-        </a>
-        <a className="m-auto p-2 text-2xl" href={props.contact}>
-          <FaGithub />
-        </a>
-        <a className="m-auto p-2 text-2xl" href={props.portfolio}>
-          <FaPortrait />
-        </a>
+
+      {/* Developer Details */}
+      <div className="p-6 text-center">
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">{props.name}</h3>
+        <p className="text-lg text-gray-600 mb-4">{props.description}</p>
+
+        {/* Social Links */}
+        <div className="flex justify-center space-x-6">
+          {props.insta_id && (
+            <a
+              href={props.insta_id}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-500 hover:text-pink-600 transition-colors duration-300"
+            >
+              <FaInstagram className="text-2xl" />
+            </a>
+          )}
+          {props.linkedin_id && (
+            <a
+              href={props.linkedin_id}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-500 hover:text-blue-700 transition-colors duration-300"
+            >
+              <FaLinkedin className="text-2xl" />
+            </a>
+          )}
+          {props.contact && (
+            <a
+              href={props.contact}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-500 hover:text-gray-900 transition-colors duration-300"
+            >
+              <FaGithub className="text-2xl" />
+            </a>
+          )}
+          {props.portfolio && (
+            <a
+              href={props.portfolio}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-500 hover:text-purple-600 transition-colors duration-300"
+            >
+              <FaPortrait className="text-2xl" />
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
 }
+
 export default Meetdev;

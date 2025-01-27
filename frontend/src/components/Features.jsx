@@ -14,39 +14,56 @@ const Features = () => {
   };
 
   return (
-    <div className="features">
-      <div className="m-3 md:ml-10">
-        <div>
-          <h1 className="p-2 text-center md:text-left text-6xl">Features</h1>
-          <p className="md:p-3 text-center md:text-left md:mr-80 text-2xl">
+    <div className="py-20 bg-gradient-to-r from-blue-50 to-purple-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Heading Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4">
+            Features
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-700 max-w-2xl mx-auto">
             Uncover a seamless and intuitive user experience as you navigate through advanced tools and functionalities designed to enhance your interaction and engagement. Discover a world of convenience and innovation right at your fingertips.
           </p>
         </div>
-        <div className="mt-10">
-          <div className="">
-            {feat_det.map((ele, index) => (
-              <div key={index} className="p-3 md:p-5 border-2 text-white bg-stone-900 border-zinc-600 shadow-2xl">
-                <p className="flex text-2xl items-center">
-                  {<ele.icon className="mr-1" size={40} />}
-                  {ele.title}
-                  <span className="ml-auto">
-                    {isOpen[index] ? (
-                      <FaPlus className="m-1 cursor-pointer rotate-45 duration-200" onClick={() => toggleDropdown(index)} />
-                    ) : (
-                      <FaPlus className="m-1 cursor-pointer duration-200" onClick={() => toggleDropdown(index)} />
-                    )}
-                  </span>
-                </p>
-                <div className={`transition-max-height duration-300 ${isOpen[index] ? 'max-h-48' : 'max-h-0 overflow-hidden'}`}>
-                  <p className="text-xl p-1">{ele.desc}</p>
+
+        {/* Features List */}
+        <div className="space-y-6">
+          {feat_det.map((ele, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+            >
+              <div
+                className="p-6 flex items-center cursor-pointer"
+                onClick={() => toggleDropdown(index)}
+              >
+                <div className="flex items-center space-x-4">
+                  <ele.icon className="text-3xl text-blue-600" />
+                  <h2 className="text-2xl font-semibold text-gray-900">
+                    {ele.title}
+                  </h2>
                 </div>
+                <span className="ml-auto">
+                  {isOpen[index] ? (
+                    <FaMinus className="text-gray-500 text-xl transition-transform duration-200" />
+                  ) : (
+                    <FaPlus className="text-gray-500 text-xl transition-transform duration-200" />
+                  )}
+                </span>
               </div>
-            ))}
-          </div>
+              <div
+                className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                  isOpen[index] ? "max-h-48" : "max-h-0"
+                }`}
+              >
+                <p className="px-6 pb-6 text-lg text-gray-600">{ele.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default Features;

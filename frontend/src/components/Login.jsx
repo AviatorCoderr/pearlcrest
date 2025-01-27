@@ -4,6 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { BarLoader } from 'react-spinners';
 import { Link } from 'react-router-dom';
+import { FaEye, FaEyeSlash, FaUser, FaLock } from 'react-icons/fa';
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -60,7 +61,7 @@ export default function Login() {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col md:flex-row items-stretch">
+    <div className="w-full min-h-screen flex flex-col md:flex-row items-stretch bg-gradient-to-r from-blue-50 to-purple-50">
       <div className="relative w-full md:w-1/2 flex-shrink-0 hidden md:block">
         <img
           src="/static/images/PC2.jpg"
@@ -77,35 +78,39 @@ export default function Login() {
             <p className="text-base mb-2">Enter Your login details.</p>
           </div>
           <div className="w-full flex flex-col">
-            <input
-              type="text"
-              placeholder="Flat Number"
-              className="w-full text-black py-2 my-2 bg-transparent border-b border-black outline-none focus:outline-none"
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <div className="relative">
+            <div className="relative flex items-center">
+              <FaUser className="absolute left-3 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Flat Number"
+                className="w-full text-black pl-10 py-2 my-2 bg-transparent border-b border-gray-300 outline-none focus:outline-none focus:border-purple-500 transition-colors"
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <div className="relative flex items-center">
+              <FaLock className="absolute left-3 text-gray-400" />
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className="w-full text-black py-2 my-2 bg-transparent border-b border-black outline-none focus:outline-none"
+                className="w-full text-black pl-10 py-2 my-2 bg-transparent border-b border-gray-300 outline-none focus:outline-none focus:border-purple-500 transition-colors"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button
-                className="absolute right-4 top-4 text-gray-600 hover:text-gray-800"
+                className="absolute right-4 text-gray-400 hover:text-gray-600"
                 onClick={togglePasswordVisibility}
               >
-                {showPassword ? "Hide" : "Show"} Password
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
           </div>
-          <div className="w-full flex items-center justify-between">
+          <div className="w-full flex items-center justify-between mt-4">
             <div className="w-full flex items-center">
               <input type="checkbox" className="w-4 h-4 mr-2" />
               <p className="text-sm">Remember Me</p>
             </div>
             <Link to="/forgot-password">
-              <p className="text-sm cursor-pointer underline underline-offset-2 font-medium whitespace-nowrap">
+              <p className="text-sm cursor-pointer underline underline-offset-2 font-medium whitespace-nowrap text-purple-600 hover:text-purple-800">
                 Forgot Password
               </p>
             </Link>
@@ -113,7 +118,7 @@ export default function Login() {
 
           <div className="w-full flex flex-col my-4">
             <button
-              className="bg-black text-white w-full rounded-md p-4 text-center flex items-center justify-center my-2 hover:bg-black/90"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white w-full rounded-md p-4 text-center flex items-center justify-center my-2 hover:from-purple-700 hover:to-blue-700 transition-all"
               onClick={handleLogin}
             >
               Log In
@@ -127,11 +132,11 @@ export default function Login() {
           <div className="bg-white m-4 p-6 rounded-lg w-full max-w-md md:max-w-4xl max-h-full overflow-y-auto">
             {isLoading ? (
               <div className="flex justify-center items-center">
-                <BarLoader color="#000" />
+                <BarLoader color="#6D28D9" />
               </div>
             ) : (
               <button
-                className="bg-black w-1/2 text-white m-auto rounded-md p-4 text-center flex items-center justify-center my-2 hover:opacity-80"
+                className="bg-gradient-to-r from-purple-600 to-blue-600 w-1/2 text-white m-auto rounded-md p-4 text-center flex items-center justify-center my-2 hover:from-purple-700 hover:to-blue-700 transition-all"
                 onClick={handleContinue}
               >
                 Continue to Dashboard

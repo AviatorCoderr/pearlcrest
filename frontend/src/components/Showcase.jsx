@@ -5,40 +5,16 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 function Showcase() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const img_urls = [
-    {
-      url : "/static/images/PC4.jpg"
-    },
-    {
-      url: "/static/images/PC5.jpg"
-    },
-    {
-      url: "/static/images/PC6.jpg"
-    },
-    {
-      url: "/static/images/PC3.jpg"
-    },
-    {
-      url: "/static/images/IMG-20230402-WA0098.jpg"
-    },
-    {
-      url: "/static/images/IMG-20230402-WA0054.jpg"
-    }
-  ]
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const threshold = -1; // Adjust this value based on your needs
+    { url: "/static/images/PC4.jpg", alt: "Pearl Crest Image 1" },
+    { url: "/static/images/PC5.jpg", alt: "Pearl Crest Image 2" },
+    { url: "/static/images/PC6.jpg", alt: "Pearl Crest Image 3" },
+    { url: "/static/images/PC3.jpg", alt: "Pearl Crest Image 4" },
+    { url: "/static/images/IMG-20230402-WA0098.jpg", alt: "Pearl Crest Image 5" },
+    { url: "/static/images/IMG-20230402-WA0054.jpg", alt: "Pearl Crest Image 6" },
+  ];
 
-      setIsVisible(scrollY > threshold);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   // Slick carousel settings
   const settings = {
@@ -49,59 +25,52 @@ function Showcase() {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3000,
+    arrows: true,
+    fade: true, // Adds a fade effect for smoother transitions
   };
 
   return (
-    <>
-    <div className="m-0">
-      <div className="flex flex-col-reverse md:flex-row items-center p-6 mx-auto space-y-0">
-        <div className="flex flex-col ml-5 space-y-12 md:w-2/3">
-          <h2 className="w-full m-0 md:p-1 md:mt-10 text-3xl text-center md:text-5xl md:text-left text-black ">
-            From Payments to Complaints: Pearl Crest Puts it All at Your
-            Fingertips
-          </h2>
-          <div className="flex gap-4">
-          <Link className="m-auto md:m-0" to="/log">
-            <button className="px-10 py-4 text-center bg-black hover:opacity-80 border-white text-white border-2 rounded-l-3xl rounded-r-3xl">
-              Login
-            </button>
-          </Link>
-          <Link className="m-auto md:m-0" to="/votereg">
-            <button className="px-10 py-4 text-center bg-yellow-800 hover:opacity-80 border-white text-white border-2 rounded-l-3xl rounded-r-3xl">
-              Voter Register
-            </button>
-          </Link>
-          <Link className="m-auto md:m-0" to="/votelog">
-            <button className="px-10 py-4 text-center bg-yellow-800 hover:opacity-80 border-white text-white border-2 rounded-l-3xl rounded-r-3xl">
-              Voter Login
-            </button>
-          </Link>
-          <Link className="m-auto md:m-0" to="/votelogoff">
-            <button className="px-10 py-4 text-center bg-yellow-800 hover:opacity-80 border-white text-white border-2 rounded-l-3xl rounded-r-3xl">
-              CEO login
-            </button>
-          </Link>
+    <div className="bg-gradient-to-r from-blue-50 to-purple-50 py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Text Section */}
+        <div className="flex flex-col-reverse md:flex-row items-center gap-10 md:gap-20">
+          <div className="flex flex-col space-y-8 md:w-1/2">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 text-center md:text-left">
+              From Payments to Complaints: Pearl Crest Puts it All at Your
+              Fingertips
+            </h2>
+            <div className="flex justify-center md:justify-start">
+              <Link to="/log">
+                <button className="px-12 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg">
+                  Login
+                </button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Carousel Section */}
+          <div className="w-full md:w-1/2">
+            <Slider {...settings}>
+              {img_urls.map((ele, index) => (
+                <div key={index}>
+                  <div
+                    className={`w-full h-64 md:h-96 overflow-hidden rounded-3xl shadow-2xl transition-opacity duration-500 ${
+                      isVisible ? "opacity-100" : "opacity-0"
+                    }`}
+                  >
+                    <img
+                      className="w-full h-full object-cover"
+                      src={ele.url}
+                      alt={ele.alt}
+                    />
+                  </div>
+                </div>
+              ))}
+            </Slider>
           </div>
         </div>
       </div>
     </div>
-      <div className=" h-full m-6">
-        <Slider {...settings}>
-          {img_urls.map((ele, index) => { 
-            return (
-            <div key={index}>
-            <img
-              className={`w-full h-[20rem] md:h-[30rem] object-cover border-2 border-black rounded-3xl ${
-                isVisible ? "show" : ""
-              }`}
-              src={ele.url}
-              alt="pcpics"
-            />
-          </div>
-          )})}
-        </Slider>
-      </div>
-      </>
   );
 }
 

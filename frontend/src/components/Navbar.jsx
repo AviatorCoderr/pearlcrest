@@ -1,81 +1,115 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BsFillMenuButtonWideFill } from "react-icons/bs";
+
 function Navbar() {
   const [isOpen, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleClick = () => {
     setOpen(!isOpen);
   };
-  const navigate = useNavigate()
+
   return (
-    <div className="md:flex z-20 my-2">
-      <div className="p-2 md:ml-10 text-3xl flex">
-        <p className="m-2 py-2 md:visible flex">
-          <img className="px-2" src="/static/images/favicon-32x32.png" alt="" />
-          PEARL CREST
-        </p>
-        <button onClick={handleClick} className="ml-auto mr-3 md:hidden">
-        <BsFillMenuButtonWideFill size={38}/>
-        </button>
-      </div>
-      <div className="hidden md:block ml-auto">
-        <ul className="md:flex">
-          <li onClick={() => navigate("/")} className="p-3 text-lg mx-5 group">
-            <button className="relative overflow-hidden py-2 px-4">
+    <nav className="bg-white shadow-md fixed w-full z-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo Section */}
+          <div className="flex items-center">
+            <img
+              className="h-8 w-8"
+              src="/static/images/favicon-32x32.png"
+              alt="Pearl Crest Logo"
+            />
+            <span className="ml-2 text-2xl font-bold text-gray-900">
+              PEARL CREST
+            </span>
+          </div>
+
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-8">
+            <button
+              onClick={() => navigate("/")}
+              className="text-gray-700 hover:text-black text-lg font-medium relative group"
+            >
               Home
-              <span className="absolute hover:visible duration-200 inset-x-0 bottom-0 w-1/3 group-hover:w-full h-1 bg-black"></span>
+              <span className="absolute inset-x-0 bottom-0 h-0.5 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
             </button>
-          </li>
-          <li className="p-3 text-lg mx-5 group">
-            <button onClick={() => navigate("/results")} className="relative overflow-hidden py-2 px-4">
+            <button
+              onClick={() => navigate("/results")}
+              className="text-gray-700 hover:text-black text-lg font-medium relative group"
+            >
               Results
-              <span className="absolute hover:visible duration-200 inset-x-0 bottom-0 w-1/3 group-hover:w-full h-1 bg-black"></span>
+              <span className="absolute inset-x-0 bottom-0 h-0.5 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
             </button>
-          </li>
-          <li className="p-3 text-lg mx-5 group">
-            <button onClick={() => navigate("/council")} className="relative overflow-hidden py-2 px-4">
+            <button
+              onClick={() => navigate("/council")}
+              className="text-gray-700 hover:text-black text-lg font-medium relative group"
+            >
               Council
-              <span className="absolute hover:visible duration-200 inset-x-0 bottom-0 w-1/3 group-hover:w-full h-1 bg-black"></span>
+              <span className="absolute inset-x-0 bottom-0 h-0.5 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
             </button>
-          </li>
-          <Link to="/log">
-            <li className="p-3 text-lg px-10 mx-5 bg-black hover:opacity-85 text-white border-black border-2 m-2 rounded-l-3xl rounded-r-3xl">
-              <button>Login</button>
-            </li>
-          </Link>
-        </ul>
-      </div>
-      {isOpen && (
-        <div className="md:hidden">
-          <ul className="md:flex">
-            <li onClick={() => navigate("/")} className="p-3 text-lg mx-5 group">
-              <button className="relative overflow-hidden py-2 px-4 w-full">
-                Home
-                <span className="absolute hover:visible duration-200 inset-x-0 bottom-0 w-1/6 group-hover:w-full h-1 bg-black"></span>
-              </button>
-            </li>
-            <li className="p-3 text-lg mx-5 group">
-              <button className="relative overflow-hidden py-2 px-4 w-full">
-                Gallery
-                <span className="absolute hover:visible duration-200 inset-x-0 bottom-0 w-1/6 group-hover:w-full h-1 bg-black"></span>
-              </button>
-            </li>
-            <li onClick={() => navigate("/council")} className="p-3 text-lg mx-5 group">
-              <button className="relative overflow-hidden py-2 px-4 w-full">
-                Council
-                <span className="absolute hover:visible duration-200 inset-x-0 bottom-0 w-1/6 group-hover:w-full h-1 bg-black"></span>
-              </button>
-            </li>
-            <Link to="/log">
-              <li className="p-3 text-lg px-10 mx-5 bg-black hover:opacity-85 text-white border-black border-2 m-2 rounded-l-3xl rounded-r-3xl">
-                <button>Login</button>
-              </li>
+            <Link
+              to="/log"
+              className="px-6 py-2 bg-black text-white text-lg font-semibold rounded-full hover:bg-gray-800 transition-colors duration-300"
+            >
+              Login
             </Link>
-          </ul>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={handleClick}
+              className="text-gray-700 hover:text-black focus:outline-none"
+            >
+              <BsFillMenuButtonWideFill size={28} />
+            </button>
+          </div>
         </div>
-      )}
-    </div>
+
+        {/* Mobile Menu */}
+        {isOpen && (
+          <div className="md:hidden mt-4 pb-4">
+            <div className="flex flex-col space-y-4">
+              <button
+                onClick={() => {
+                  navigate("/");
+                  setOpen(false);
+                }}
+                className="text-gray-700 hover:text-black text-lg font-medium"
+              >
+                Home
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/results");
+                  setOpen(false);
+                }}
+                className="text-gray-700 hover:text-black text-lg font-medium"
+              >
+                Results
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/council");
+                  setOpen(false);
+                }}
+                className="text-gray-700 hover:text-black text-lg font-medium"
+              >
+                Council
+              </button>
+              <Link
+                to="/log"
+                className="px-6 py-2 bg-black text-white text-lg font-semibold rounded-full hover:bg-gray-800 transition-colors duration-300 text-center"
+              >
+                Login
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
+    </nav>
   );
 }
 
