@@ -17,7 +17,6 @@ export default function VotingDashboard() {
   });
   const [currentSection, setCurrentSection] = useState('');
   const [progress, setProgress] = useState(0);
-  const [voiceRecognitionActive, setVoiceRecognitionActive] = useState(false);
 
   const sectionRefs = {
     president: useRef(null),
@@ -40,13 +39,13 @@ export default function VotingDashboard() {
   };
 
   const sectionColors = {
-    president: 'bg-blue-500 text-white',
-    treasurer: 'bg-yellow-500 text-white',
-    secretary: 'bg-green-500 text-white',
-    executiveablock: 'bg-red-500 text-white',
-    executivebblock: 'bg-purple-500 text-white',
-    executivecblock: 'bg-indigo-500 text-white',
-    executivedblock: 'bg-teal-500 text-white',
+    president: 'bg-gradient-to-r from-blue-500 to-blue-600',
+    treasurer: 'bg-gradient-to-r from-yellow-500 to-yellow-600',
+    secretary: 'bg-gradient-to-r from-green-500 to-green-600',
+    executiveablock: 'bg-gradient-to-r from-red-500 to-red-600',
+    executivebblock: 'bg-gradient-to-r from-purple-500 to-purple-600',
+    executivecblock: 'bg-gradient-to-r from-indigo-500 to-indigo-600',
+    executivedblock: 'bg-gradient-to-r from-teal-500 to-teal-600',
   };
 
   useEffect(() => {
@@ -131,69 +130,26 @@ export default function VotingDashboard() {
     });
   };
 
-  const startVoiceRecognition = () => {
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+  const handleFinalSubmit = () => {
+    const totalVotesCast = Object.values(votedCandidate).reduce((total, votes) => total + votes.length, 0);
+    const totalVotesRequired = Object.values(votesRequired).reduce((total, count) => total + count, 0);
   
-    Swal.fire({
-      title: 'Voice Recognition Active',
-      html: `
-        <p>Please say <strong>"Confirm"</strong> clearly to lock your votes.</p>
-      `,
-      icon: 'info',
-      showCancelButton: true,
-      allowOutsideClick: false,
-    }).then((result) => {
-      if (result.isDismissed) {
-        recognition.stop();
-        setVoiceRecognitionActive(false);
-      }
-    });
-  
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript.toLowerCase();
-      if (transcript.includes('confirm')) {
-        Swal.close();
-        handleFinalSubmit();
-      } else {
-        Swal.fire({
-          title: 'Try Again',
-          text: 'We did not hear "Confirm". Please try again.',
-          icon: 'warning',
-          confirmButtonText: 'OK',
-        });
-      }
-    };
-  
-    recognition.onerror = () => {
+    if (totalVotesCast < totalVotesRequired) {
       Swal.fire({
-        title: 'Error',
-        text: 'Voice recognition failed. Please try again.',
-        icon: 'error',
+        title: 'Incomplete Votes',
+        text: `You have only voted for ${totalVotesCast} out of ${totalVotesRequired} required votes. Please complete your votes before submitting.`,
+        icon: 'warning',
         confirmButtonText: 'OK',
       });
-      setVoiceRecognitionActive(false);
-    };
+      return;
+    }
   
-    recognition.onend = () => {
-      setVoiceRecognitionActive(false);
-    };
-  
-    recognition.start();
-    setVoiceRecognitionActive(true);
-  };
-  
-
-  const handleFinalSubmit = () => {
     const voteData = Object.values(votedCandidate).flat();
-    axios.post('/api/v1/ele/vote', {votes: voteData})
+    axios.post('/api/v1/ele/vote', { votes: voteData })
       .then(response => {
         if (response.data.success) {
           axios.get('/api/v1/ele/vote-receipt')
             .then(receiptResponse => {
-              console.log(receiptResponse)
               Swal.fire({
                 title: 'Votes Locked!',
                 text: `Verification Token: ${receiptResponse.data.verificationToken}. Save for future uses.`,
@@ -249,19 +205,23 @@ export default function VotingDashboard() {
 
     const remainingVotes = votesRequired[post] - votedCandidate[post]?.length;
     return (
-      <div ref={sectionRefs[post]} data-section={post} className={`mt-6 p-4 rounded-xl shadow-lg ${sectionColors[post]}`}>
+      <div ref={sectionRefs[post]} data-section={post} className={`mt-6 p-6 rounded-xl shadow-lg ${sectionColors[post]} text-white`}>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold capitalize">{formatSectionName(post)}</h2>
           <p className="text-lg">Vote for {remainingVotes} candidate{remainingVotes > 1 ? 's' : ''}</p>
         </div>
         <ul className="space-y-4">
           {candidates.map((candidate) => (
-            <li key={candidate._id} className="flex text-black justify-between items-center p-4 bg-white rounded-lg shadow-md">
+            <li key={candidate._id} className="flex justify-between items-center p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
               <div className="flex items-center">
-                <span className="mr-4">{candidate.name} - Flat: {candidate.flatnumber}</span>
+                <span className="mr-4 text-gray-800">{candidate.name} - Flat: {candidate.flatnumber}</span>
               </div>
               <button
-                className={`px-4 py-2 rounded-lg font-medium transition-all ${votedCandidate[post].includes(candidate._id) ? 'bg-green-500 text-white' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  votedCandidate[post].includes(candidate._id)
+                    ? 'bg-green-500 text-white hover:bg-green-600'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
                 onClick={() => handleVote(candidate, post)}
                 disabled={votedCandidate[post].length >= votesRequired[post] && !votedCandidate[post].includes(candidate._id)}
               >
@@ -275,26 +235,29 @@ export default function VotingDashboard() {
   };
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="fixed top-0 left-0 w-full bg-gray-800 text-white py-2 shadow-md text-center">
-        <div className="w-full bg-blue-200 h-2 rounded-full">
-          <div className="bg-green-600 h-2 rounded-full" style={{ width: `${progress}%` }}></div>
+    <div className="min-h-screen p-6 bg-gray-50">
+      <div className="fixed top-0 left-0 w-full bg-gray-900 text-white py-3 shadow-md text-center z-50">
+        <div className="w-full bg-blue-200 h-2 rounded-full mx-auto max-w-4xl">
+          <div className="bg-green-500 h-2 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div>
         </div>
-        <p className="mt-2">Currently Voting: <strong>{currentSection ? formatSectionName(currentSection) : 'None'}</strong></p>
+        <p className="mt-2 text-lg">Currently Voting: <strong>{currentSection ? formatSectionName(currentSection) : 'None'}</strong></p>
       </div>
-      <header className="text-center my-6">
-        <h1 className="text-4xl font-bold">Pearl Crest Society Elections 2025</h1>
-        <p className="text-lg text-gray-700 italic">"Your vote is your voice—make it count!"</p>
+      <header className="text-center my-8">
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          Pearl Crest Society Elections 2025
+        </h1>
+        <p className="text-xl text-gray-600 italic mt-2">"Your vote is your voice—make it count!"</p>
       </header>
       
-      {Object.keys(candidates).map((post) => renderCandidates(candidates[post], post))}
-      <button
-        onClick={startVoiceRecognition}
-        className="m-auto my-5 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-green-700"
-        disabled={voiceRecognitionActive}
-      >
-        {voiceRecognitionActive ? 'Listening...' : 'Lock Votes by Voice'}
-      </button>
+      <div className="max-w-4xl mx-auto">
+        {Object.keys(candidates).map((post) => renderCandidates(candidates[post], post))}
+        <button
+          onClick={handleFinalSubmit}
+          className="m-auto my-8 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-green-700 transition-all duration-300 block"
+        >
+          Submit Votes
+        </button>
+      </div>
     </div>
   );
 }
