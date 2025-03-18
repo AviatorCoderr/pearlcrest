@@ -542,7 +542,7 @@ const addUnVerfiedTransaction = asyncHandler(async(req, res) => {
   const flatid = req?.flat?._id
   if(!flatid) throw new ApiError(400, "Unauthorised access. Please login")
   const prev = await UnTransaction.find({flat: flatid, transactionId});
-  if(prev) throw new ApiError(400, "Your transaction is already registered and under processing. Please wait for approval.");
+  if(prev.length > 0) throw new ApiError(400, "Your transaction is already registered and under processing. Please wait for approval.");
   const response = await UnTransaction.create({
     flat: flatid,
     purpose,
