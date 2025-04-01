@@ -4,7 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { BarLoader } from 'react-spinners';
 import { Link } from 'react-router-dom';
-import { FaEye, FaEyeSlash, FaUser, FaLock } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaUser, FaLock, FaStar } from 'react-icons/fa';
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -12,6 +12,10 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showReviewPopup, setShowReviewPopup] = useState(false);
+  const [review, setReview] = useState("");
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const navigate = useNavigate();
 
   const handleContinue = () => {
@@ -28,10 +32,9 @@ export default function Login() {
     )
     .then((response) => {
       console.log(response);
-      console.log("Login success:", JSON.stringify(response.data.data.flat));
       localStorage.setItem("user", JSON.stringify(response.data.data.flat));
       setIsLoading(false);
-      navigate("/db"); 
+      setShowReviewPopup(true); // Show review popup after successful login
     })
     .catch((error) => {
       Swal.fire({
@@ -41,13 +44,10 @@ export default function Login() {
         confirmButtonText: "OK",
       })
       .then(result => {
-        if(result.isConfirmed)
+        if(result.isConfirmed) {
           setIsLoggingIn(false);
           setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Login error:", error);
-        setIsLoading(false);
+        }
       });
     });
   };
@@ -58,6 +58,50 @@ export default function Login() {
 
   const handleLogin = () => {
     setIsLoggingIn(true);
+  };
+
+  const submitReview = async () => {
+    if (!review || rating === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Please complete your review",
+        text: "Both a rating and written feedback are required",
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.post("/api/v1/review/add-review", {
+        flatnumber: username,
+        name: "Resident", // You can modify this or get from user data
+        review,
+        rating
+      });
+
+      if (response.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "Thank you!",
+          text: "Your feedback helps us improve!",
+          timer: 1500
+        });
+        navigate("/db");
+      }
+    } catch (error) {
+      console.error("Error submitting review:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Couldn't submit your review. Please try again later.",
+      });
+    } finally {
+      setShowReviewPopup(false);
+    }
+  };
+
+  const skipReview = () => {
+    setShowReviewPopup(false);
+    navigate("/db");
   };
 
   return (
@@ -119,7 +163,7 @@ export default function Login() {
           <div className="w-full flex flex-col my-4">
             <button
               className="bg-gradient-to-r from-purple-600 to-blue-600 text-white w-full rounded-md p-4 text-center flex items-center justify-center my-2 hover:from-purple-700 hover:to-blue-700 transition-all"
-              onClick={handleLogin}
+              onClick={handleContinue}
             >
               Log In
             </button>
@@ -127,41 +171,38 @@ export default function Login() {
         </div>
       </div>
 
-      {isLoggingIn && (
-        <div className="fixed top-0 left-0 w-full h-full overflow-auto bg-gray-900 bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white m-4 p-6 rounded-lg w-full max-w-md md:max-w-4xl max-h-full overflow-y-auto">
-            {isLoading ? (
-              <div className="flex justify-center items-center">
-                <BarLoader color="#6D28D9" />
-              </div>
-            ) : (
+
+      {/* Review Popup */}
+      {showReviewPopup && (
+        <div className="fixed top-0 left-0 w-full h-full overflow-auto bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white m-4 p-8 rounded-lg w-full max-w-md max-h-full overflow-y-auto">
+            <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">We Value Your Feedback!</h2>
+            <p className="text-center text-gray-600 mb-6">
+              From Mr. Manish, Treasurer !!!
+              Your experience helps us improve our services for all residents. 
+              Please take a moment to share your thoughts.
+            </p>
+            
+            <textarea
+              className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="What do you like about our services? How can we improve?"
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+            ></textarea>
+            
+            <div className="flex justify-between mt-6">
               <button
-                className="bg-gradient-to-r from-purple-600 to-blue-600 w-1/2 text-white m-auto rounded-md p-4 text-center flex items-center justify-center my-2 hover:from-purple-700 hover:to-blue-700 transition-all"
-                onClick={handleContinue}
+                onClick={skipReview}
+                className="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium"
               >
-                Continue to Dashboard
+                Skip for now
               </button>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:flex justify-center items-center">
-                <img
-                  loading="lazy"
-                  className="w-1/2 rounded-full md:rounded-none md:w-3/4 shadow-2xl m-auto shadow-black border-2 border-black"
-                  src='/static/images/manish_jpg.jpg'
-                  alt="img"
-                />
-              </div>
-              <div className="text-left">
-                <h1 className="text-lg bg-gray-100 text-gray-800 font-bold p-3">Meet Your Treasurer</h1>
-                <p className=" text-lg mt-2 bg-gray-100 text-gray-800 font-bold p-3">
-                Thank you for choosing and trusting me. I appreciate your confidence and look forward to serving you well.</p>
-                <p className="mt-6 leading-8 text-gray-700">
-                  Meet <strong>Manish</strong>, a <strong>Senior Programmer in the Finance Department at Central Coalfields Limited, Ranchi</strong>. An academic <strong>topper in Master of Computer Applications</strong>, Manish excels in MS Excel and Programming, enhancing financial processes with his technical expertise. As a <strong>blackbelt in karate</strong>, he embodies discipline and dedication.
-                </p>
-                <p className="mt-6 leading-8 text-gray-700">
-                  Serving as the <strong>Treasurer of the Pearl Crest Society</strong>, Manish is committed to maintaining integrity and transparency, enforcing a <strong>strict no-corruption policy</strong>. His blend of technical proficiency and ethical standards drives the society towards innovation and accountability.
-                </p>
-              </div>
+              <button
+                onClick={submitReview}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Submit Review
+              </button>
             </div>
           </div>
         </div>
