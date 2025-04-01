@@ -1,19 +1,66 @@
 import React from 'react';
 import Navbar from './Navbar';
+import { FaPhone, FaHome, FaUserTie } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const MemberCard = ({ member }) => {
+  const isLeadership = ['PRESIDENT', 'SECRETARY', 'TREASURER'].includes(member.position);
+  
   return (
-    <div className="bg-gray-900 rounded-lg shadow-md overflow-hidden transform transition hover:scale-105 duration-300 max-w-xs mx-auto flex flex-col justify-center text-center">
-      <img className="w-full h-[60] object-cover rounded-t-lg" src={member.url} alt={member.name} />
-      <div className="px-6 py-4">
-        <h3 className="text-xl font-bold text-white mt-4">{member.name}</h3>
-        <p className="text-gray-300 text-sm mt-2">
-          <strong>Position:</strong> {member.position}<br />
-          <strong>Flat:</strong> {member.flat}<br />
-          <strong>Contact:</strong> <a className="text-blue-500 hover:underline" href={`tel:${member.contact}`}>{member.contact}</a>
-        </p>
+    <motion.div 
+      className={`rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl ${
+        isLeadership ? 'border-t-4 border-blue-500' : 'border-t-4 border-gray-200'
+      }`}
+      whileHover={{ y: -5 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="relative">
+        <img 
+          className="w-full h-60 object-cover" 
+          src={member.url} 
+          alt={member.name} 
+          onError={(e) => {
+            e.target.onerror = null; 
+            e.target.src = '/static/images/placeholder-profile.jpg'
+          }}
+        />
+        {isLeadership && (
+          <div className="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+            {member.position}
+          </div>
+        )}
       </div>
-    </div>
+      
+      <div className="p-6 bg-white">
+        <h3 className="text-xl font-bold text-gray-800 mb-2">{member.name}</h3>
+        
+        <div className="space-y-2 text-gray-600">
+          {!isLeadership && (
+            <div className="flex items-center">
+              <FaUserTie className="mr-2 text-blue-500" />
+              <span className="capitalize">{member.position.toLowerCase()}</span>
+            </div>
+          )}
+          
+          <div className="flex items-center">
+            <FaHome className="mr-2 text-blue-500" />
+            <span>{member.flat}</span>
+          </div>
+          
+          <div className="flex items-center">
+            <FaPhone className="mr-2 text-blue-500" />
+            <a 
+              href={`tel:${member.contact}`} 
+              className="text-blue-600 hover:underline hover:text-blue-800 transition-colors"
+            >
+              {member.contact}
+            </a>
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 };
 
@@ -32,17 +79,46 @@ const MemberCouncil = () => {
     { id: 11, position: 'Executive Member', name: 'Mr. Ranjan Kumar', flat: 'D-block', contact: '9334902514', url: '/static/images/ranjan-min.jpg' }
   ];
 
+  // Separate leadership and other members
+  const leadership = members.filter(m => ['PRESIDENT', 'SECRETARY', 'TREASURER'].includes(m.position));
+  const otherMembers = members.filter(m => !['PRESIDENT', 'SECRETARY', 'TREASURER'].includes(m.position));
+
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4">
-        <h3 className="text-4xl font-bold text-center my-8 text-gray-800">EXECUTIVE COMMITTEE</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {members.map((member) => (
-            <div key={member.id} className="p-4 rounded-lg">
-              <MemberCard member={member} />
+      <div className="bg-gray-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl mb-4">
+              Executive Committee
+            </h1>
+            <p className="max-w-2xl mx-auto text-xl text-gray-600">
+              Meet the dedicated team managing our community affairs
+            </p>
+          </motion.div>
+
+          <div className="mb-20">
+            <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">Leadership</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {leadership.map((member) => (
+                <MemberCard key={member.id} member={member} />
+              ))}
             </div>
-          ))}
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">Committee Members</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {otherMembers.map((member) => (
+                <MemberCard key={member.id} member={member} />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </>

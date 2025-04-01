@@ -62,6 +62,7 @@ function App() {
           <Route path="/paymentsuccess" element={<PaymentSucess />} />
           <Route path="/forgot-password" element={<ForgotPass />} />
           <Route path="/results" element={<Result />} />
+          <Route path="/council" element={<MemberCouncil />} />
           <Route
             path="/db"
             element={<Layout />}
