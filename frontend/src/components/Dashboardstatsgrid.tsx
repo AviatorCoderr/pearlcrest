@@ -53,7 +53,7 @@ export default function Dashboardstatsgrid() {
             <div className='pl-4'>
               <span className='text-sm text-gray-500 font-medium'>Total Income</span>
               <div className='flex items-center'>
-                <strong className='text-2xl text-gray-800 font-bold'>${parseFloat(income[0] + income[1]).toFixed(2)}</strong>
+                <strong className='text-2xl text-gray-800 font-bold'>₹{parseFloat(income[0] + income[1]).toFixed(2)}</strong>
                 <span className='text-xs text-green-500 ml-2 bg-green-50 px-2 py-1 rounded-full'>+{(income[0] + income[1]) > 0 ? '100%' : '0%'}</span>
               </div>
               <p className='text-xs text-gray-400 mt-1'>All income sources</p>
@@ -74,7 +74,7 @@ export default function Dashboardstatsgrid() {
             <div className='pl-4'>
               <span className='text-sm text-gray-500 font-medium'>Total Expenses</span>
               <div className='flex items-center'>
-                <strong className='text-2xl text-gray-800 font-bold'>${parseFloat(exp[0] + exp[1]).toFixed(2)}</strong>
+                <strong className='text-2xl text-gray-800 font-bold'>₹{parseFloat(exp[0] + exp[1]).toFixed(2)}</strong>
                 <span className='text-xs text-red-500 ml-2 bg-red-50 px-2 py-1 rounded-full'>-{(exp[0] + exp[1]) > 0 ? '100%' : '0%'}</span>
               </div>
               <p className='text-xs text-gray-400 mt-1'>All expenses</p>
@@ -95,8 +95,8 @@ export default function Dashboardstatsgrid() {
             <div className='pl-4'>
               <span className='text-sm text-gray-500 font-medium'>Cash Balance</span>
               <div className='flex items-center'>
-                <strong className='text-2xl text-gray-800 font-bold'>${(income[0] - exp[0]).toFixed(2)}</strong>
-                <span className={`text-xs ml-2 px-2 py-1 rounded-full ${
+                <strong className='text-2xl text-gray-800 font-bold'>{(income[0] - exp[0]).toFixed(2)}</strong>
+                <span className={`text-xs ml-2 px-2 py-1 rounded-full ₹{
                   (income[0] - exp[0]) >= 0 
                     ? 'text-green-500 bg-green-50' 
                     : 'text-red-500 bg-red-50'
@@ -122,8 +122,8 @@ export default function Dashboardstatsgrid() {
             <div className='pl-4'>
               <span className='text-sm text-gray-500 font-medium'>Bank Balance</span>
               <div className='flex items-center'>
-                <strong className='text-2xl text-gray-800 font-bold'>${(income[1] - exp[1]).toFixed(2)}</strong>
-                <span className={`text-xs ml-2 px-2 py-1 rounded-full ${
+                <strong className='text-2xl text-gray-800 font-bold'>₹{(income[1] - exp[1]).toFixed(2)}</strong>
+                <span className={`text-xs ml-2 px-2 py-1 rounded-full ₹{
                   (income[1] - exp[1]) >= 0 
                     ? 'text-green-500 bg-green-50' 
                     : 'text-red-500 bg-red-50'
@@ -150,7 +150,7 @@ function BoxWrapper({ children, loading, color = "gray" }) {
   };
   
   return (
-    <div className={`bg-white rounded-lg p-4 flex-1 border border-gray-200 flex items-center shadow-sm hover:shadow-md transition-shadow duration-200 relative overflow-hidden ${colorClasses[color]}`}
+    <div className={`bg-white rounded-lg p-4 flex-1 border border-gray-200 flex items-center shadow-sm hover:shadow-md transition-shadow duration-200 relative overflow-hidden ₹{colorClasses[color]}`}
          style={{ borderLeftWidth: '4px' }}>
       <div className="absolute top-0 right-0 w-16 h-16 -mr-4 -mt-4 rounded-full opacity-10 bg-gray-300"></div>
       {children}

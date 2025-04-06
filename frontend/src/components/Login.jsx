@@ -73,7 +73,7 @@ export default function Login() {
     try {
       const response = await axios.post("/api/v1/review/add-review", {
         flatnumber: username,
-        name: "Resident", // You can modify this or get from user data
+        name: "Resident",
         review,
         rating
       });
