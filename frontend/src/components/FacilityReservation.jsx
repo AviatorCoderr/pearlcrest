@@ -401,38 +401,54 @@ export default function FacilityReservation() {
                                         >
                                             <option value="">Select Payment Method</option>
                                             <option value="UPI">UPI</option>
+                                            <option value="NEFT">NEFT</option>
+                                            <option value="IMPS">IMPS</option>
                                             <option value="Cheque">Cheque</option>
                                         </select>
                                     </div>
 
                                     {paymentMode && (
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                                Transaction Reference
-                                                <button
-                                                    type="button"
-                                                    className="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none"
-                                                    title={`${
-                                                        paymentMode === 'UPI' 
-                                                            ? 'UPI Reference Number (12 alphanumeric characters)' 
-                                                            : 'Cheque Number (6 digits)'
-                                                    }`}
-                                                >
-                                                    <FiInfo />
-                                                </button>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                placeholder={`Enter ${paymentMode} reference`}
-                                                value={transactionId}
-                                                onChange={(e) => setTransactionId(e.target.value)}
-                                                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            />
-                                            <p className="mt-1 text-xs text-gray-500">
-                                                {paymentMode === 'UPI' && 'Example: 12 character UPI reference like ABCD1234EF56'}
-                                                {paymentMode === 'Cheque' && 'Example: 6 digit cheque number like 123456'}
-                                            </p>
-                                        </div>
+                                      <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                          Transaction Reference
+                                          <button
+                                            type="button"
+                                            className="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none"
+                                            title={
+                                              paymentMode === 'UPI' 
+                                                ? 'UPI Reference Number (12 alphanumeric characters)' 
+                                                : paymentMode === 'NEFT' 
+                                                  ? 'NEFT Reference Number (8-12 alphanumeric characters)' 
+                                                  : paymentMode === 'IMPS' 
+                                                    ? 'IMPS Reference Number (8-12 alphanumeric characters)' 
+                                                    : 'Cheque Number (6 digits)'
+                                            }
+                                          >
+                                            <FiInfo />
+                                          </button>
+                                        </label>
+                                        <input
+                                          type="text"
+                                          placeholder={
+                                            paymentMode === 'UPI' 
+                                              ? 'Enter 12 character UPI reference' 
+                                              : paymentMode === 'NEFT' 
+                                                ? 'Enter 8-12 character NEFT reference' 
+                                                : paymentMode === 'IMPS' 
+                                                  ? 'Enter 8-12 character IMPS reference' 
+                                                  : 'Enter 6-digit cheque number'
+                                          }
+                                          value={transactionId}
+                                          onChange={(e) => setTransactionId(e.target.value)}
+                                          className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        />
+                                        <p className="mt-1 text-xs text-gray-500">
+                                          {paymentMode === 'UPI' && 'Example: 12 character UPI reference like ABCD1234EF56'}
+                                          {paymentMode === 'NEFT' && 'Example: 8-12 character NEFT reference like NEFT123456'}
+                                          {paymentMode === 'IMPS' && 'Example: 8-12 character IMPS reference like IMPS789012'}
+                                          {paymentMode === 'Cheque' && 'Example: 6 digit cheque number like 123456'}
+                                        </p>
+                                      </div>
                                     )}
                                 </div>
                             </div>

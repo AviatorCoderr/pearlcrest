@@ -439,6 +439,8 @@ const Societypayments = () => {
                     >
                       <option value="">Select Payment Mode</option>
                       <option value="UPI">UPI</option>
+                      <option value="NEFT">NEFT</option>
+                      <option value="IMPS">IMPS</option>
                       <option value="Cheque">Cheque</option>
                     </select>
                   </div>
@@ -453,7 +455,11 @@ const Societypayments = () => {
                           title={
                             paymentMode === 'UPI' 
                               ? 'UPI Reference Number should be 12-20 alphanumeric characters long.' 
-                              : 'Cheque Number should be 6 numeric characters long.'
+                              : paymentMode === 'NEFT' 
+                                ? 'NEFT Reference Number should be 11-22 alphanumeric characters long.' 
+                                : paymentMode === 'IMPS' 
+                                  ? 'IMPS Reference Number should be 8 to 22 alphanumeric characters long.' 
+                                  : 'Cheque Number should be 6 numeric characters long.'
                           }
                         >
                           <FiInfo />
@@ -464,7 +470,11 @@ const Societypayments = () => {
                         placeholder={
                           paymentMode === 'UPI' 
                             ? 'Enter 12-20 digit UPI reference' 
-                            : 'Enter 6-digit cheque number'
+                            : paymentMode === 'NEFT' 
+                              ? 'Enter 11-22 digit NEFT reference' 
+                              : paymentMode === 'IMPS' 
+                                ? 'Enter 8-22 digit IMPS reference' 
+                                : 'Enter 6-digit cheque number'
                         }
                         value={transactionId}
                         onChange={(e) => setTransactionId(e.target.value)}
@@ -472,6 +482,8 @@ const Societypayments = () => {
                       />
                       <p className="mt-1 text-xs text-gray-500">
                         {paymentMode === 'UPI' && 'Example: 12 alphanumeric characters like ABCD1234EF56'}
+                        {paymentMode === 'NEFT' && 'Example: 8-12 alphanumeric characters like NEFT123456'}
+                        {paymentMode === 'IMPS' && 'Example: 8-12 alphanumeric characters like IMPS789012'}
                         {paymentMode === 'Cheque' && 'Example: 6 digit cheque number like 123456'}
                       </p>
                     </div>
