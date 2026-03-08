@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Swal from 'sweetalert2';
 import { CircleLoader } from 'react-spinners';
-import { FiCalendar, FiDollarSign, FiInfo, FiCheck, FiX, FiCreditCard } from 'react-icons/fi';
+import { FiCalendar, FiDollarSign, FiInfo, FiCheck, FiX, FiCreditCard, FiCopy } from 'react-icons/fi';
 import { FaQrcode, FaRupeeSign } from 'react-icons/fa';
 
 export default function FacilityReservation() {
@@ -101,6 +101,24 @@ export default function FacilityReservation() {
         if (isBooked) return 'bg-red-100 text-red-500';
         if (isSelected) return 'bg-blue-500 text-white';
         return '';
+    };
+
+    const copyToClipboard = (text, label) => {
+        navigator.clipboard.writeText(text).then(() => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Copied!',
+                text: `${label} copied to clipboard`,
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }).catch(() => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed to copy',
+                text: 'Could not copy to clipboard'
+            });
+        });
     };
 
     const handleCheckout = async () => {
@@ -384,6 +402,81 @@ export default function FacilityReservation() {
                                     <p className="mt-3 text-xs text-gray-500 text-center">
                                         All major UPI partners supported
                                     </p>
+                                </div>
+                            </div>
+
+                            <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center">
+                                    <FiCreditCard className="mr-2 text-blue-500" /> Society Bank Details
+                                </h3>
+                                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200 mb-6">
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-center pb-3 border-b border-blue-200">
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-700">Account Name</span>
+                                                <p className="text-sm font-semibold text-gray-900">PEARL CREST FLAT OWNERS SOCIETY</p>
+                                            </div>
+                                            <button
+                                                onClick={() => copyToClipboard('PEARL CREST FLAT OWNERS SOCIETY', 'Account Name')}
+                                                className="ml-2 p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                                title="Copy Account Name"
+                                            >
+                                                <FiCopy size={18} />
+                                            </button>
+                                        </div>
+                                        <div className="flex justify-between items-center pb-3 border-b border-blue-200">
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-700">Account Number</span>
+                                                <p className="text-sm font-semibold text-gray-900 tracking-wide">_00000448674139299</p>
+                                            </div>
+                                            <button
+                                                onClick={() => copyToClipboard('_00000448674139299', 'Account Number')}
+                                                className="ml-2 p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                                title="Copy Account Number"
+                                            >
+                                                <FiCopy size={18} />
+                                            </button>
+                                        </div>
+                                        <div className="flex justify-between items-center pb-3 border-b border-blue-200">
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-700">IFS Code</span>
+                                                <p className="text-sm font-semibold text-gray-900 tracking-wide">SBIN0004143</p>
+                                            </div>
+                                            <button
+                                                onClick={() => copyToClipboard('SBIN0004143', 'IFS Code')}
+                                                className="ml-2 p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                                title="Copy IFS Code"
+                                            >
+                                                <FiCopy size={18} />
+                                            </button>
+                                        </div>
+                                        <div className="flex justify-between items-center pb-3 border-b border-blue-200">
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-700">UPI ID</span>
+                                                <p className="text-sm font-semibold text-gray-900 tracking-wide">4867413299@sbi</p>
+                                            </div>
+                                            <button
+                                                onClick={() => copyToClipboard('4867413299@sbi', 'UPI ID')}
+                                                className="ml-2 p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                                title="Copy UPI ID"
+                                            >
+                                                <FiCopy size={18} />
+                                            </button>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-700">Account Type</span>
+                                                <p className="text-sm font-semibold text-gray-900">Current Account</p>
+                                            </div>
+                                            <button
+                                                onClick={() => copyToClipboard('Current Account', 'Account Type')}
+                                                className="ml-2 p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                                title="Copy Account Type"
+                                            >
+                                                <FiCopy size={18} />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
