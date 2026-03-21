@@ -335,10 +335,10 @@ export default function AddIncome() {
           <div className="flex justify-between items-center">
             <div>
               <span className="text-sm font-medium text-gray-700">Account Number</span>
-              <p className="text-sm font-semibold text-gray-900 tracking-wide">_00000448674139299</p>
+              <p className="text-sm font-semibold text-gray-900 tracking-wide">44867413299</p>
             </div>
             <button
-              onClick={() => copyToClipboard('_00000448674139299', 'Account Number')}
+              onClick={() => copyToClipboard('44867413299', 'Account Number')}
               className="ml-2 p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
               title="Copy Account Number"
             >
